@@ -1,24 +1,25 @@
 
-
 <template>
-  <div >
-
+  <div class="meet-chat">
+    <div class="meet-chat__messages__list">
+      <div class="meet-chat__messages__item" v-for="{text } in messagesList">
+        {{text}}
+      </div>
+      <form @submit.prevent="submitMessage" class="meet-chat__form">
+          <input type="text" class="meet-chat__form__input" placeholder="type a message...">
+           <button type="submit"> submit</button>
+      </form>
+    </div>
   </div>
 </template>
 
-<script>
-import {defineComponent} from "vue";
+<script setup lang="ts">
+import {useMeetChat} from "@/features/useMeetChat";
 
-export default defineComponent({
-name: 'MeetChat',
-setup(){
+const {messagesList, submitMessage} = useMeetChat()
 
-  return {
-
-  }
-}
-})
 </script>
+
 
 <style scoped>
 
