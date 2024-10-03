@@ -1,21 +1,33 @@
-import {ref} from "vue";
+import {ref, unref} from "vue";
 
 const messagesList = ref([])
+const userMessage= ref('')
 
-var ws = new WebSocket("ws://host:port/");
 
-socket.onopen = function() {
-    console.log('open')
+var ws = new WebSocket("ws://localhost:3003");
+
+ws.onopen = function(event) {
+    console.log('open event', event)
     //do something when connection estabilished
 };
 
-socket.onmessage = function(message) {
-    console.log('msg')
+ws.onmessage = function(event) {
+    console.log('event Message',event)
+
+    messagesList.value.push(JSON.parse(event.data))
+
     //do something when message arrives
 };
 
-socket.onclose = function() {
-    console.log('close')
+ws.onclose = function(event) {
+    console.log('event Close', event)
+
+    //do something when connection close
+};
+
+ws.onerror = function(event) {
+    console.log('error event', event)
+
     //do something when connection close
 };
 
@@ -26,17 +38,24 @@ socket.onclose = function() {
 
 export const useMeetChat = ()=> {
 
-    const submitMessage = (message = 'hui')=> {
+    const submitMessage = ()=> {
 
-        // { event: "chat-message", payload: { userName, message }}
-        // conn.send(JSON.stringify())
+        const payload = JSON.stringify({ userId:'hui', text : unref(userMessage) })
 
-        // setTimeout(function (){
-        //     wsSend(message);
-        // },100);
+        if(ws.readyState){
+            ws.send(payload)
+         return
+        }
+
+        setTimeout(function (){
+            console.warn('readyState Warn')
+            ws.send(payload)
+        },1000);
+
     }
 
  return {
+        userMessage,
      submitMessage,
      messagesList
  }

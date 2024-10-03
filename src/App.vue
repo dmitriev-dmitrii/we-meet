@@ -5,7 +5,7 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/meet">Meet</RouterLink>
+
       </nav>
     </div>
   </header>
@@ -16,7 +16,9 @@
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import {useWebSocket} from "@/features/useWebSocket";
+const {connectWebSocket} = useWebSocket()
+connectWebSocket();
 </script>
 
 <style scoped>
