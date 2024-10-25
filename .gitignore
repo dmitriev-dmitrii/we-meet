@@ -19,6 +19,7 @@ coverage
 
 /we-meet-frontend
 /we-meet-backend
+/app
 
 # Editor directories and files
 .vscode/*
