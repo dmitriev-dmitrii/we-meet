@@ -1,6 +1,14 @@
 git-clone-submodules:
-	git clone --recurse-submodules
-	
+	@echo "Current directory: $$(pwd)"
+	@echo "Git status:"
+	git status
+	@echo "Submodule status before update:"
+	git submodule status
+	@echo "Updating submodules..."
+	git submodule update --init --recursive --force || (echo "Error updating submodules" && exit 1)
+	@echo "Submodule status after update:"
+	git submodule status
+
 build-app:
 	npm ci
 	cd ./we-meet-frontend/ && npm run build
