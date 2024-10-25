@@ -16,10 +16,7 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
-
-/we-meet-frontend
-/we-meet-backend
-/app
+/backend/public
 
 # Editor directories and files
 .vscode/*
