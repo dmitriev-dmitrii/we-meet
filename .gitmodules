@@ -1,0 +1,6 @@
+[submodule "we-meet-backend"]
+	path = we-meet-backend
+	url = https://github.com/dmitriev-dmitrii/we-meet-backend
+[submodule "we-meet-frontend"]
+	path = we-meet-frontend
+	url = https://github.com/dmitriev-dmitrii/we-meet-frontend
