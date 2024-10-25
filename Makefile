@@ -1,21 +1,17 @@
-git-clone-submodules:
-	@echo "Current directory: $$(pwd)"
-	@echo "Git status:"
-	git status
-	@echo "Submodule status before update:"
-	git submodule status
-	@echo "Updating submodules..."
-	git submodule update --init --recursive --force || (echo "Error updating submodules" && exit 1)
-	@echo "Submodule status after update:"
-	git submodule status
+clone-modules:
+	rm -rf we-meet-backend
+	rm -rf we-meet-frontend
+	git clone https://github.com/dmitriev-dmitrii/we-meet-backend
+	git clone https://github.com/dmitriev-dmitrii/we-meet-frontend
 
 build-app:
-	npm ci
-	cd ./we-meet-frontend/ && npm run build
-	# cd ./we-meet-backend/ && npm run build
-	mv --force ./we-meet-frontend/dist/*  ./we-meet-backend/public/
+	rm -rf  app
+	mkdir  app
+	cd ./we-meet-frontend/ && npm i && npm run build
+	cp -R ./we-meet-backend/* ./app
+	cp -R ./we-meet-frontend/dist/* ./app/public/
 
 start-app:
-	cd ./we-meet-backend/ && npm run start
+	cd ./app/ && npm i && npm run start
 
-make start: git-clone-submodules build-app start-app
+make start: clone-modules build-app start-app
