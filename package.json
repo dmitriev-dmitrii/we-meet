@@ -6,7 +6,7 @@
     "start": "make deploy"
   },
   "engines": {
-    "node": ">=18"
+    "node": "16.x"
   },
   "keywords": [],
   "author": "",
