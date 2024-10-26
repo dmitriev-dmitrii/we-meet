@@ -5,6 +5,9 @@
   "scripts": {
     "start": "make deploy"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
