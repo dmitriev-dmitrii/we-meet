@@ -1,7 +1,7 @@
 import {ref, unref} from "vue";
 
 // const WEB_SOCKET_URL = "ws://localhost:3000";
-const WEB_SOCKET_URL = `ws://${window.location.host}`
+const WEB_SOCKET_URL = `wss://${window.location.host}`
 
 let ws = new WebSocket(WEB_SOCKET_URL);
 
