@@ -1,61 +1,77 @@
 <template>
 
-    <h1>Meet </h1>
-<!--    <MeetChat/>-->
-<h2>creatorUserId : {{creatorUserId}}</h2>
-  <div ref="videoTagsContainer" >
+   <div v-if="!loading && !err">
+
+      <div v-if="!userId">
+        <AuthForm/>
+      </div>
+
+     <Meet v-if="userId && meetId" />
+
+   </div>
+
+  <div v-if="loading">
+    loading...
   </div>
 
-  <div v-for="{name,userId} in meetUsers" :key="userId">
-    <hr/>
-    name : {{name}} , <br/>
-    userId :{{userId}}
-
+  <div v-if="err">
+    err {{ err }}
   </div>
+
 </template>
 
 <style>
 
 </style>
 <script setup lang="ts">
-import MeetChat from "@/components/meet/MeetChat.vue";
-import {useMeetRoom} from "@/features/useMeetRoom";
-import {useCurrentUser} from "@/features/useCurrentUser";
+import {onMounted, ref, unref, useTemplateRef} from "vue";
 import {useRoute} from "vue-router";
-import {onBeforeMount, onMounted, unref, useTemplateRef, watch} from "vue";
-import {usePeerConnection} from "@/features/usePeerConnection";
-import {useWebSocket} from "@/features/useWebSocket";
-import router from "@/router";
+import {useMeet} from "@/features/useMeet";
+import {useCurrentUser} from "@/features/useCurrentUser";
+import AuthForm from "@/components/AuthForm.vue";
 
-const {roomId, joinRoom ,meetUsers , creatorUserId} =  useMeetRoom()
-const  { name , initUserStream, userStream} = useCurrentUser()
-const {connectWebSocket} = useWebSocket()
-const {createPeerConnection} = usePeerConnection()
+import Meet from "@/components/meet/Meet.vue";
 
-const videoContainer = useTemplateRef('videoContainer')
-watch( meetUsers, (value, oldValue, onCleanup) => {
+const { meetId, findMeetById  } =  useMeet()
 
-  // const video = document.createElement("video");
-  // video.srcObject = value[value.length]['userStream'];
-  // unref(videoContainer).append(video)
-  // video.play()
+const {userId} = useCurrentUser()
 
-})
+const route = useRoute()
+const { params } = unref(route)
+const loading = ref(true)
+const err = ref('')
 
-// if (!unref(roomId)) {
-//   router.push({name:'HomePage'})
-// }
 
 onMounted(async ()=> {
 
-  if (!unref(userStream)) {
-    await initUserStream()
+  try {
+    await findMeetById( params.id )
+
+
+  } catch (error) {
+const {status } = error
+
+if (status === 404) {
+  meetId.value = ''
+  err.value = 404
+  return
+}
+    err.value = error
+
   }
-
-
-  await createPeerConnection()
-  joinRoom()
+finally {
+    loading.value = false
+  }
 
 })
 
+
+
 </script>
+
+<style>
+.my-stream{
+  border: dodgerblue 2px solid;
+  border-radius: 5px;
+}
+</style>
