@@ -1,3 +1,4 @@
+import adapter from 'webrtc-adapter';
 import './assets/main.css'
 
 import { createApp } from 'vue'

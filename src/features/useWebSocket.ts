@@ -1,73 +1,31 @@
-import {ref, unref} from "vue";
-
-const WEB_SOCKET_URL = "ws://localhost:7000";
-// const WEB_SOCKET_URL = `ws://${window.location.host}`
-
-let ws = new WebSocket(WEB_SOCKET_URL);
+const WEB_SOCKET_URL = import.meta.env.PROD ? `wss://${window.location.host}` : 'ws://localhost:3000';
 
 const webSocketQueue = [];
 const webSocketMessageHandlersMap = new Map();
-export const useWebSocket = ()=> {
-  const   addWebSocketMessageHandlers = (events = [])=> {
+const ws = new WebSocket(WEB_SOCKET_URL);
 
-        events.forEach(({type,callback})=> {
+export const useWebSocket = ()=> {
+    const   addWebSocketMessageHandlers = (eventsMap = {})=> {
+
+        for (const [type, callback] of Object.entries(eventsMap)) {
+
             if ( webSocketMessageHandlersMap.has(type)) {
                 console.warn(`webSocketMessageHandlersMap : replaced event callback for type: ${type}`)
             }
 
-            webSocketMessageHandlersMap.set(type,callback)
-        })
-    }
+            if ( type && callback ) {
+                webSocketMessageHandlersMap.set(type,callback)
+            }
 
-    const onSocketConnected = ()=> {
-        console.log('WebSocket connected');
-    }
-
-    const onSocketMessage = ({data}) => {
-
-            const payload = JSON.parse(data);
-
-            const {type} =  payload
-
-        if (!webSocketMessageHandlersMap.has(type)) {
-          console.error('onSocketMessage , empty callback for type' , type )
-          return
         }
-
-        const callback =  webSocketMessageHandlersMap.get(type)
-
-        callback(payload)
-
-    };
-
-
-        const onSocketError = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-
-   const onSocketClose = (event) => {
-       console.log('WebSocket Closed', event );
-   };
-
-    const connectWebSocket =  () => {
-
-        ws = new WebSocket(WEB_SOCKET_URL);
-
-        ws.onopen = onSocketConnected
-
-        ws.onmessage = onSocketMessage
-
-        ws.onerror = onSocketError
-
-        ws.onclose = onSocketClose
     }
 
-    function sendWebSocketMessage(payload) {
-
+    function sendWebSocketMessage(payload:any) {
+        // TODO сделать интерфейс payload
         if (ws.readyState !== WebSocket.OPEN) {
             console.warn('WebSocket state is not OPEN ')
             // webSocketQueue.push(payload)
+            // TODO пушить  очередь на отправку
             setTimeout(()=> {
                 sendWebSocketMessage(payload)
             }, 500 )
@@ -77,8 +35,39 @@ export const useWebSocket = ()=> {
         ws.send(JSON.stringify(payload));
     }
 
+
+    ws.onmessage =  (event) => {
+        const {data} = event
+        //@ts-ignore
+        const payload = JSON.parse(data);
+
+        const {type} =  payload
+
+        if (!webSocketMessageHandlersMap.has(type)) {
+            console.warn('onSocketMessage , empty callback for event ' , `"${type}"` )
+            return
+        }
+
+        const callback =  webSocketMessageHandlersMap.get(type)
+
+        callback(payload)
+
+    };
+
+    ws.onopen = (event)=> {
+        console.log('WebSocket onopen');
+        // TODO читать очередь на отправку
+    }
+
+    ws.onclose = (event) => {
+        console.log('WebSocket Closed', event );
+    };
+
+    ws.onerror =  (error:any) => {
+        console.error('WebSocket error:', error);
+    };
+
     return {
-        connectWebSocket,
         addWebSocketMessageHandlers,
         sendWebSocketMessage
     }
