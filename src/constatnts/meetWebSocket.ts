@@ -1,10 +1,12 @@
 // TODO to enum
 export const MEET_WEB_SOCKET_EVENTS = {
-    USER_ENTER_MEET:'enter-meet',
-    USER_LEAVE_MEET: `leave-meet`,
+    USER_WEB_SOCKET_AUTH:'socket-auth',
+    USER_JOIN_MEET: 'join-meet',
+    USER_LEAVE_MEET:'leave-meet',
 
     CHAT_MESSAGE: 'chat-message',
 
+    // USER_REQUESTS_ACCESS_TO_MEET: 0,
     // LEAVE: `leave`,
     // SHARE_ROOMS: `share-rooms`, // Send all available rooms
     // ADD_PEER: 'add-peer', // Creating new connection between clients
@@ -14,6 +16,7 @@ export const MEET_WEB_SOCKET_EVENTS = {
     // ICE_CANDIDATE: 'ice-candidate',
     // SESSION_DESCRIPTION: 'session-description',
     // MUTE_TRACK: `mute-track`
+
 }
 
 export const MEET_WEB_SOCKET_CHANNELS = {

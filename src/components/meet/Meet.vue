@@ -21,7 +21,7 @@ import MeetChat from "@/components/meet/MeetChat.vue";
 
 const {meetUsers } =  useMeet()
 
-const {userId, userName , saveUser} = useCurrentUser()
+const {userId, userName , userAuth} = useCurrentUser()
 
 const videosContainer = useTemplateRef('videosContainer')
 

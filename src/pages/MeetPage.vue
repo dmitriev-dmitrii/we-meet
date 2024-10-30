@@ -1,18 +1,26 @@
 <template>
 
-   <div v-if="!loading && !err">
+<!--   <div v-if="!loading && !err">-->
 
-      <div v-if="!userId">
-        <AuthForm/>
-      </div>
+<!--      <div v-if="!userId">-->
+<!--        <AuthForm/>-->
+<!--      </div>-->
 
-     <Meet v-if="userId && meetId" />
+<!--     <Meet v-if="userId && meetId" />-->
 
-   </div>
+<!--   </div>-->
 
-  <div v-if="loading">
-    loading...
-  </div>
+<!--  <div v-if="loading">-->
+<!--    loading...-->
+<!--  </div>-->
+
+<!--  <div v-if="err">-->
+<!--    err {{ err }}-->
+<!--  </div>-->
+
+  <AuthForm/>
+
+  <Meet />
 
   <div v-if="err">
     err {{ err }}

@@ -5,41 +5,57 @@ import {useWebSocket} from "@/features/useWebSocket";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 const {sendWebSocketMessage} = useWebSocket()
 
-const   {userName,userId} = useCurrentUser()
+const   {userName,userId,userAuth} = useCurrentUser()
 
 const meetId = ref('')
 const meetUsers = ref([])
 const meetChatMessages = ref([])
-
-export const useMeet = () => {
+const meetOwnerId = ref('')
+    export const useMeet = () => {
     const createMeet = async ()=> {
 
     const url = 'http://localhost:3000/api/meet/create'
 
     const payload = {
-
-        userName: unref(userName),
-        userId: unref(userId)
+            userName: unref(userName),
+            userId: unref(userId)
     }
 
-    const {data} = await axios.post(url, payload)
+    const {data} = await axios.post(url, payload,{
+        withCredentials: true
+    })
 
+    meetOwnerId.value =  data.meetOwnerId
     meetId.value = data.meetId
-    meetUsers.value = data.meetUsers
 
     return data
+    }
+    const sendJoinMeetRequest = async ()=> {
+
+    const url = 'http://localhost:3000/api/meet/join-request'
+
+    const payload = {
+           meetId : unref(meetId)
+    }
+
+    const {data} = await axios.post(url, payload , {
+        withCredentials: true
+    })
+
+    meetId.value = data.meetId
+    meetChatMessages.value = data.meetChatMessages
+
     }
 
     const findMeetById = async (id='')=> {
 
         const url = 'http://localhost:3000/api/meet/' + id
 
-        const {data} = await axios.get(url)
-
-        meetUsers.value = data.meetUsers
+        const {data} = await axios.get(url,{
+            withCredentials: true
+        })
 
         meetId.value = data.meetId
-        meetChatMessages.value = data.meetChatMessages
 
         return data
     }
@@ -62,16 +78,47 @@ export const useMeet = () => {
     }
 
     const  meetChatMessageHandle = (message:any)=> {
+        //@ts-ignore
         meetChatMessages.value.push(message)
+    }
+    //@ts-ignore
+    const  userJoinMeetHandle = ( payload )=> {
+
+        const {
+            type,
+            userName ,
+            userId ,
+            text,
+        } = payload
+        //@ts-ignore
+        meetChatMessages.value.push(  {  type, userName , userId , text } )
+
+    }
+        //@ts-ignore
+    const  userLeaveMeetHandle = ( payload)=> {
+
+        const {
+            type,
+            userName ,
+            userId ,
+            text,
+        } = payload
+        //@ts-ignore
+        meetChatMessages.value.push(  {  type, userName , userId , text } )
+
     }
 
     return {
+        userLeaveMeetHandle,
+        sendJoinMeetRequest,
+        userJoinMeetHandle,
         meetChatMessages,
         submitChatMessage,
         meetChatMessageHandle,
         findMeetById,
         createMeet,
         meetUsers,
-        meetId
+        meetId,
+        meetOwnerId
     }
 }

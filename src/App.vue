@@ -19,19 +19,20 @@ import {useWebSocket} from "@/features/useWebSocket";
 import {useCurrentUser} from "@/features/useCurrentUser";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 import {useMeet} from "@/features/useMeet";
+const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle} = useMeet();
+const {setupWebSocketMessageHandlers} = useWebSocket()
 
-const {meetChatMessageHandle} = useMeet()
-const {addWebSocketMessageHandlers} = useWebSocket()
 
-addWebSocketMessageHandlers({
-  [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]:meetChatMessageHandle
-})
+ setupWebSocketMessageHandlers({
+
+
+    [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]: meetChatMessageHandle,
+    [MEET_WEB_SOCKET_EVENTS.USER_JOIN_MEET]: userJoinMeetHandle,
+    [MEET_WEB_SOCKET_EVENTS.USER_LEAVE_MEET]: userLeaveMeetHandle,
+
+  })
+
 
 </script>
 
-<style scoped>
-main {
-
-}
-</style>
 

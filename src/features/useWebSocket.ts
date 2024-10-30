@@ -1,14 +1,18 @@
+
+
 const WEB_SOCKET_URL = import.meta.env.PROD ? `wss://${window.location.host}` : 'ws://localhost:3000';
 
 const webSocketQueue = [];
 const webSocketMessageHandlersMap = new Map();
-const ws = new WebSocket(WEB_SOCKET_URL);
 
+const ws = new WebSocket(WEB_SOCKET_URL);
+// TODO reconnect strategy
 export const useWebSocket = ()=> {
-    const   addWebSocketMessageHandlers = (eventsMap = {})=> {
+    const   setupWebSocketMessageHandlers = (eventsMap = {})=> {
+        // TODO add many Handlers to 1 event
 
         for (const [type, callback] of Object.entries(eventsMap)) {
-
+            console.log(type)
             if ( webSocketMessageHandlersMap.has(type)) {
                 console.warn(`webSocketMessageHandlersMap : replaced event callback for type: ${type}`)
             }
@@ -36,11 +40,11 @@ export const useWebSocket = ()=> {
     }
 
 
-    ws.onmessage =  (event) => {
+    ws.onmessage = async (event) => {
         const {data} = event
         //@ts-ignore
         const payload = JSON.parse(data);
-
+        // console.log(payload)
         const {type} =  payload
 
         if (!webSocketMessageHandlersMap.has(type)) {
@@ -50,7 +54,7 @@ export const useWebSocket = ()=> {
 
         const callback =  webSocketMessageHandlersMap.get(type)
 
-        callback(payload)
+        await callback(payload)
 
     };
 
@@ -67,8 +71,12 @@ export const useWebSocket = ()=> {
         console.error('WebSocket error:', error);
     };
 
+    // const connectToWebSocket =  () => {
+    //     ws =  new WebSocket(WEB_SOCKET_URL);
+    // }
+
     return {
-        addWebSocketMessageHandlers,
+        setupWebSocketMessageHandlers,
         sendWebSocketMessage
     }
 }

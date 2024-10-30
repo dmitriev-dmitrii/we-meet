@@ -1,41 +1,20 @@
 import {computed, nextTick, ref, unref} from "vue";
 import adapter from 'webrtc-adapter';
 import axios from "axios";
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
+import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
-function setCookie(name, value, options = {}) {
-// todo унести отсюда куки
-    options = {
-        path: '/',
-        // при необходимости добавьте другие значения по умолчанию
-        ...options
-    };
 
-    if (options.expires instanceof Date) {
-        options.expires = options.expires.toUTCString();
-    }
+import {useWebSocket} from "@/features/useWebSocket";
 
-    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-
-    for (let optionKey in options) {
-        updatedCookie += "; " + optionKey;
-        let optionValue = options[optionKey];
-        if (optionValue !== true) {
-            updatedCookie += "=" + optionValue;
-        }
-    }
-
-    document.cookie = updatedCookie;
-}
-
+const {sendWebSocketMessage} = useWebSocket()
 
 
 const   userName= ref(adapter.browserDetails.browser);
 const   userId = ref('');
 
+
 const   isVideoOn = ref(true);
 const   isAudioOn = ref(true);
-
 
 const   userStream = ref( '');
 
@@ -48,8 +27,7 @@ export const useCurrentUser = () => {
         console.log('tracks',tracks)
         // @ts-ignore
         userStream.value  =  userLocalStream
-
-
+        
       }
 
         catch (e) {
@@ -58,42 +36,41 @@ export const useCurrentUser = () => {
 
     }
 
-    const saveUser = async ()=> {
-        // TODO нужен ли  Fingerprint
-        // TODO забахать авторизацию
-        const fpPromise = FingerprintJS.load()
-        const fp = await fpPromise
-        const result = await fp.get()
-        userId.value = result.visitorId
+    const userAuth = async ()=> {
+        const url = 'http://localhost:3000/api/users/auth'
 
-        setCookie('userId', result.visitorId);
-        setCookie('userName', unref(userName));
+        const payload = {
+            userName: unref(userName),
+        }
 
+        const { data} = await axios.post(url, payload,   {
+            withCredentials: true
+        })
 
-        // const url = 'http://localhost:3000/api/users/save'
-        //
-        // const payload = {
-        //     userName: unref(userName),
-        //     userId: unref(userId)
-        // }
-        //
-        // const {data} = await axios.post(url, payload)
-        //
-        // return data
+        userId.value = data.userId
+        userName.value = data.userName
+
+        const { userFingerprint } = data
+        const message = {
+            type:  MEET_WEB_SOCKET_EVENTS.USER_WEB_SOCKET_AUTH,
+            userFingerprint,
+        }
+
+        sendWebSocketMessage(message);
+
+        return data
     }
-
 
     return {
         isAudioOn,
         isVideoOn,
-        saveUser,
+        userAuth,
         initUserStream,
         userStream,
         userId,
-        userName
+        userName,
     }
 }
-
 
 // stopVideo.addEventListener("click", () => {
 //   const enabled = myVideoStream.getVideoTracks()[0].enabled;

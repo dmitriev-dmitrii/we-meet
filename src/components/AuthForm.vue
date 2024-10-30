@@ -13,9 +13,9 @@
 
         <label> is on video <input type="checkbox" v-model="isVideoOn"> </label>
 
-        <button type="button" :disabled="!!meetId" @click="createMeet"> create meet </button>
+        <button type="button"  @click="onCreateMeet"> create meet </button>
 
-        <button type="submit" :disabled="!meetId"> to meet => {{ meetId }}</button>
+        <button type="submit" :disabled="!meetId" > to meet => {{ meetId }}</button>
 
       </form>
 
@@ -28,15 +28,35 @@
 <script setup lang="ts">
 import {useCurrentUser} from "@/features/useCurrentUser";
 import {useMeet} from "@/features/useMeet";
-import {RouterLink, useRouter} from "vue-router";
-import {unref} from "vue";
+import { useRoute, useRouter} from "vue-router";
+import {ref, unref} from "vue";
 import {useWebSocket} from "@/features/useWebSocket";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
-const { userName,userId ,isAudioOn , isVideoOn , initUserStream , saveUser} = useCurrentUser()
-const { createMeet , meetId }= useMeet()
+
+
+const { userName,userId ,isAudioOn , isVideoOn , initUserStream , userAuth} = useCurrentUser()
+const { createMeet , meetId , sendJoinMeetRequest }= useMeet()
 const router = useRouter()
 const {sendWebSocketMessage} = useWebSocket()
+const route = useRoute()
+
+
+const onCreateMeet = async ()=> {
+
+  if (!unref(userName)) {
+    return
+  }
+
+  await userAuth()
+  await createMeet()
+
+  const { name } = unref(route)
+
+  if (name === 'MeetPage') {
+    await router.replace({ name:'MeetPage', params:{ id: unref(meetId) }})
+  }
+}
 
 const onSubmit = async () => {
 
@@ -44,21 +64,17 @@ const onSubmit = async () => {
     return
   }
 
-  await saveUser()
+  await userAuth()
+  await sendJoinMeetRequest()
 
   // await initUserStream()
 
-    const message = {
-      type:  MEET_WEB_SOCKET_EVENTS.USER_ENTER_MEET,
-      meetId :unref( meetId ) ,
-      userName : unref(userName),
-      userId : unref(userId)
+  const { name } = unref(route)
 
-    }
+  if (name !== 'MeetPage') {
+    await router.push({ name:'MeetPage', params:{ id: unref(meetId) }})
+  }
 
-    sendWebSocketMessage(message);
-
-  await router.push({ name:'MeetPage', params:{ id:unref(meetId) }})
 }
 
 
