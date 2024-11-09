@@ -1,10 +1,10 @@
-// TODO to enum
-export const MEET_WEB_SOCKET_EVENTS = {
-    USER_WEB_SOCKET_AUTH:'socket-auth',
-    USER_JOIN_MEET: 'join-meet',
-    USER_LEAVE_MEET:'leave-meet',
 
-    CHAT_MESSAGE: 'chat-message',
+export enum MEET_WEB_SOCKET_EVENTS  {
+    USER_WEB_SOCKET_AUTH='socket-auth',
+    USER_JOIN_MEET = 'join-meet',
+    USER_LEAVE_MEET = 'leave-meet',
+
+    CHAT_MESSAGE ='chat-message',
 
     // USER_REQUESTS_ACCESS_TO_MEET: 0,
     // LEAVE: `leave`,
@@ -19,7 +19,7 @@ export const MEET_WEB_SOCKET_EVENTS = {
 
 }
 
-export const MEET_WEB_SOCKET_CHANNELS = {
-    MEET_CHAT_MESSAGES_CHANNEL: 1 , //канал для сообщений чата
-    MEET_CHANNEL: 2 , // технический канал
+export const enum MEET_WEB_SOCKET_CHANNELS  {
+    MEET_CHAT_MESSAGES_CHANNEL= 1 , //канал для сообщений чата
+    MEET_CHANNEL= 2 , // технический канал
 }
