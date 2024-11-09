@@ -10,7 +10,7 @@ let ws:WebSocket
 
 export const useWebSocket = () => {
 
-   const onWebSocketMessage = async (event) => {
+   const onWebSocketMessage = async (event: MessageEvent) => {
         const { data } = event;
         //@ts-ignore
         const payload = JSON.parse(data);
@@ -61,15 +61,15 @@ export const useWebSocket = () => {
     }
 
 
-    const  onWebSocketOpen = (event) => {
+    const  onWebSocketOpen = () => {
         console.log('WebSocket connected');
         reconnectAttempts = 0;
 
 
         while (webSocketQueue.length > 0) {
 
-            if (!ws.readyState === WebSocket.OPEN) {
-                return
+            if (ws.readyState !== WebSocket.OPEN) {
+                return;
             }
 
             const message = webSocketQueue.shift();
@@ -77,7 +77,7 @@ export const useWebSocket = () => {
         }
 
     };
-    const onWebSocketClose = (event) => {
+    const onWebSocketClose = (event: CloseEvent) => {
         console.log('WebSocket closed', event);
         reconnectAttempts++;
         const delay = Math.min(reconnectDelay * reconnectAttempts, 30000); // Ограничение до 30 секунд
@@ -87,7 +87,7 @@ export const useWebSocket = () => {
         }, delay);
     };
 
-    const  onWebSocketError = (error) => {
+    const  onWebSocketError = (error: any) => {
         if (!reconnectAttempts) {
             console.error('WebSocket error:', error);
         }

@@ -45,7 +45,7 @@ const { meetId, findMeetById  } =  useMeet()
 const {userId} = useCurrentUser()
 
 const route = useRoute()
-const { params } = unref(route)
+
 const loading = ref(true)
 const err = ref('')
 
@@ -53,18 +53,13 @@ const err = ref('')
 onMounted(async ()=> {
 
   try {
-    await findMeetById( params.id )
+    const { params } = unref(route)
 
+    await findMeetById( params.id as string )
 
   } catch (error) {
-const {status } = error
 
-if (status === 404) {
-  meetId.value = ''
-  err.value = 404
-  return
-}
-    err.value = error
+    err.value = String(error)
 
   }
 finally {
