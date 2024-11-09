@@ -1,97 +1,113 @@
-import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
+import { MEET_WEB_SOCKET_EVENTS } from "@/constatnts/meetWebSocket";
+const webSocketQueue: any[] = [];
+const webSocketMessageHandlersMap: Map<MEET_WEB_SOCKET_EVENTS, Set<Function>> = new Map();
 
+const reconnectDelay = 1000; // Начальная задержка в миллисекундах для реконекта
+let reconnectAttempts = 0; // Отслеживание количества попыток реконекта
 
 const WEB_SOCKET_URL = import.meta.env.PROD ? `wss://${window.location.host}` : 'ws://localhost:3000';
+let ws:WebSocket
 
-const webSocketQueue = [];
-const webSocketMessageHandlersMap:Map< MEET_WEB_SOCKET_EVENTS , Set<Function>> = new Map();
+export const useWebSocket = () => {
 
-const ws = new WebSocket(WEB_SOCKET_URL);
-// TODO reconnect strategy
-export const useWebSocket = ()=> {
-    const   setupWebSocketMessageHandlers = ( eventsMap: Partial<Record<MEET_WEB_SOCKET_EVENTS, [Function]>>) => {
+   const onWebSocketMessage = async (event) => {
+        const { data } = event;
+        //@ts-ignore
+        const payload = JSON.parse(data);
+        const { type } = payload;
+        // console.log(payload)
+        if (!type && !webSocketMessageHandlersMap.has(type)) {
+            console.warn(`WebSocket , onSocketMessage - empty callback for event type:"${type}"`);
+            return;
+        }
 
+        const callbacksSet = webSocketMessageHandlersMap.get(type);
+
+        if (!callbacksSet) {
+            console.warn(`WebSocket No handlers found for event type "${type}"`);
+            return;
+        }
+
+        try {
+            const callbacksPromises = Array.from(callbacksSet).map((callback) => {
+                return callback(payload);
+            });
+
+            await Promise.all(callbacksPromises);
+        } catch (e) {
+            console.log(`WebSocket error of ws handle, message type :"${type}", err:` ,e )
+        }
+    };
+
+
+    const setupWebSocketMessageHandlers = (eventsMap: Partial<Record<MEET_WEB_SOCKET_EVENTS, [Function]>>) => {
         if (!Object.keys(eventsMap).length) {
-            return
+            return;
         }
 
         for (const [type, callbacksArr] of Object.entries(eventsMap)) {
-
-           webSocketMessageHandlersMap.set( type as MEET_WEB_SOCKET_EVENTS, new Set( callbacksArr ) )
-
+            webSocketMessageHandlersMap.set(type as MEET_WEB_SOCKET_EVENTS, new Set(callbacksArr));
         }
-    }
+    };
 
-    function sendWebSocketMessage(payload:any) {
-        // TODO сделать интерфейс payload
+    function sendWebSocketMessage(payload: any) {
         if (ws.readyState !== WebSocket.OPEN) {
-            console.warn('WebSocket state is not OPEN ')
-            // webSocketQueue.push(payload)
-            // TODO пушить  очередь на отправку
-            setTimeout(()=> {
-                sendWebSocketMessage(payload)
-            }, 500 )
-            return
+            console.warn('WebSocket is OPEN , message send to webSocketQueue');
+            webSocketQueue.push(payload);
+            return;
         }
 
         ws.send(JSON.stringify(payload));
     }
 
 
-    ws.onmessage = async (event) => {
-        const {data} = event
-        //@ts-ignore
-        const payload = JSON.parse(data);
-        // console.log(payload)
-        const {type} =  payload
+    const  onWebSocketOpen = (event) => {
+        console.log('WebSocket connected');
+        reconnectAttempts = 0;
 
-        if (!type && !webSocketMessageHandlersMap.has(type)) {
-            console.warn('onSocketMessage , empty callbacks for event type' , `"${type}"` )
-            return
+
+        while (webSocketQueue.length > 0) {
+
+            if (!ws.readyState === WebSocket.OPEN) {
+                return
+            }
+
+            const message = webSocketQueue.shift();
+            sendWebSocketMessage(message)
         }
 
-        //map[type] =>  set => [cb] = promises
-        const callbacksSet = webSocketMessageHandlersMap.get(type);
+    };
+    const onWebSocketClose = (event) => {
+        console.log('WebSocket closed', event);
+        reconnectAttempts++;
+        const delay = Math.min(reconnectDelay * reconnectAttempts, 30000); // Ограничение до 30 секунд
+        console.log(`WebSocket reconnect try ${delay}ms...`);
+        setTimeout(() => {
+            connectToWebSocket();
+        }, delay);
+    };
 
-        if (!callbacksSet) {
-            console.warn(`No handlers found for event type "${type}"`);
-            return; 
-        }
-
-        try {
-
-        const callbacksPromises = Array.from(callbacksSet).map((callback) => {
-            return callback(payload);
-        });
-
-        await Promise.all( callbacksPromises )
-
-        }
-        catch (e) {
-            console.log(`error of ws handle, message type :"${type}", err:` ,e )
+    const  onWebSocketError = (error) => {
+        if (!reconnectAttempts) {
+            console.error('WebSocket error:', error);
         }
 
     };
 
-    ws.onopen = (event)=> {
-        console.log('WebSocket onopen');
-        // TODO читать очередь на отправку
-    }
-
-    ws.onclose = (event) => {
-        console.log('WebSocket Closed', event );
+    const connectToWebSocket = () => {
+        ws = new WebSocket(WEB_SOCKET_URL);
+        ws.onopen = onWebSocketOpen
+        ws.onmessage = onWebSocketMessage
+        ws.onerror = onWebSocketError
+        ws.onclose =  onWebSocketClose
+        return ws
     };
-
-    ws.onerror =  (error:any) => {
-        console.error('WebSocket error:', error);
-    };
-
-    // const connectToWebSocket =  () => {
-    //     ws =  new WebSocket(WEB_SOCKET_URL);
-    // }
 
     return {
         setupWebSocketMessageHandlers,
-        sendWebSocketMessage
-    }
-}
+        sendWebSocketMessage,
+        connectToWebSocket,
+    };
+};
+
+

@@ -19,9 +19,10 @@ import {useCurrentUser} from "@/features/useCurrentUser";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 import {useMeet} from "@/features/useMeet";
 const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle} = useMeet();
-const {setupWebSocketMessageHandlers} = useWebSocket()
+const {setupWebSocketMessageHandlers,connectToWebSocket} = useWebSocket()
 
 
+ connectToWebSocket()
  setupWebSocketMessageHandlers({
     [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]: [meetChatMessageHandle],
     [MEET_WEB_SOCKET_EVENTS.USER_JOIN_MEET]: [userJoinMeetHandle],
