@@ -1,4 +1,3 @@
-
 <template>
   <header>
       <nav>
@@ -24,12 +23,9 @@ const {setupWebSocketMessageHandlers} = useWebSocket()
 
 
  setupWebSocketMessageHandlers({
-
-
-    [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]: meetChatMessageHandle,
-    [MEET_WEB_SOCKET_EVENTS.USER_JOIN_MEET]: userJoinMeetHandle,
-    [MEET_WEB_SOCKET_EVENTS.USER_LEAVE_MEET]: userLeaveMeetHandle,
-
+    [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]: [meetChatMessageHandle],
+    [MEET_WEB_SOCKET_EVENTS.USER_JOIN_MEET]: [userJoinMeetHandle],
+    [MEET_WEB_SOCKET_EVENTS.USER_LEAVE_MEET]: [userLeaveMeetHandle],
   })
 
 

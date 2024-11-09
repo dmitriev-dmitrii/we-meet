@@ -1,25 +1,23 @@
+import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
 
 const WEB_SOCKET_URL = import.meta.env.PROD ? `wss://${window.location.host}` : 'ws://localhost:3000';
 
 const webSocketQueue = [];
-const webSocketMessageHandlersMap = new Map();
+const webSocketMessageHandlersMap:Map< MEET_WEB_SOCKET_EVENTS , Set<Function>> = new Map();
 
 const ws = new WebSocket(WEB_SOCKET_URL);
 // TODO reconnect strategy
 export const useWebSocket = ()=> {
-    const   setupWebSocketMessageHandlers = (eventsMap = {})=> {
-        // TODO add many Handlers to 1 event
+    const   setupWebSocketMessageHandlers = ( eventsMap: Partial<Record<MEET_WEB_SOCKET_EVENTS, [Function]>>) => {
 
-        for (const [type, callback] of Object.entries(eventsMap)) {
-            console.log(type)
-            if ( webSocketMessageHandlersMap.has(type)) {
-                console.warn(`webSocketMessageHandlersMap : replaced event callback for type: ${type}`)
-            }
+        if (!Object.keys(eventsMap).length) {
+            return
+        }
 
-            if ( type && callback ) {
-                webSocketMessageHandlersMap.set(type,callback)
-            }
+        for (const [type, callbacksArr] of Object.entries(eventsMap)) {
+
+           webSocketMessageHandlersMap.set( type as MEET_WEB_SOCKET_EVENTS, new Set( callbacksArr ) )
 
         }
     }
@@ -47,14 +45,31 @@ export const useWebSocket = ()=> {
         // console.log(payload)
         const {type} =  payload
 
-        if (!webSocketMessageHandlersMap.has(type)) {
-            console.warn('onSocketMessage , empty callback for event ' , `"${type}"` )
+        if (!type && !webSocketMessageHandlersMap.has(type)) {
+            console.warn('onSocketMessage , empty callbacks for event type' , `"${type}"` )
             return
         }
 
-        const callback =  webSocketMessageHandlersMap.get(type)
+        //map[type] =>  set => [cb] = promises
+        const callbacksSet = webSocketMessageHandlersMap.get(type);
 
-        await callback(payload)
+        if (!callbacksSet) {
+            console.warn(`No handlers found for event type "${type}"`);
+            return; 
+        }
+
+        try {
+
+        const callbacksPromises = Array.from(callbacksSet).map((callback) => {
+            return callback(payload);
+        });
+
+        await Promise.all( callbacksPromises )
+
+        }
+        catch (e) {
+            console.log(`error of ws handle, message type :"${type}", err:` ,e )
+        }
 
     };
 
