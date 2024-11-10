@@ -21,6 +21,9 @@ import {useMeet} from "@/features/useMeet";
 const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle} = useMeet();
 const {setupWebSocketMessageHandlers,connectToWebSocket} = useWebSocket()
 
+// todo server ws status indicator
+// todo axios api instance
+// todo add eslint prettier airbnb
 
  connectToWebSocket()
  setupWebSocketMessageHandlers({
