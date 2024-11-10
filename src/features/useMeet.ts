@@ -14,7 +14,7 @@ const meetOwnerId = ref('')
     export const useMeet = () => {
     const createMeet = async ()=> {
 
-    const url = 'http://localhost:3000/api/meet/create'
+    const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/create'
 
     const payload = {
             userName: unref(userName),
@@ -32,7 +32,7 @@ const meetOwnerId = ref('')
     }
     const sendJoinMeetRequest = async ()=> {
 
-    const url = 'http://localhost:3000/api/meet/join-request'
+    const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/join-request'
 
     const payload = {
            meetId : unref(meetId)
@@ -49,7 +49,7 @@ const meetOwnerId = ref('')
 
     const findMeetById = async (id='')=> {
 
-        const url = 'http://localhost:3000/api/meet/' + id
+        const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/' + id
 
         const {data} = await axios.get(url,{
             withCredentials: true

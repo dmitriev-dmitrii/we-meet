@@ -37,7 +37,7 @@ export const useCurrentUser = () => {
     }
 
     const userAuth = async ()=> {
-        const url = 'http://localhost:3000/api/users/auth'
+        const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/users/auth'
 
         const payload = {
             userName: unref(userName),

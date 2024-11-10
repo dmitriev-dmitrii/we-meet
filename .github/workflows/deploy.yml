@@ -39,7 +39,8 @@ jobs:
         run: npm ci
       - name: Build
         env:
-          URL_MAIN: ${{ secrets.VITE_WE_MEET_API_URL }}
+          VITE_WE_MEET_API_URL: ${{ vars.VITE_WE_MEET_API_URL }}
+          VITE_WE_MEET_WS_URL: ${{ vars.VITE_WE_MEET_WS_URL }}
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v4

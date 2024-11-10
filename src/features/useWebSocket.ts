@@ -5,7 +5,7 @@ const webSocketMessageHandlersMap: Map<MEET_WEB_SOCKET_EVENTS, Set<Function>> = 
 const reconnectDelay = 1000; // Начальная задержка в миллисекундах для реконекта
 let reconnectAttempts = 0; // Отслеживание количества попыток реконекта
 
-const WEB_SOCKET_URL = import.meta.env.PROD ? `wss://${window.location.host}` : 'ws://localhost:3000';
+const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL
 let ws:WebSocket
 
 export const useWebSocket = () => {
