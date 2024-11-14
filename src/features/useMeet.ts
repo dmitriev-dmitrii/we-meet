@@ -14,6 +14,8 @@ const meetOwnerId = ref('')
     export const useMeet = () => {
     const createMeet = async ()=> {
 
+    await userAuth()
+
     const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/create'
 
     const payload = {
@@ -31,6 +33,8 @@ const meetOwnerId = ref('')
     return data
     }
     const sendJoinMeetRequest = async ()=> {
+
+    await userAuth()
 
     const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/join-request'
 

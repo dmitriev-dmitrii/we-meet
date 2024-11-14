@@ -1,4 +1,5 @@
 import { MEET_WEB_SOCKET_EVENTS } from "@/constatnts/meetWebSocket";
+import {computed, ref} from "vue";
 const webSocketQueue: any[] = [];
 const webSocketMessageHandlersMap: Map<MEET_WEB_SOCKET_EVENTS, Set<Function>> = new Map();
 
@@ -7,6 +8,13 @@ let reconnectAttempts = 0; // Отслеживание количества по
 
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL
 let ws:WebSocket
+
+const currentWebSocketState = ref(3)
+// TODO пробнуть смотреть через прокси js или setter
+// CONNECTING: 0
+// OPEN: 1
+// CLOSING: 2
+// CLOSED: 3
 
 export const useWebSocket = () => {
 
@@ -62,6 +70,7 @@ export const useWebSocket = () => {
 
 
     const  onWebSocketOpen = () => {
+        currentWebSocketState.value =  WebSocket.OPEN
         console.log('WebSocket connected');
         reconnectAttempts = 0;
 
@@ -78,6 +87,7 @@ export const useWebSocket = () => {
 
     };
     const onWebSocketClose = (event: CloseEvent) => {
+        currentWebSocketState.value =  WebSocket.CLOSED
         console.log('WebSocket closed', event);
         reconnectAttempts++;
         const delay = Math.min(reconnectDelay * reconnectAttempts, 30000); // Ограничение до 30 секунд
@@ -88,6 +98,7 @@ export const useWebSocket = () => {
     };
 
     const  onWebSocketError = (error: any) => {
+        currentWebSocketState.value =  WebSocket.CLOSED
         if (!reconnectAttempts) {
             console.error('WebSocket error:', error);
         }
@@ -95,6 +106,7 @@ export const useWebSocket = () => {
     };
 
     const connectToWebSocket = () => {
+        currentWebSocketState.value =  WebSocket.CONNECTING
         ws = new WebSocket(WEB_SOCKET_URL);
         ws.onopen = onWebSocketOpen
         ws.onmessage = onWebSocketMessage
@@ -107,6 +119,7 @@ export const useWebSocket = () => {
         setupWebSocketMessageHandlers,
         sendWebSocketMessage,
         connectToWebSocket,
+        currentWebSocketState,
     };
 };
 

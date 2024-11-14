@@ -44,11 +44,11 @@ const route = useRoute()
 
 const onCreateMeet = async ()=> {
 
-  if (!unref(userName)) {
-    return
-  }
+  // if (!unref(userName)) {
+  //   return
+  // }
 
-  await userAuth()
+
   await createMeet()
 
   const { name } = unref(route)
@@ -59,12 +59,11 @@ const onCreateMeet = async ()=> {
 }
 
 const onSubmit = async () => {
+  //
+  // if (!unref(userName)) {
+  //   return
+  // }
 
-  if (!unref(userName)) {
-    return
-  }
-
-  await userAuth()
   await sendJoinMeetRequest()
 
   // await initUserStream()

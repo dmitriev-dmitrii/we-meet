@@ -4,13 +4,17 @@ import axios from "axios";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
 
-import {useWebSocket} from "@/features/useWebSocket";
+import {useWebSocket  } from "@/features/useWebSocket";
 
-const {sendWebSocketMessage} = useWebSocket()
 
+const {setupWebSocketMessageHandlers,connectToWebSocket,currentWebSocketState,sendWebSocketMessage} = useWebSocket()
 
 const   userName= ref(adapter.browserDetails.browser);
 const   userId = ref('');
+
+const userIsAuth = computed(()=> {
+    return Boolean(unref(userId) && unref(userName) && unref(currentWebSocketState)=== WebSocket.OPEN )
+})
 
 
 const   isVideoOn = ref(true);
@@ -37,6 +41,16 @@ export const useCurrentUser = () => {
     }
 
     const userAuth = async ()=> {
+
+        if (unref( userIsAuth)  ) {
+            return
+        }
+
+        if (unref(currentWebSocketState) !== WebSocket.OPEN) {
+            connectToWebSocket()
+            await nextTick()
+        }
+
         const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/users/auth'
 
         const payload = {
@@ -50,6 +64,10 @@ export const useCurrentUser = () => {
         userId.value = data.userId
         userName.value = data.userName
 
+
+
+
+
         const { userFingerprint } = data
         const message = {
             type:  MEET_WEB_SOCKET_EVENTS.USER_WEB_SOCKET_AUTH,
@@ -58,13 +76,14 @@ export const useCurrentUser = () => {
 
         sendWebSocketMessage(message);
 
-        return data
+        return
     }
 
     return {
         isAudioOn,
         isVideoOn,
         userAuth,
+        userIsAuth,
         initUserStream,
         userStream,
         userId,
