@@ -15,7 +15,7 @@
 
         <button type="button"  @click="onCreateMeet"> create meet </button>
 
-        <button type="submit" :disabled="!meetId" > to meet => {{ meetId }}</button>
+        <button type="submit" :disabled="!meetId" >  meet  join req => {{ meetId }}</button>
 
       </form>
 
@@ -29,7 +29,7 @@
 import {useCurrentUser} from "@/features/useCurrentUser";
 import {useMeet} from "@/features/useMeet";
 import { useRoute, useRouter} from "vue-router";
-import {ref, unref} from "vue";
+import {computed, ref, unref} from "vue";
 import {useWebSocket} from "@/features/useWebSocket";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
@@ -42,6 +42,11 @@ const {sendWebSocketMessage} = useWebSocket()
 const route = useRoute()
 
 
+const isMeetPage = computed(()=>{
+  const { name } = unref(route)
+  return name === 'MeetPage'
+})
+
 const onCreateMeet = async ()=> {
 
   // if (!unref(userName)) {
@@ -53,7 +58,7 @@ const onCreateMeet = async ()=> {
 
   const { name } = unref(route)
 
-  if (name === 'MeetPage') {
+  if (unref(isMeetPage)) {
     await router.replace({ name:'MeetPage', params:{ id: unref(meetId) }})
   }
 }
@@ -70,7 +75,7 @@ const onSubmit = async () => {
 
   const { name } = unref(route)
 
-  if (name !== 'MeetPage') {
+  if (!unref(isMeetPage)) {
     await router.push({ name:'MeetPage', params:{ id: unref(meetId) }})
   }
 

@@ -64,7 +64,7 @@ const meetOwnerId = ref('')
         return data
     }
 
-   const  submitChatMessage = (text = '')=> {
+   const  submitChatMessage = async (text = '')=> {
 
         if (!text) {
             return
@@ -78,7 +78,7 @@ const meetOwnerId = ref('')
            text
        }
 
-       sendWebSocketMessage(payload)
+     await   sendWebSocketMessage(payload)
     }
 
     const  meetChatMessageHandle = (message:any)=> {

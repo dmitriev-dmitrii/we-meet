@@ -6,9 +6,9 @@
   <div>meetUsers {{meetUsers.length}}</div>
   <MeetChat/>
 
-    <div ref="videosGridContainer" class="videos-grid-container">
+<!--    <div ref="videosGridContainer" class="videos-grid-container">-->
 
-    </div>
+<!--    </div>-->
 </template>
 
 <script setup lang="ts">
@@ -23,7 +23,8 @@ const {meetUsers } =  useMeet()
 
 const {userId, userName , userAuth} = useCurrentUser()
 
-const videosGridContainer = useTemplateRef('videosGridContainer')
+// const videosGridContainer = useTemplateRef('videosGridContainer')
+
 
 
 

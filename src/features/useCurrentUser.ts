@@ -7,7 +7,7 @@ import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 import {useWebSocket  } from "@/features/useWebSocket";
 
 
-const {setupWebSocketMessageHandlers,connectToWebSocket,currentWebSocketState,sendWebSocketMessage} = useWebSocket()
+const {connectToWebSocket,currentWebSocketState,sendWebSocketMessage} = useWebSocket()
 
 const   userName= ref(adapter.browserDetails.browser);
 const   userId = ref('');
@@ -65,16 +65,12 @@ export const useCurrentUser = () => {
         userName.value = data.userName
 
 
-
-
-
-        const { userFingerprint } = data
         const message = {
             type:  MEET_WEB_SOCKET_EVENTS.USER_WEB_SOCKET_AUTH,
-            userFingerprint,
+            userId : unref(userId),
         }
 
-        sendWebSocketMessage(message);
+       await sendWebSocketMessage(message);
 
         return
     }

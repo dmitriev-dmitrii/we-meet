@@ -23,7 +23,7 @@ export const useWebSocket = () => {
         //@ts-ignore
         const payload = JSON.parse(data);
         const { type } = payload;
-        // console.log(payload)
+        console.log(payload)
         if (!type && !webSocketMessageHandlersMap.has(type)) {
             console.warn(`WebSocket , onSocketMessage - empty callback for event type:"${type}"`);
             return;
@@ -58,9 +58,9 @@ export const useWebSocket = () => {
         }
     };
 
-    function sendWebSocketMessage(payload: any) {
-        if (ws.readyState !== WebSocket.OPEN) {
-            console.warn('WebSocket is OPEN , message send to webSocketQueue');
+    async  function sendWebSocketMessage(payload: any) {
+        if (ws?.readyState !== WebSocket.OPEN) {
+            console.warn('WebSocket is not OPEN , message added to webSocketQueue');
             webSocketQueue.push(payload);
             return;
         }
@@ -69,7 +69,7 @@ export const useWebSocket = () => {
     }
 
 
-    const  onWebSocketOpen = () => {
+    const  onWebSocketOpen = async () => {
         currentWebSocketState.value =  WebSocket.OPEN
         console.log('WebSocket connected');
         reconnectAttempts = 0;
@@ -82,7 +82,7 @@ export const useWebSocket = () => {
             }
 
             const message = webSocketQueue.shift();
-            sendWebSocketMessage(message)
+            await  sendWebSocketMessage(message)
         }
 
     };
