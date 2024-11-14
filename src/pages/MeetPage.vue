@@ -1,24 +1,6 @@
 <template>
 
-<!--   <div v-if="!loading && !err">-->
-
-<!--      <div v-if="!userId">-->
-<!--        <AuthForm/>-->
-<!--      </div>-->
-
-<!--     <Meet v-if="userId && meetId" />-->
-
-<!--   </div>-->
-
-<!--  <div v-if="loading">-->
-<!--    loading...-->
-<!--  </div>-->
-
-<!--  <div v-if="err">-->
-<!--    err {{ err }}-->
-<!--  </div>-->
-
-  <AuthForm/>
+  <AuthForm />
 
   <Meet />
 
@@ -34,13 +16,13 @@
 <script setup lang="ts">
 import {onMounted, ref, unref, useTemplateRef} from "vue";
 import {useRoute} from "vue-router";
-import {useMeet} from "@/features/useMeet";
+import {useMeet} from "@/components/meet/features/useMeet";
 import {useCurrentUser} from "@/features/useCurrentUser";
 import AuthForm from "@/components/AuthForm.vue";
 
 import Meet from "@/components/meet/Meet.vue";
 
-const { meetId, findMeetById  } =  useMeet()
+const { meetId, findMeetById } =  useMeet()
 
 const {userId} = useCurrentUser()
 

@@ -3,15 +3,15 @@ import {ref, unref} from "vue";
 import {useCurrentUser} from "@/features/useCurrentUser";
 import {useWebSocket} from "@/features/useWebSocket";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
-const {sendWebSocketMessage} = useWebSocket()
 
-const   {userName,userId,userAuth} = useCurrentUser()
+const   { userName,userId, userAuth } = useCurrentUser()
+const {sendWebSocketMessage} = useWebSocket()
 
 const meetId = ref('')
 const meetUsers = ref([])
 const meetChatMessages = ref([])
 const meetOwnerId = ref('')
-    export const useMeet = () => {
+export const useMeet = () => {
     const createMeet = async ()=> {
 
     await userAuth()
@@ -78,7 +78,7 @@ const meetOwnerId = ref('')
            text
        }
 
-     await   sendWebSocketMessage(payload)
+      sendWebSocketMessage(payload)
     }
 
     const  meetChatMessageHandle = (message:any)=> {

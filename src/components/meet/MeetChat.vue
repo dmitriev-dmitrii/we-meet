@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 
-import {useMeet} from "@/features/useMeet";
+import {useMeet} from "@/components/meet/features/useMeet";
 import {ref, unref} from "vue";
 
 const {meetChatMessages,meetChatMessageHandle,submitChatMessage} = useMeet()
