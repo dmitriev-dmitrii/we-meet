@@ -4,6 +4,8 @@
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <div>currentWebSocketState : {{currentWebSocketState}} </div>
+        <div>userIsAuth : {{    userIsAuth    }} </div>
+
       </nav>
   </header>
   <main >
@@ -21,7 +23,7 @@ import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 import {useMeet} from "@/features/useMeet";
 const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle} = useMeet();
 const {setupWebSocketMessageHandlers,currentWebSocketState} = useWebSocket()
-
+const { userIsAuth } = useCurrentUser()
 // todo server ws status indicator
 // todo axios api instance
 // todo add eslint prettier airbnb

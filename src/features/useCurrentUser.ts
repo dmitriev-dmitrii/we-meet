@@ -3,19 +3,16 @@ import adapter from 'webrtc-adapter';
 import axios from "axios";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
-
 import {useWebSocket  } from "@/features/useWebSocket";
 
-
-const {connectToWebSocket,currentWebSocketState,sendWebSocketMessage} = useWebSocket()
+const {connectToWebSocket, currentWebSocketState,sendWebSocketMessage} = useWebSocket()
 
 const   userName= ref(adapter.browserDetails.browser);
 const   userId = ref('');
 
 const userIsAuth = computed(()=> {
-    return Boolean(unref(userId) && unref(userName) && unref(currentWebSocketState)=== WebSocket.OPEN )
+    return Boolean(unref(userId) && unref(userName)  && unref(currentWebSocketState)=== WebSocket.OPEN  )
 })
-
 
 const   isVideoOn = ref(true);
 const   isAudioOn = ref(true);
@@ -23,6 +20,7 @@ const   isAudioOn = ref(true);
 const   userStream = ref( '');
 
 export const useCurrentUser = () => {
+
     const initUserStream = async ()=> {
     try {
 
@@ -31,7 +29,6 @@ export const useCurrentUser = () => {
         console.log('tracks',tracks)
         // @ts-ignore
         userStream.value  =  userLocalStream
-        
       }
 
         catch (e) {
@@ -44,11 +41,6 @@ export const useCurrentUser = () => {
 
         if (unref( userIsAuth)  ) {
             return
-        }
-
-        if (unref(currentWebSocketState) !== WebSocket.OPEN) {
-            connectToWebSocket()
-            await nextTick()
         }
 
         const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/users/auth'
@@ -64,15 +56,6 @@ export const useCurrentUser = () => {
         userId.value = data.userId
         userName.value = data.userName
 
-
-        const message = {
-            type:  MEET_WEB_SOCKET_EVENTS.USER_WEB_SOCKET_AUTH,
-            userId : unref(userId),
-        }
-
-       await sendWebSocketMessage(message);
-
-        return
     }
 
     return {
