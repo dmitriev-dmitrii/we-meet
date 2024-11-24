@@ -17,7 +17,7 @@ const localStream = await navigator.mediaDevices.getUserMedia({ video: true, aud
 localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
 peerConnection.ontrack = (event) => {
-    remoteVideo.srcObject = event.streams[0];
+    // remoteVideo.srcObject = event.streams[0];
 };
 
 peerConnection.onicecandidate = (event) => {
