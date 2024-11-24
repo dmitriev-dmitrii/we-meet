@@ -110,16 +110,21 @@ export const useWebSocket = () => {
     };
 
     const connectToWebSocket = async () => {
-        // TODO в промис
-        currentWebSocketState.value =  WebSocket.CONNECTING
-        // ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=${unref(meetId)}`);
-        ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=123`); // todo ref meetid
-        ws.onopen = onWebSocketOpen
-        ws.onmessage = onWebSocketMessage
-        ws.onerror = onWebSocketError
-        ws.onclose =  onWebSocketClose
+        return new Promise((resolve, reject) => {
+            currentWebSocketState.value =  WebSocket.CONNECTING
+            // ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=${unref(meetId)}`);
+            ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=123`); // todo ref meetid
 
-        return ws
+            ws.onmessage = onWebSocketMessage
+            ws.onerror = onWebSocketError
+            ws.onclose = onWebSocketClose
+
+            ws.onopen = () => {
+                onWebSocketOpen(ws)
+                resolve(ws)
+            }
+
+        })
     };
 
     return {

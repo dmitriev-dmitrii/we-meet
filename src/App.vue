@@ -24,9 +24,17 @@ import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 import {useMeet} from "@/components/meet/features/useMeet";
 import VideoStream from "@/components/VideoStream.vue";
 import {watch} from "vue";
+import {useWebRTC} from "@/features/useWebRTC";
 const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle, meetId} = useMeet();
 const {setupWebSocketMessageHandlers,currentWebSocketState} = useWebSocket()
 const { userIsAuth , userId } = useCurrentUser()
+// const {
+//   createPeerAnswer,
+//   onPeerAnswer,
+//   createPeerOffer,
+//   onPeerOffer,
+//   onIceCandidate,
+// } = useWebRTC()
 // todo server ws status indicator
 // todo axios api instance
 // todo add eslint prettier airbnb
@@ -35,6 +43,10 @@ const { userIsAuth , userId } = useCurrentUser()
     [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]: [meetChatMessageHandle],
     [MEET_WEB_SOCKET_EVENTS.USER_JOIN_MEET]: [userJoinMeetHandle],
     [MEET_WEB_SOCKET_EVENTS.USER_LEAVE_MEET]: [userLeaveMeetHandle],
+
+   // [MEET_WEB_SOCKET_EVENTS.RTC_OFFER]: [onPeerOffer ,createPeerAnswer],
+   // [MEET_WEB_SOCKET_EVENTS.RTC_ANSWER]: [onPeerAnswer],
+   // [MEET_WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE]: [onIceCandidate],
   })
 
 // watch(meetId , async (val) => {

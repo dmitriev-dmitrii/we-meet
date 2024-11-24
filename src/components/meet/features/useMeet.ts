@@ -3,10 +3,11 @@ import {ref, unref} from "vue";
 import {useCurrentUser} from "@/features/useCurrentUser";
 import {useWebSocket} from "@/features/useWebSocket";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
+import {useWebRTC} from "@/features/useWebRTC";
 
 const   { userName,userId, userAuth } = useCurrentUser()
 const {sendWebSocketMessage} = useWebSocket()
-
+const {createPeerOffer} = useWebRTC()
 const meetId = ref('')
 const meetUsers = ref([])
 const meetChatMessages = ref([])
@@ -15,15 +16,16 @@ export const useMeet = () => {
     const createMeet = async ()=> {
 
     await userAuth()
-
+    const rtcOffer = await   createPeerOffer()
     const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/create'
 
     const payload = {
             userName: unref(userName),
-            userId: unref(userId)
+            userId: unref(userId),
+            rtcOffer
     }
 
-    const {data} = await axios.post(url, payload,{
+    const { data} = await axios.post(url, payload,{
         withCredentials: true
     })
 
@@ -72,6 +74,12 @@ export const useMeet = () => {
 
        const payload = {
            type:  MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE,
+           // data : {
+           //     meetId :unref( meetId ) ,
+           //     userName : unref(userName),
+           //     userId : unref(userId),
+           //     text
+           // },
            meetId :unref( meetId ) ,
            userName : unref(userName),
            userId : unref(userId),

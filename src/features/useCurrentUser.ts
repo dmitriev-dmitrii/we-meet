@@ -1,4 +1,4 @@
-import {computed, nextTick, ref, unref} from "vue";
+import {computed, ref, unref} from "vue";
 import adapter from 'webrtc-adapter';
 import axios from "axios";
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
@@ -22,13 +22,13 @@ const   userStream = ref( '');
 export const useCurrentUser = () => {
 
     const initUserStream = async ()=> {
+
     try {
 
-      const userLocalStream =  await window.navigator.mediaDevices.getUserMedia({ video:unref(isVideoOn) , audio: unref(isAudioOn) });
-      const tracks =   userLocalStream.getTracks()
-        console.log('tracks',tracks)
-        // @ts-ignore
-        userStream.value  =  userLocalStream
+        userStream.value  =  await window.navigator.mediaDevices.getUserMedia({
+            video: unref(isVideoOn),
+            audio: unref(isAudioOn)
+        })
       }
 
         catch (e) {
@@ -45,8 +45,6 @@ export const useCurrentUser = () => {
             return
         }
 
-        await connectToWebSocket()
-
         const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/users/auth'
 
         const payload = {
@@ -60,6 +58,7 @@ export const useCurrentUser = () => {
         userId.value = data.userId
         userName.value = data.userName
 
+        await connectToWebSocket()
     }
 
     return {

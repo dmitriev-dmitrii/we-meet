@@ -6,6 +6,10 @@ export enum MEET_WEB_SOCKET_EVENTS  {
 
     CHAT_MESSAGE ='chat-message',
 
+    RTC_OFFER = 'rtc-offer',
+    RTC_ANSWER = 'rtc-answer',
+    RTC_ICE_CANDIDATE =  'rtc-ice-candidate'
+
     // USER_REQUESTS_ACCESS_TO_MEET: 0,
     // LEAVE: `leave`,
     // SHARE_ROOMS: `share-rooms`, // Send all available rooms
