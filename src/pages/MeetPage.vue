@@ -1,6 +1,6 @@
 <template>
 
-  <AuthForm />
+  <AuthForm v-if="!userStore.isAuth" />
 
   <Meet />
 
@@ -15,21 +15,24 @@
 </style>
 <script setup lang="ts">
 import {onMounted, ref, unref, useTemplateRef} from "vue";
-import {useRoute} from "vue-router";
-import {useMeet} from "@/features/useMeet";
-import {useCurrentUser} from "@/features/useCurrentUser";
+import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
+import {useMeetStore} from "@/store/useMeetStore";
 import AuthForm from "@/components/AuthForm.vue";
 
 import Meet from "@/components/meet/Meet.vue";
+import {useUserStore} from "@/store/useUserStore";
 
-const { meetId, findMeetById } =  useMeet()
-
-const {userId} = useCurrentUser()
+const userStore = useUserStore()
+const meetStore = useMeetStore()
 
 const route = useRoute()
 
+
 const loading = ref(true)
 const err = ref('')
+
+
+
 
 
 onMounted(async ()=> {
@@ -37,8 +40,8 @@ onMounted(async ()=> {
   try {
     const { params } = unref(route)
 
-    await findMeetById( params.id as string )
-
+    await meetStore.findMeetById( params.id as string )
+    err.value = ''
   } catch (error) {
 
     err.value = String(error)
@@ -50,6 +53,11 @@ finally {
 
 })
 
+
+onBeforeRouteLeave( async ()=> {
+
+  await userStore.sendLogoutRequest()
+})
 
 
 </script>
