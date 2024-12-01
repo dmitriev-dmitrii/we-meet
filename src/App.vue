@@ -6,8 +6,6 @@
 
         <div>isAuth : {{userStore.isAuth}} </div>
 
-
-
         <div>currentWebSocketState : {{currentWebSocketState}} </div>
 
       </nav>

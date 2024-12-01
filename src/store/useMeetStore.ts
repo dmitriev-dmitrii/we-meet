@@ -3,9 +3,11 @@ import axios from "axios";
 import {ref, unref} from "vue";
 import {defineStore} from "pinia";
 import {useWebRTC} from "@/features/useWebRTC";
+import {useUserStore} from "@/store/useUserStore";
 
 export const useMeetStore = defineStore('meetStore', () => {
     const {createPeerOffer} = useWebRTC()
+    const userStore = useUserStore()
 
     const meetId = ref('')
     const meetUsers = ref([])
@@ -20,7 +22,8 @@ export const useMeetStore = defineStore('meetStore', () => {
         const rtcOffer = await   createPeerOffer()
 
         const payload = {
-            rtcOffer
+            rtcOffer,
+            userId: userStore.userId
         }
 
         const { data} = await axios.post(url, payload,{
@@ -37,7 +40,8 @@ export const useMeetStore = defineStore('meetStore', () => {
         const url = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet/join-request'
 
         const payload = {
-            meetId : unref(meetId)
+            meetId : unref(meetId),
+            userId: userStore.userId
         }
 
         const {data} = await axios.post(url, payload , {

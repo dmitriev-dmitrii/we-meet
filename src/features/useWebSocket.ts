@@ -130,7 +130,7 @@ export const useWebSocket = () => {
 
             currentWebSocketState.value =  WebSocket.CONNECTING
 
-            ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=${ meetStore.meetId }`);
+            ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=${ meetStore.meetId }&userId=${ userStore.userId }`);
 
             ws.onmessage = onWebSocketMessage
             ws.onerror = onWebSocketError

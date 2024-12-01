@@ -29,6 +29,8 @@ export const useUserStore = defineStore('userStore', () => {
         userId.value = data.userId
         userName.value = data.userName
 
+        // sessionStorage.setItem( 'userId', data.userId );
+
         await connectToWebSocket()
     }
 
