@@ -1,7 +1,8 @@
-import {useWebSocket} from "@/features/useWebSocket";
+// @ts-nocheck
+// import {useWebSocket} from "@/features/useWebSocket";
 import {computed, ref, unref} from "vue";
 
-const {sendWebSocketMessage} = useWebSocket()
+// const {sendWebSocketMessage} = useWebSocket()
 
 const configuration = {
     iceServers: [
@@ -11,10 +12,10 @@ const configuration = {
 
 const peerConnection = new RTCPeerConnection(configuration);
 
-const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+// const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 // localVideo.srcObject = localStream;
 
-localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+// localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
 peerConnection.ontrack = (event) => {
     // remoteVideo.srcObject = event.streams[0];
@@ -71,7 +72,6 @@ export const useWebRTC = () => {
         // sendWebSocketMessage()
         // socket.send(JSON.stringify({ type: 'offer', offer }));
     }
-
 
 
     const  onPeerOffer = async ({data})=> {

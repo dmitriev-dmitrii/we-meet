@@ -3,13 +3,16 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+
+        <div>isAuth : {{userStore.isAuth}} </div>
+
+
+
         <div>currentWebSocketState : {{currentWebSocketState}} </div>
-        <div>userIsAuth : {{    userIsAuth    }} </div>
 
       </nav>
   </header>
   <main>
-    <VideoStream v-if=" meetId" :userId="userId" />
     <RouterView />
   </main>
 
@@ -19,15 +22,16 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import {useWebSocket} from "@/features/useWebSocket";
-import {useCurrentUser} from "@/features/useCurrentUser";
+
 import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
-import {useMeet} from "@/components/meet/features/useMeet";
-import VideoStream from "@/components/VideoStream.vue";
+
 import {watch} from "vue";
 import {useWebRTC} from "@/features/useWebRTC";
-const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle, meetId} = useMeet();
+import {useMeetChat} from "@/components/meet/features/useMeetChat";
+import {useUserStore} from "@/store/useUserStore";
+const {meetChatMessageHandle,userJoinMeetHandle,userLeaveMeetHandle} = useMeetChat();
 const {setupWebSocketMessageHandlers,currentWebSocketState} = useWebSocket()
-const { userIsAuth , userId } = useCurrentUser()
+const userStore = useUserStore()
 // const {
 //   createPeerAnswer,
 //   onPeerAnswer,

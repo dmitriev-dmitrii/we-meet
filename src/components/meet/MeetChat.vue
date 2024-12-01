@@ -4,8 +4,10 @@
   <div class="meet-chat">
     <h2 style="text-align: center" >meet-chat</h2>
     <div class="meet-chat__messages__list">
-      <div  class="meet-chat__messages__item" v-for="( { text , userName }  , index) in meetChatMessages" :key = index>
-        {{userName}} : {{text}}
+      <div   class="meet-chat__messages__item" v-for="( { userName,message,sendTime }  , index) in chatMessagesFormatted" :key = index>
+
+        {{userName}} : {{ message  }}   <span style="text-align: right"> sendTime : {{ sendTime }}</span>
+
       </div>
       <form @submit.prevent="submitMessage" class="meet-chat__form">
           <input type="text"  v-model='textMessage' class="meet-chat__form__input" placeholder="type a message...">
@@ -17,11 +19,13 @@
 
 <script setup lang="ts">
 
-import {useMeet} from "@/components/meet/features/useMeet";
+
 import {ref, unref} from "vue";
+import {useMeetChat} from "@/components/meet/features/useMeetChat";
+import {useMeetStore} from "@/store/useMeetStore";
+const {  submitChatMessage , chatMessagesFormatted } = useMeetChat();
 
-const {meetChatMessages,meetChatMessageHandle,submitChatMessage} = useMeet()
-
+const meetStore = useMeetStore()
 const textMessage = ref('')
 
 const submitMessage = () =>{

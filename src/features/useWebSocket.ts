@@ -1,5 +1,9 @@
+// @ts-nocheck
 import { MEET_WEB_SOCKET_EVENTS } from "@/constatnts/meetWebSocket";
+import {useMeetStore} from "@/store/useMeetStore";
 import {computed, ref, unref} from "vue";
+import {useUserStore} from "@/store/useUserStore";
+
 
 const webSocketQueue: any[] = [];
 const webSocketMessageHandlersMap: Map<MEET_WEB_SOCKET_EVENTS, Set<Function>> = new Map();
@@ -18,12 +22,20 @@ const currentWebSocketState = ref(3)
 // CLOSED: 3
 
 export const useWebSocket = () => {
+
+   const userStore = useUserStore()
+   const meetStore = useMeetStore()
+
+
    const onWebSocketMessage = async (event: MessageEvent) => {
         const { data } = event;
         //@ts-ignore
         const payload = JSON.parse(data);
         const { type } = payload;
-        // console.log(payload)
+        if (!payload.data) {
+            debugger
+        }
+
         if (!type && !webSocketMessageHandlersMap.has(type)) {
             console.warn(`WebSocket , onSocketMessage - empty callback for event type:"${type}"`);
             return;
@@ -58,12 +70,15 @@ export const useWebSocket = () => {
     };
 
      function sendWebSocketMessage(payload: any) {
+
         if (ws?.readyState !== WebSocket.OPEN) {
             console.warn('WebSocket is not OPEN , message added to webSocketQueue');
             webSocketQueue.push(payload);
             return;
         }
 
+        payload.userId = userStore.userId
+        payload.meetId = meetStore.meetId
         ws.send(JSON.stringify(payload));
     }
 
@@ -87,8 +102,8 @@ export const useWebSocket = () => {
     const onWebSocketClose = async ({ code, reason }: CloseEvent) => {
         currentWebSocketState.value =  WebSocket.CLOSED
 
-        if (code === 1005) {
-            console.log(`WebSocket closed server force close socket`);
+        if (code === 3000) {
+            console.log(`WebSocket closed  force closed from  server `);
              return
         }
 
@@ -96,8 +111,8 @@ export const useWebSocket = () => {
         const delay = Math.min(reconnectDelay * reconnectAttempts, 30000); // Ограничение до 30 секунд
         console.log(`WebSocket reconnect try ${delay}ms...`);
 
-        setTimeout(  () => {
-         connectToWebSocket();
+        setTimeout(  async () => {
+         await connectToWebSocket();
         }, delay);
     };
 
@@ -110,20 +125,37 @@ export const useWebSocket = () => {
     };
 
     const connectToWebSocket = async () => {
+
         return new Promise((resolve, reject) => {
+
             currentWebSocketState.value =  WebSocket.CONNECTING
-            // ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=${unref(meetId)}`);
-            ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=123`); // todo ref meetid
+
+            ws = new WebSocket(`${WEB_SOCKET_URL}?meetId=${ meetStore.meetId }`);
 
             ws.onmessage = onWebSocketMessage
             ws.onerror = onWebSocketError
             ws.onclose = onWebSocketClose
 
             ws.onopen = () => {
-                onWebSocketOpen(ws)
+                onWebSocketOpen()
                 resolve(ws)
             }
 
+        })
+    };
+
+    const closeWebSocket = async ():Promise<void> => {
+
+        return new Promise((resolve, reject) => {
+
+            currentWebSocketState.value =  WebSocket.CLOSING
+
+            if (ws) {
+                ws.close(3000)
+            }
+
+            resolve()
+            currentWebSocketState.value =  WebSocket.CLOSED
         })
     };
 
@@ -131,6 +163,7 @@ export const useWebSocket = () => {
         setupWebSocketMessageHandlers,
         sendWebSocketMessage,
         connectToWebSocket,
+        closeWebSocket,
         currentWebSocketState,
     };
 };

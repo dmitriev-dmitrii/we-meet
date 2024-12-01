@@ -8,13 +8,9 @@
 
         <label> name <input type="text" v-model="userName"> </label>
 
-        <label> is on audio <input type="checkbox" v-model="isAudioOn"> </label>
+        <button type="button"  :disabled="isMeetPage && !!meetStore.meetId" @click="onCreateMeet"> create meet </button>
 
-        <label> is on video <input type="checkbox" v-model="isVideoOn"> </label>
-
-        <button type="button"  :disabled="isMeetPage && !!meetId" @click="onCreateMeet"> create meet </button>
-
-        <button type="submit" :disabled="!meetId" >  meet  join req => {{ meetId }}</button>
+        <button type="submit" :disabled="!meetStore.meetId" >  meet  join req => {{ meetStore.meetId }}</button>
 
       </form>
 
@@ -23,47 +19,46 @@
 </template>
 
 <script setup lang="ts">
-import {useCurrentUser} from "@/features/useCurrentUser";
-import {useMeet} from "@/components/meet/features/useMeet";
+
+import {useMeetStore} from "@/store/useMeetStore";
+import {useUserStore} from "@/store/useUserStore";
 import { useRoute, useRouter} from "vue-router";
 import {computed, ref, unref} from "vue";
+import {useWebSocket} from "@/features/useWebSocket";
+import adapter from "webrtc-adapter";
 
-const { userName,userId ,isAudioOn , isVideoOn , initUserStream , userIsAuth } = useCurrentUser()
-const { createMeet , meetId , sendJoinMeetRequest }= useMeet()
+const { connectToWebSocket } = useWebSocket()
+const userStore = useUserStore()
+const meetStore = useMeetStore()
 const router = useRouter()
 const route = useRoute()
 
-const isMeetPage = computed(()=>{
+const userName = ref(adapter.browserDetails.browser)
+
+const isMeetPage = computed(()=> {
   const { name } = unref(route)
   return name === 'MeetPage'
 })
 
+
 const onCreateMeet = async ()=> {
 
-  if (!unref(userName)) {
-    return
-  }
+  await userStore.sendAuthRequest({userName : unref(userName)})
+  await meetStore.createMeet()
 
-  await createMeet()
 }
 
 const onSubmit = async () => {
 
-  if (!unref(userName)) {
-    return
-  }
+  await userStore.sendAuthRequest({userName : unref(userName)})
 
-  // await initUserStream()
-
-  await sendJoinMeetRequest()
-
+  await meetStore.sendJoinMeetRequest()
 
   if (!unref(isMeetPage)) {
-    await router.push({ name:'MeetPage', params:{ id: unref(meetId) }})
+    await router.push({ name:'MeetPage', params:{ id: unref(meetStore.meetId) }})
   }
 
 }
-
 
 </script>
 
