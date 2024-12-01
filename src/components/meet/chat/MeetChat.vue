@@ -21,7 +21,7 @@
 
 
 import {ref, unref} from "vue";
-import {useMeetChat} from "@/components/meet/features/useMeetChat";
+import {useMeetChat} from "@/components/meet/chat/useMeetChat";
 import {useMeetStore} from "@/store/useMeetStore";
 const {  submitChatMessage , chatMessagesFormatted } = useMeetChat();
 

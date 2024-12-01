@@ -26,7 +26,6 @@ export const useWebSocket = () => {
    const userStore = useUserStore()
    const meetStore = useMeetStore()
 
-
    const onWebSocketMessage = async (event: MessageEvent) => {
         const { data } = event;
         //@ts-ignore

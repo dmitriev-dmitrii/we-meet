@@ -46,6 +46,10 @@ const onCreateMeet = async ()=> {
   await userStore.sendAuthRequest({userName : unref(userName)})
   await meetStore.createMeet()
 
+  if (!unref(isMeetPage)) {
+    await router.push({ name:'MeetPage', params:{ id: unref(meetStore.meetId) }})
+  }
+
 }
 
 const onSubmit = async () => {

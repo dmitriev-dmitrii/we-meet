@@ -1,8 +1,9 @@
 <template>
 
-  <AuthForm v-if="!userStore.isAuth" />
+  <AuthForm  />
 
-  <Meet />
+  <MeetStreams v-if="meetStore.meetId"/>
+  <MeetChat  />
 
   <div v-if="err">
     err {{ err }}
@@ -19,8 +20,9 @@ import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 import {useMeetStore} from "@/store/useMeetStore";
 import AuthForm from "@/components/AuthForm.vue";
 
-import Meet from "@/components/meet/Meet.vue";
 import {useUserStore} from "@/store/useUserStore";
+import MeetChat from "@/components/meet/chat/MeetChat.vue";
+import MeetStreams from "@/components/meet/streams/MeetStreams.vue";
 
 const userStore = useUserStore()
 const meetStore = useMeetStore()
@@ -30,8 +32,6 @@ const route = useRoute()
 
 const loading = ref(true)
 const err = ref('')
-
-
 
 
 

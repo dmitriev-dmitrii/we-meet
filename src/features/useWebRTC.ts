@@ -1,8 +1,7 @@
 // @ts-nocheck
-// import {useWebSocket} from "@/features/useWebSocket";
+import {useWebSocket} from "@/features/useWebSocket";
 import {computed, ref, unref} from "vue";
-
-// const {sendWebSocketMessage} = useWebSocket()
+import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
 
 const configuration = {
     iceServers: [
@@ -12,58 +11,8 @@ const configuration = {
 
 const peerConnection = new RTCPeerConnection(configuration);
 
-// const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-// localVideo.srcObject = localStream;
-
-// localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-peerConnection.ontrack = (event) => {
-    // remoteVideo.srcObject = event.streams[0];
-};
-
-peerConnection.onicecandidate = (event) => {
-    console.log('onicecandidate')
-
-    if (event.candidate) {
-        // socket.send(JSON.stringify({ type: 'ice-candidate', candidate: event.candidate }));
-    }
-};
-peerConnection.onconnectionstatechange = (e)=>{
-    console.log('onconnectionstatechange', e)
-}
-
-
-// peerConnection.onaddstream
-// peerConnection.onremovestream
-
-peerConnection.ondatachannel = ()=>{
-    console.log(' ondatachannel ')
-}
-
-peerConnection.onicecandidateerror = ()=>{
-    console.log(' onicecandidateerror ')
-}
-
-peerConnection.oniceconnectionstatechange = ()=>{
-    console.log(' oniceconnectionstatechange ')
-}
-
-peerConnection.onicegatheringstatechange = ()=>{
-    console.log(' onicegatheringstatechange ')
-}
-
-peerConnection.onnegotiationneeded = ()=>{
-    console.log('onnegotiationneeded  ')
-}
-
-peerConnection.onsignalingstatechange = ()=>{
-
-    console.log(' onsignalingstatechange ', peerConnection.signalingState )
-}
-
-
 export const useWebRTC = () => {
-
+    const {sendWebSocketMessage} = useWebSocket()
     async function createPeerOffer() {
 
         const offer = await peerConnection.createOffer();
@@ -73,28 +22,38 @@ export const useWebRTC = () => {
         // socket.send(JSON.stringify({ type: 'offer', offer }));
     }
 
+    const  onPeerOffer = async ({rtcOffer})=> {
 
-    const  onPeerOffer = async ({data})=> {
-
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(rtcOffer));
 
     }
     const createPeerAnswer = async ()=> {
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
-        // sendWebSocketMessage()
+
+        const payload = {
+           type: MEET_WEB_SOCKET_EVENTS.RTC_ANSWER,
+           data: {
+                answer
+            }
+        }
+
+        sendWebSocketMessage(payload)
+        console.log('createPeerAnswer', payload)
         // socket.send(JSON.stringify({ type: 'answer', answer }));
     }
     const onPeerAnswer = async ({data})=> {
-        console.log(data)
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+        console.log('onPeerAnswer', data)
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
     }
 
     const onIceCandidate = async ({data})=> {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+        console.log('onIceCandidate' , data)
+        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
     }
 
     return {
+        peerConnection,
         createPeerAnswer,
         onPeerAnswer,
         createPeerOffer,
