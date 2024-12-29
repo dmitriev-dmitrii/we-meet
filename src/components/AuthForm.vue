@@ -4,13 +4,13 @@
 
     <legend>Auth Form</legend>
 
-      <form @submit.prevent="onSubmit">
+      <form @submit.prevent="onJoinMeet">
 
-        <label> name <input type="text" v-model="userName"> </label>
+        <label> name <input  v-model="userStore.userName"> </label>
 
-        <button type="button"  :disabled="isMeetPage && !!meetStore.meetId" @click="onCreateMeet"> create meet </button>
+        <button type="button"   @click="onCreateMeet"> create meet </button>
 
-        <button type="submit" :disabled="!meetStore.meetId" >  meet  join req => {{ meetStore.meetId }}</button>
+        <button type="submit" :disabled="!meetStore.meetId" >  meet  join req </button>
 
       </form>
 
@@ -23,17 +23,14 @@
 import {useMeetStore} from "@/store/useMeetStore";
 import {useUserStore} from "@/store/useUserStore";
 import { useRoute, useRouter} from "vue-router";
-import {computed, ref, unref} from "vue";
-import {useWebSocket} from "@/features/useWebSocket";
+import {computed, onMounted, ref, unref} from "vue";
 import adapter from "webrtc-adapter";
 
-const { connectToWebSocket } = useWebSocket()
 const userStore = useUserStore()
 const meetStore = useMeetStore()
 const router = useRouter()
 const route = useRoute()
 
-const userName = ref(adapter.browserDetails.browser)
 
 const isMeetPage = computed(()=> {
   const { name } = unref(route)
@@ -43,7 +40,6 @@ const isMeetPage = computed(()=> {
 
 const onCreateMeet = async ()=> {
 
-  await userStore.sendAuthRequest({userName : unref(userName)})
   await meetStore.createMeet()
 
   if (!unref(isMeetPage)) {
@@ -52,9 +48,7 @@ const onCreateMeet = async ()=> {
 
 }
 
-const onSubmit = async () => {
-
-  await userStore.sendAuthRequest({userName : unref(userName)})
+const onJoinMeet = async () => {
 
   await meetStore.sendJoinMeetRequest()
 
@@ -63,6 +57,11 @@ const onSubmit = async () => {
   }
 
 }
+
+onMounted(()=> {
+  // todo focus on input form
+    userStore.userName = adapter.browserDetails.browser
+})
 
 </script>
 

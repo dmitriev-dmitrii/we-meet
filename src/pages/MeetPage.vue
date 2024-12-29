@@ -1,9 +1,10 @@
 <template>
 
-  <AuthForm  />
+  <div>  meetUsers {{meetStore.meetUsers}} </div>
 
-  <MeetStreams v-if="meetStore.meetId"/>
-  <MeetChat  />
+  <Meet v-if="userStore.isUserConnectedMeet"/>
+  <AuthForm  v-else />
+
 
   <div v-if="err">
     err {{ err }}
@@ -21,8 +22,7 @@ import {useMeetStore} from "@/store/useMeetStore";
 import AuthForm from "@/components/AuthForm.vue";
 
 import {useUserStore} from "@/store/useUserStore";
-import MeetChat from "@/components/meet/chat/MeetChat.vue";
-import MeetStreams from "@/components/meet/streams/MeetStreams.vue";
+import Meet from "@/components/meet/Meet.vue";
 
 const userStore = useUserStore()
 const meetStore = useMeetStore()
@@ -38,6 +38,7 @@ const err = ref('')
 onMounted(async ()=> {
 
   try {
+    // todo  if !user in meet
     const { params } = unref(route)
 
     await meetStore.findMeetById( params.id as string )
@@ -54,10 +55,10 @@ finally {
 })
 
 
-onBeforeRouteLeave( async ()=> {
-
-  await userStore.sendLogoutRequest()
-})
+// onBeforeRouteLeave( async ()=> {
+//
+//   await userStore.sendLogoutRequest()
+// })
 
 
 </script>
