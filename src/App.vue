@@ -16,13 +16,11 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import {useWebSocket} from "@/features/useWebSocket";
-
-import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
-
 import {useWebRtc} from "@/features/useWebRtc";
 import {useUserStore} from "@/store/useUserStore";
+import {WEB_SOCKET_EVENTS} from "@/constatnts/WebSocketEvents";
 
-const {setupWebSocketMessageHandlers,currentWebSocketState} = useWebSocket()
+const {setupWebSocketMessageHandlers} = useWebSocket()
 const userStore = useUserStore()
 const {
   updatePeerIceCandidate,
@@ -30,20 +28,18 @@ const {
   confirmPeerOffer,
   setupPeerAnswer,
 } = useWebRtc()
+
 // todo server ws status indicator
 // todo axios api instance
 // todo chat Handlers refactor
 // todo add eslint prettier airbnb
 
  setupWebSocketMessageHandlers({
-    // [MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE]: [meetChatMessageHandle],
-    // [MEET_WEB_SOCKET_EVENTS.USER_JOIN_MEET]: [userJoinMeetHandle ],
-    // [MEET_WEB_SOCKET_EVENTS.USER_LEAVE_MEET]: [userLeaveMeetHandle],
+   [WEB_SOCKET_EVENTS.MEET_JOIN_REQUEST] : [createPeerOffer],
 
-   'join-request' : [createPeerOffer],
-   'offer': [confirmPeerOffer],
-   'answer': [setupPeerAnswer],
-   'ice-candidate': [updatePeerIceCandidate],
+   [WEB_SOCKET_EVENTS.RTC_OFFER]: [confirmPeerOffer],
+   [WEB_SOCKET_EVENTS.RTC_ANSWER]: [setupPeerAnswer],
+   [WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE]: [updatePeerIceCandidate],
 
   })
 

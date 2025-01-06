@@ -1,12 +1,13 @@
 // @ts-nocheck
-import { MEET_WEB_SOCKET_EVENTS } from "@/constatnts/meetWebSocket";
+
 import {useMeetStore} from "@/store/useMeetStore";
 import {computed, ref, unref} from "vue";
 import {useUserStore} from "@/store/useUserStore";
+import type {WEB_SOCKET_EVENTS} from "@/constatnts/WebSocketEvents";
 
 
 const webSocketQueue: any[] = [];
-const webSocketMessageHandlersMap: Map<MEET_WEB_SOCKET_EVENTS, Set<Function>> = new Map();
+const webSocketMessageHandlersMap: Map<WEB_SOCKET_EVENTS, Set<Function>> = new Map();
 
 const reconnectDelay = 1000; // Начальная задержка в миллисекундах для реконекта
 let reconnectAttempts = 0; // Отслеживание количества попыток реконекта

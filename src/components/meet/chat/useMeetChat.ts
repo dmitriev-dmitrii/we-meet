@@ -1,6 +1,6 @@
 // @ts-nocheck
 import {computed, ref, unref} from "vue";
-import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
+import {WEB_SOCKET_EVENTS} from "@/constatnts/WebSocketEvents";
 
 import {useWebSocket} from "@/features/useWebSocket";
 import {useMeetStore} from "@/store/useMeetStore";
@@ -18,7 +18,7 @@ export const useMeetChat = () => {
         }
 
        const payload = {
-           type:  MEET_WEB_SOCKET_EVENTS.CHAT_MESSAGE,
+           // type:  WEB_SOCKET_EVENTS.CHAT_MESSAGE,
            data: {
                text
            }

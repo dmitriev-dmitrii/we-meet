@@ -9,7 +9,8 @@ export const useUserStore = defineStore('userStore', () => {
     const   userName= ref('');
     const   userId = ref('');
 
-    const isUserConnectedMeet = computed(()=>{
+
+    const isUserConnectedMeet = computed(()=> {
       return   unref(meetStore.meetUsersId.includes(unref(userId)))
     })
 

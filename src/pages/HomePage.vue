@@ -1,15 +1,13 @@
 <template>
 
-    <AuthForm/>
+    <JoinMeetForm/>
 
 </template>
 
 <script setup lang="ts">
 
 
-import AuthForm from "@/components/AuthForm.vue";
-
-
+import JoinMeetForm from "@/components/meet/JoinMeetForm.vue";
 
 </script>
 

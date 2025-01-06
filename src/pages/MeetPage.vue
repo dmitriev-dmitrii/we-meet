@@ -1,9 +1,9 @@
 <template>
 
-  <div>  meetUsers {{meetStore.meetUsers}} </div>
+  <div>  meetUsers {{meetStore.meetUsers.length}} </div>
 
   <Meet v-if="userStore.isUserConnectedMeet"/>
-  <AuthForm  v-else />
+  <JoinMeetForm  v-else />
 
 
   <div v-if="err">
@@ -19,10 +19,10 @@
 import {onMounted, ref, unref, useTemplateRef} from "vue";
 import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 import {useMeetStore} from "@/store/useMeetStore";
-import AuthForm from "@/components/AuthForm.vue";
-
 import {useUserStore} from "@/store/useUserStore";
+
 import Meet from "@/components/meet/Meet.vue";
+import JoinMeetForm from "@/components/meet/JoinMeetForm.vue";
 
 const userStore = useUserStore()
 const meetStore = useMeetStore()

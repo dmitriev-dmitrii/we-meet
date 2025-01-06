@@ -1,18 +1,17 @@
 // @ts-nocheck
 import {useWebSocket} from "@/features/useWebSocket";
 
-import {MEET_WEB_SOCKET_EVENTS} from "@/constatnts/meetWebSocket";
+import { WEB_SOCKET_EVENTS } from "@/constatnts/WebSocketEvents";
 import {useUserStore} from "@/store/useUserStore";
 import {useMeetStore} from "@/store/useMeetStore";
-
 
 const peerConnections = {};
 const dataChannels = {}
 
 const configuration = {
-    // iceServers: [
-    //     { urls: 'stun:stun.l.google.com:19302' },
-    // ]
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+    ]
 };
 
 
@@ -26,8 +25,10 @@ export const useWebRtc = (callbacks=  {})=> {
 
     const buildPairOfConnectionsName = ( remoteUserId , isHostPeer= false )=> {
         // пусть имя хоста будет первым - проще для дебагинга
-        return   isHostPeer ? `[${userId}][${remoteUserId}]` : `[${remoteUserId}][${ userId}]`
+        const id = [ userStore.userId, remoteUserId ]
+        return   isHostPeer ? JSON.stringify(id) : JSON.stringify(id.reverse())
     }
+
     const {
         onDataChanelOpen,
         onDataChanelClose,
@@ -35,7 +36,7 @@ export const useWebRtc = (callbacks=  {})=> {
     } = callbacks
 
     const setupDataChanelEvents = ({ channel , pairName })=> {
-
+        console.log('channel , pairName ', channel , pairName )
         dataChannels[pairName] = channel
 
         channel.onmessage = async (e) =>  {
@@ -73,7 +74,7 @@ export const useWebRtc = (callbacks=  {})=> {
 
         const payload = {
             to: this.remoteUserId,
-            type:'ice-candidate',
+            type:WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE,
             data:{
                 pairName : this.pairName,
                 candidate : event.candidate
@@ -100,7 +101,7 @@ export const useWebRtc = (callbacks=  {})=> {
         await peerConnections[pairName].setLocalDescription(offer)
 
         const payload = {
-            type:'offer',
+            type: WEB_SOCKET_EVENTS.RTC_OFFER,
             to: from,
             data: offer
         }
@@ -109,6 +110,7 @@ export const useWebRtc = (callbacks=  {})=> {
     }
 
     const confirmPeerOffer  = async( { from , data } ) => {
+
         const pairName =  buildPairOfConnectionsName( from )
 
         peerConnections[pairName] =  new RTCPeerConnection(configuration)
@@ -130,7 +132,7 @@ export const useWebRtc = (callbacks=  {})=> {
 
         const payload = {
             to:from,
-            type:'answer',
+            type:WEB_SOCKET_EVENTS.RTC_ANSWER,
             data: answer
         }
 
@@ -153,7 +155,7 @@ export const useWebRtc = (callbacks=  {})=> {
         const data = JSON.stringify({...payload, from : userId })
 
         Object.values(dataChannels).forEach((item)=> {
-            if ( item.readyState === 'open' ) {
+            if ( item.readyState ===  RTCDataChannelState.OPEN ) {
                 item.send(data)
             }
         })

@@ -29,8 +29,6 @@ export const useMeetStore = defineStore('meetStore', () => {
         })
 
 
-        meetId.value = data.meetId
-
         return data
     }
     const sendJoinMeetRequest = async ()=> {
@@ -55,11 +53,6 @@ export const useMeetStore = defineStore('meetStore', () => {
         userStore.userName = user.userName
 
         await connectToWebSocket()
-
-        // if (userStore.userId === data.meetOwnerId) {
-        // await  createPeerOffer()
-        // }
-
     }
 
     const findMeetById = async (id='')=> {
@@ -71,6 +64,7 @@ export const useMeetStore = defineStore('meetStore', () => {
         })
 
         meetId.value = data.meetId
+        meetUsers.value = data.meetUsers
 
         return data
     }

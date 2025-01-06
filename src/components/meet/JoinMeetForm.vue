@@ -37,13 +37,12 @@ const isMeetPage = computed(()=> {
   return name === 'MeetPage'
 })
 
-
 const onCreateMeet = async ()=> {
 
-  await meetStore.createMeet()
+ const { meetId } = await meetStore.createMeet()
 
   if (!unref(isMeetPage)) {
-    await router.push({ name:'MeetPage', params:{ id: unref(meetStore.meetId) }})
+    await router.push({ name:'MeetPage', params:{ id: meetId }})
   }
 
 }
