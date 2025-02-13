@@ -1,13 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <title>Vite App</title>
   </head>
-  <body>
+  <body style="display: flex; flex-direction: column;">
     <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <h1 style="text-align: center">Web-RTC connection </h1>
+
+    <h2>wsOnlineClients : <span id="wsOnlineClientsDom"></span></h2>
+
+    <template id="local-media-stream-template">
+      <div class="user-label"></div>
+      <video></video>
+      <div class="actions-bar">
+
+        <button class="actions-bar__audio" data-action-type="audio"> audio</button>
+
+        <button class="actions-bar__video" data-action-type="video"> video</button>
+
+        <button class="actions-bar__leave-meet" data-action-type="leave-meet"> leave meet</button>
+      </div>
+
+      <style>
+        .actions-bar__audio {
+
+        }
+
+        .actions-bar__audio.active {
+          color: dodgerblue;
+        }
+
+        .actions-bar__video {
+
+        }
+
+        .actions-bar__video.active {
+          color: dodgerblue;
+        }
+      </style>
+    </template>
+
+    <template id="remote-media-stream-template">
+      <div class="user-label"></div>
+      <video></video>
+      <div class="status-bar">
+        <div class="status-bar__audio">
+          audio
+        </div>
+        <div class="status-bar__video">
+          video
+        </div>
+      </div>
+      <style>
+        .status-bar__video {
+
+        }
+
+        .status-bar__video.active {
+          color: dodgerblue;
+        }
+
+        .status-bar__audio {
+
+        }
+
+        .status-bar__audio.active {
+          color: dodgerblue;
+        }
+      </style>
+    </template>
+
+    <button id="connectButton"> connectButton</button>
+
+    <div id="webRtc">
+
+      <div id="webRtcMediaStreams">
+        <local-media-stream/>
+      </div>
+
+      <div id="webRtcChatWrapper">
+        <ul id="webRtcChatMessages"></ul>
+        <form id="webRtcChatForm">
+          <input type="text" id="webRtcChatInput" placeholder="Введите сообщение" required/>
+          <button type="submit">Отправить</button>
+        </form>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

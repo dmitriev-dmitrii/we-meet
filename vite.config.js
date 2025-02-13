@@ -1,7 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 
 import {defineConfig, loadEnv} from 'vite'
-import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 
@@ -15,9 +14,7 @@ const config = {
     server: {
         port: parseInt(VITE_APP_PORT,10),
     },
-    plugins: [
-    vue(),
-    ],
+    plugins: [],
     resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
