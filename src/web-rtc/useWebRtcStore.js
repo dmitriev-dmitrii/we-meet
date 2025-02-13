@@ -1,3 +1,4 @@
+import adapter from 'webrtc-adapter';
 export const userId = adapter.browserDetails.browser
 export const peerConnections = {};
 window.peerConnections = peerConnections

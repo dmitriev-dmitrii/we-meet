@@ -13,5 +13,8 @@
   },
   "devDependencies": {
     "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "webrtc-adapter": "^9.0.1"
   }
 }
