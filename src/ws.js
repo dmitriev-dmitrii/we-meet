@@ -1,6 +1,8 @@
 import {userId} from "./web-rtc/useWebRtcStore.js";
 
-window.socket = new WebSocket(`ws://${window.location.host}?userId=${userId}&roomId=123`);
+const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
+
+window.socket = new WebSocket(`${WEB_SOCKET_URL}?userId=${userId}&meetId=123`);
 
 const onMessageHandlers = new Map()
 
@@ -10,7 +12,6 @@ socket.onopen = () => {
 
 socket.onclose = () => {
     console.log('Соединение с сервером закрыто');
-    wsOnlineClientsDom.innerText = JSON.stringify([])
 };
 
 socket.onmessage = async (event) => {
@@ -28,7 +29,7 @@ socket.onmessage = async (event) => {
 export const sendWebSocketMessage = (payload) => {
     socket.send(JSON.stringify(payload))
 }
-export const setupOnWsMessageCallbaks = (payload = {}) => {
+export const setupOnWsMessageCallbacks = (payload = {}) => {
 
     Object.entries(payload).forEach(([key, ...value]) => {
 
