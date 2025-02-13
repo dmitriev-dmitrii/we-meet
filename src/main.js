@@ -39,7 +39,7 @@ import {
 } from "./constants.js";
 
 import {remoteMediaStreamsDomMap} from './web-rtc/useWebRtcStore.js'
-import {setupOnWsMessageCallbaks} from "./ws.js";
+import {setupOnWsMessageCallbacks} from "./ws.js";
 import {useWebRtcConnections} from "./web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./web-rtc/useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./web-rtc/useWebRtcMediaStreams.js";
@@ -127,7 +127,7 @@ const onMediaStreamTrack = (event, {pairName, remoteUserId, remoteUserName}) => 
     webRtcMediaStreams.append(remoteMediaStreamsDomMap.get(remoteUserId))
 }
 
-setupOnWsMessageCallbaks({
+setupOnWsMessageCallbacks({
     [WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER]: [createPeerOffer],
     [WEB_SOCKET_EVENTS.RTC_OFFER]: confirmPeerOffer,
     [WEB_SOCKET_EVENTS.RTC_ANSWER]: setupPeerAnswer,

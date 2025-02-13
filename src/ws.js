@@ -2,7 +2,7 @@ import {userId} from "./web-rtc/useWebRtcStore.js";
 
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
 
-window.socket = new WebSocket(`${WEB_SOCKET_URL}?userId=${userId}&roomId=123`);
+window.socket = new WebSocket(`${WEB_SOCKET_URL}?userId=${userId}&meetId=123`);
 
 const onMessageHandlers = new Map()
 
@@ -29,7 +29,7 @@ socket.onmessage = async (event) => {
 export const sendWebSocketMessage = (payload) => {
     socket.send(JSON.stringify(payload))
 }
-export const setupOnWsMessageCallbaks = (payload = {}) => {
+export const setupOnWsMessageCallbacks = (payload = {}) => {
 
     Object.entries(payload).forEach(([key, ...value]) => {
 
