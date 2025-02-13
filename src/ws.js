@@ -1,4 +1,4 @@
-import {userId} from "./web-rtc/useWebRtcStore.js";
+import {userId} from "./store/store.js";
 
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
 

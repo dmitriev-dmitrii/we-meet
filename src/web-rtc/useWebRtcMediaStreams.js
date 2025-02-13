@@ -1,9 +1,8 @@
-import {dataChannels, mediaStreams, peerConnections, userId} from "./useWebRtcStore.js";
+import {dataChannels, mediaStreams, peerConnections, userId} from "../store/store.js";
 import {MEDIA_STREAMS_EVENTS} from "../constants.js";
 
 const mediaStreamsCallbacksMap = new Map()
 // TODO придумать как не дублировать код с евентами
-
 export const useWebRtcMediaStreams = () => {
     const initLocalMediaStream = async () => {
 

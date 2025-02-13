@@ -1,6 +1,6 @@
 import {sendWebSocketMessage} from "../ws.js";
 
-import {peerConnections, buildConnectionsName, mediaStreams, dataChannels} from "./useWebRtcStore.js";
+import {peerConnections, buildConnectionsName, mediaStreams, dataChannels} from "../store/store.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
@@ -12,7 +12,6 @@ const configuration = {
     //     { urls: 'stun:stun.l.google.com:19302' },
     // ]
 };
-
 
 export const useWebRtcConnections = () => {
 

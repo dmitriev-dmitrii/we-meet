@@ -1,10 +1,9 @@
 import {useWebRtcMediaStreams} from "../web-rtc/useWebRtcMediaStreams.js";
-import {mediaStreams, userId, localUser, peerConnections ,  remoteMediaStreamsDomMap} from "../web-rtc/useWebRtcStore.js";
+import {mediaStreams, userId, localUser, peerConnections ,  remoteMediaStreamsDomMap} from "../store/store.js";
 import {useWebRtcDataChannels} from "../web-rtc/useWebRtcDataChannels.js";
 import {DATA_CHANNELS_MESSAGE_TYPE} from "../constants.js";
 
 const localMediaStreamTemplate = document.getElementById('local-media-stream-template');
-
 
 const LOCAL_STREAM_ACTION_BAR_MAP = {
     LEAVE_MEET: 'leave-meet',

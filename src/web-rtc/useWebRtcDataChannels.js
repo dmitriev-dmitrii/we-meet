@@ -1,4 +1,4 @@
-import {dataChannels, userId, localUser, mediaStreams} from "./useWebRtcStore.js";
+import {dataChannels, userId, localUser, mediaStreams} from "../store/store.js";
 import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "../constants.js";
 
 const dataChannelsCallbacksMap = new Map();

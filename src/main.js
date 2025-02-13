@@ -1,7 +1,6 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
+import javascriptLogo from '/javascript.svg'
 import viteLogo from '/vite.svg'
-
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -30,7 +29,7 @@ import {
     MEDIA_STREAMS_EVENTS
 } from "./constants.js";
 
-import {remoteMediaStreamsDomMap} from './web-rtc/useWebRtcStore.js'
+import {remoteMediaStreamsDomMap} from './store/store.js'
 import {setupOnWsMessageCallbacks} from "./ws.js";
 import {useWebRtcConnections} from "./web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./web-rtc/useWebRtcDataChannels.js";
