@@ -15,7 +15,6 @@ document.querySelector('#app').innerHTML = `
   </div>
 `
 
-
 import {LocalMediaStream} from "./components/LocalMediaStream.js";
 import {RemoteMediaStream} from "./components/RemoteMediaStream.js";
 
@@ -27,13 +26,13 @@ import {
     DATA_CHANNELS_EVENTS,
     DATA_CHANNELS_MESSAGE_TYPE,
     MEDIA_STREAMS_EVENTS
-} from "./constants.js";
+} from "./constants/constants.js";
 
-import {remoteMediaStreamsDomMap} from './store/store.js'
-import {setupOnWsMessageCallbacks} from "./ws.js";
-import {useWebRtcConnections} from "./web-rtc/useWebRtcConnections.js";
-import {useWebRtcDataChannels} from "./web-rtc/useWebRtcDataChannels.js";
-import {useWebRtcMediaStreams} from "./web-rtc/useWebRtcMediaStreams.js";
+import {remoteMediaStreamsDomMap} from './store/webRtcStore.js'
+import {setupOnWsMessageCallbacks} from "./features/ws/ws.js";
+import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
+import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
+import {useWebRtcMediaStreams} from "./features/web-rtc/useWebRtcMediaStreams.js";
 
 const wsOnlineClientsDom = document.getElementById('wsOnlineClientsDom');
 const connectButton = document.getElementById('connectButton');

@@ -1,21 +1,24 @@
-import {dataChannels, mediaStreams, peerConnections, userId} from "../store/store.js";
-import {MEDIA_STREAMS_EVENTS} from "../constants.js";
+import { mediaStreams, peerConnections} from "../../store/webRtcStore.js";
+import {MEDIA_STREAMS_EVENTS} from "../../constants/constants.js";
+import localUserStore from "@/store/localUserStore.js";
 
 const mediaStreamsCallbacksMap = new Map()
 // TODO придумать как не дублировать код с евентами
 export const useWebRtcMediaStreams = () => {
+
+
     const initLocalMediaStream = async () => {
 
-        mediaStreams[userId] = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        mediaStreams[localUserStore.userId] = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         //cb navigator.mediaDevices.ondevicechange
 
-        return mediaStreams[userId]
+        return mediaStreams[localUserStore.userId]
     }
 
     const setupMediaStreamToPeer = ({pairName, remoteUserId}) => {
 
-        if (mediaStreams[userId]) {
-            mediaStreams[userId].getTracks().forEach(track => peerConnections[pairName].addTrack(track, mediaStreams[userId]));
+        if (mediaStreams[localUserStore.userId]) {
+            mediaStreams[localUserStore.userId].getTracks().forEach(track => peerConnections[pairName].addTrack(track, mediaStreams[localUserStore.userId]));
         }
 
         peerConnections[pairName].ontrack = function (e) {

@@ -1,8 +1,8 @@
-import {userId} from "./store/store.js";
+import localUserStore from "@/store/localUserStore.js";
 
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
 
-window.socket = new WebSocket(`${WEB_SOCKET_URL}?userId=${userId}&meetId=123`);
+window.socket = new WebSocket(`${WEB_SOCKET_URL}?userId=${localUserStore.userId}&meetId=123`);
 
 const onMessageHandlers = new Map()
 

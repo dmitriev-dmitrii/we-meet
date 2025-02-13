@@ -1,11 +1,7 @@
-import adapter from 'webrtc-adapter';
-export const userId = adapter.browserDetails.browser
-export const peerConnections = {};
-export const dataChannels = {};
-export const mediaStreams = {};
+import adapter from "webrtc-adapter";
+import {mediaStreams} from "@/store/webRtcStore.js";
 
-export const remoteMediaStreamsDomMap = new Map()
-export const localUser = {
+export default {
 
     userId : adapter.browserDetails.browser,
 
@@ -13,7 +9,7 @@ export const localUser = {
 
     get audio() {
         try {
-            return mediaStreams[userId].getAudioTracks().some((item) => item.enabled)
+            return mediaStreams[this.userId].getAudioTracks().some((item) => item.enabled)
         } catch (e) {
             console.log('audio get err', e)
             return false
@@ -22,7 +18,7 @@ export const localUser = {
 
     set audio(value) {
         try {
-            mediaStreams[userId].getAudioTracks().find(({readyState}) => {
+            mediaStreams[this.userId].getAudioTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
 
@@ -35,7 +31,7 @@ export const localUser = {
 
     get video() {
         try {
-            return mediaStreams[userId].getVideoTracks().some((item) => item.enabled)
+            return mediaStreams[this.userId].getVideoTracks().some((item) => item.enabled)
         } catch (e) {
             console.log('video get err', e)
             return false
@@ -44,7 +40,7 @@ export const localUser = {
 
     set video(value) {
         try {
-            mediaStreams[userId].getVideoTracks().find(({readyState}) => {
+            mediaStreams[this.userId].getVideoTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
 
@@ -55,6 +51,3 @@ export const localUser = {
         }
     }
 }
-
-
-

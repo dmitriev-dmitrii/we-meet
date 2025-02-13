@@ -1,6 +1,6 @@
-import {useWebRtcMediaStreams} from "../web-rtc/useWebRtcMediaStreams.js";
-import {useWebRtcDataChannels} from "../web-rtc/useWebRtcDataChannels.js";
-import {useWebRtcConnections} from "../web-rtc/useWebRtcConnections.js";
+import {useWebRtcMediaStreams} from "../features/web-rtc/useWebRtcMediaStreams.js";
+import {useWebRtcDataChannels} from "../features/web-rtc/useWebRtcDataChannels.js";
+import {useWebRtcConnections} from "../features/web-rtc/useWebRtcConnections.js";
 
 const remoteMediaStreamTemplate = document.getElementById('remote-media-stream-template');
 

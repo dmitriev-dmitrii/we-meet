@@ -1,7 +1,8 @@
-import {useWebRtcMediaStreams} from "../web-rtc/useWebRtcMediaStreams.js";
-import {mediaStreams, userId, localUser, peerConnections ,  remoteMediaStreamsDomMap} from "../store/store.js";
-import {useWebRtcDataChannels} from "../web-rtc/useWebRtcDataChannels.js";
-import {DATA_CHANNELS_MESSAGE_TYPE} from "../constants.js";
+import {useWebRtcMediaStreams} from "../features/web-rtc/useWebRtcMediaStreams.js";
+import {mediaStreams,  remoteMediaStreamsDomMap} from "../store/webRtcStore.js";
+import localUserStore from "../store/localUserStore.js";
+import {useWebRtcDataChannels} from "../features/web-rtc/useWebRtcDataChannels.js";
+import {DATA_CHANNELS_MESSAGE_TYPE} from "../constants/constants.js";
 
 const localMediaStreamTemplate = document.getElementById('local-media-stream-template');
 
@@ -65,21 +66,21 @@ export class LocalMediaStream extends HTMLElement {
         }
 
         if (actionType === LOCAL_STREAM_ACTION_BAR_MAP.AUDIO) {
-            localUser.audio = !localUser.audio
-            localUser.audio ? eventTarget.classList.add('active') : eventTarget.classList.remove('active')
+            localUserStore.audio = !localUserStore.audio
+            localUserStore.audio ? eventTarget.classList.add('active') : eventTarget.classList.remove('active')
         }
 
         if (actionType === LOCAL_STREAM_ACTION_BAR_MAP.VIDEO) {
-            localUser.video = !localUser.video
-            localUser.video ? eventTarget.classList.add('active') : eventTarget.classList.remove('active')
+            localUserStore.video = !localUserStore.video
+            localUserStore.video ? eventTarget.classList.add('active') : eventTarget.classList.remove('active')
         }
 
 
         const payload = {
             type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
             data: {
-                video: localUser.video,
-                audio: localUser.audio
+                video: localUserStore.video,
+                audio: localUserStore.audio
             }
         }
 
@@ -93,12 +94,14 @@ export class LocalMediaStream extends HTMLElement {
         this.userLabel.innerText = this.userName
 
         await initLocalMediaStream()
+        localUserStore.audio = false
+        this.videoTag.srcObject = mediaStreams[localUserStore.userId]
 
-        this.videoTag.srcObject = mediaStreams[userId]
+        localUserStore.video ? this.videoToggleButton.classList.add('active') : this.videoToggleButton.classList.remove('active')
 
-        localUser.video ? this.videoToggleButton.classList.add('active') : this.videoToggleButton.classList.remove('active')
+        localUserStore.audio ? this.audioToggleButton.classList.add('active') : this.audioToggleButton.classList.remove('active')
 
-        localUser.audio ? this.audioToggleButton.classList.add('active') : this.audioToggleButton.classList.remove('active')
+
 
         await this.videoTag.play()
     }

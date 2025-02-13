@@ -1,14 +1,15 @@
-import {sendWebSocketMessage} from "../ws.js";
+import {sendWebSocketMessage} from "../ws/ws.js";
 
-import {peerConnections, mediaStreams, dataChannels, userId} from "../store/store.js";
+import {peerConnections} from "../../store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
-import {WEB_SOCKET_EVENTS} from "../constants.js";
+import {WEB_SOCKET_EVENTS} from "../../constants/constants.js";
+import localUserStore from "@/store/localUserStore.js";
 
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
     // пусть имя хоста будет первым - проще для дебагинга
-    return isHostPeer ? `[${userId}][${remoteUserId}]` : `[${remoteUserId}][${userId}]`
+    return isHostPeer ? `[${localUserStore.userId}][${remoteUserId}]` : `[${remoteUserId}][${localUserStore.userId}]`
 }
 
 const configuration = {

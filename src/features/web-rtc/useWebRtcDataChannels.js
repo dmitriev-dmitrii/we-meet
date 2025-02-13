@@ -1,5 +1,9 @@
-import {dataChannels, userId, localUser, mediaStreams} from "../store/store.js";
-import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "../constants.js";
+import {dataChannels } from "@/store/webRtcStore.js";
+import localUser from "../../store/localUserStore.js";
+import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "../../constants/constants.js";
+import localUserStore from "../../store/localUserStore.js";
+
+
 
 const dataChannelsCallbacksMap = new Map();
 // TODO придумать как не дублировать код с евентами
@@ -69,7 +73,7 @@ export const useWebRtcDataChannels = () => {
 
         Object.values(dataChannels).forEach((item) => {
 
-            const data = JSON.stringify({...payload, from: userId , pairName:item.label })
+            const data = JSON.stringify({...payload, from: localUserStore.userId , pairName:item.label })
 
             if (item.readyState === 'open') {
                 item.send(data)
