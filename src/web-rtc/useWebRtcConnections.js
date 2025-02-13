@@ -1,11 +1,15 @@
 import {sendWebSocketMessage} from "../ws.js";
 
-import {peerConnections, buildConnectionsName, mediaStreams, dataChannels} from "../store/store.js";
+import {peerConnections, mediaStreams, dataChannels, userId} from "../store/store.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
 import {WEB_SOCKET_EVENTS} from "../constants.js";
 
+const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
+    // пусть имя хоста будет первым - проще для дебагинга
+    return isHostPeer ? `[${userId}][${remoteUserId}]` : `[${remoteUserId}][${userId}]`
+}
 
 const configuration = {
     // iceServers: [
