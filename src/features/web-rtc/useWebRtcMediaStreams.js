@@ -1,5 +1,5 @@
-import { mediaStreams, peerConnections} from "../../store/webRtcStore.js";
-import {MEDIA_STREAMS_EVENTS} from "../../constants/constants.js";
+import { mediaStreams, peerConnections} from "@/store/webRtcStore.js";
+import {MEDIA_STREAMS_EVENTS} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 
 const mediaStreamsCallbacksMap = new Map()
@@ -10,7 +10,7 @@ export const useWebRtcMediaStreams = () => {
 
 
     const setupMediaStreamToPeer = ({pairName, remoteUserId}) => {
-        console.log('localUserStore.userStreams' , localUserStore.userStreams)
+
         if (localUserStore.userStreams?.active) {
             localUserStore.userStreams.getTracks().forEach(track => peerConnections[pairName].addTrack(track, localUserStore.userStreams));
         }

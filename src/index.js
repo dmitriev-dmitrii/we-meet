@@ -28,6 +28,7 @@ import {
     MEDIA_STREAMS_EVENTS
 } from "./constants/constants.js";
 
+import adapter from "webrtc-adapter";
 import {remoteMediaStreamsDomMap} from './store/webRtcStore.js'
 import {connectToWebSocket, setupOnWsMessageCallbacks} from "./features/ws/ws.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
@@ -35,6 +36,8 @@ import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js
 import {useWebRtcMediaStreams} from "./features/web-rtc/useWebRtcMediaStreams.js";
 import {meetStore} from "@/store/meetStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
+
+
 
 const wsOnlineClientsDom = document.getElementById('wsOnlineClientsDom');
 const connectButton = document.getElementById('connectButton');

@@ -16,7 +16,6 @@ export const setupOnWsMessageCallbacks = (payload = {}) => {
             onMessageHandlers.set(key, [])
         }
 
-
         onMessageHandlers.set(key, [...onMessageHandlers.get(key), ...value.flat()])
     })
 
@@ -27,8 +26,6 @@ export  const connectToWebSocket = async () => {
     return new Promise((resolve, reject) => {
 
         window.socket = new WebSocket(`${WEB_SOCKET_URL}?userId=${localUserStore.userId}&meetId=${meetStore.meetId}`);
-
-
 
         socket.onmessage = async (event) => {
             const payload = JSON.parse(event.data);
@@ -56,3 +53,6 @@ export  const connectToWebSocket = async () => {
 };
 
 
+export const closeWebSocket  = ()=>{
+    window.socket?.close(3000)
+}

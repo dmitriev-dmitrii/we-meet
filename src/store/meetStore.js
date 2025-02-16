@@ -3,32 +3,36 @@ import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {remoteMediaStreamsDomMap} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {localUserStore} from "@/store/localUserStore.js";
+import {closeWebSocket} from "@/features/ws/ws.js";
 
 const {sendDataChanelMessage} = useWebRtcDataChannels()
 
 const createMeet = async () => {
 
-        const payload = {
-            userName:localUserStore.userName,
-            userId:localUserStore.userId
-        }
-        const {data} = await meetApi.createMeet(payload)
-        meetStore.meetId = data.meetId
+    const payload = {
+        userName: localUserStore.userName,
+        userId: localUserStore.userId
+    }
+    const {data} = await meetApi.createMeet(payload)
+    meetStore.meetId = data.meetId
 
 }
 
 const sendJoinMeetRequest = async () => {
-       const { meetId } = meetStore
-       const { userId, userName } = localUserStore
+    const {meetId} = meetStore
+    const {userId, userName} = localUserStore
 
-       const {data} = await meetApi.joinMeetRequest({ meetId , userId, userName })
+    const {data} = await meetApi.joinMeetRequest({meetId, userId, userName})
 
+    // TODO  feature check   password
 }
 const leaveMeet = () => {
 
     const payload = {
         type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_CLOSE,
-        data: {}
+        data: {
+            //TODO reason
+        }
     }
 
     sendDataChanelMessage(payload)
@@ -39,16 +43,20 @@ const leaveMeet = () => {
 
     remoteMediaStreamsDomMap.clear()
 
-    console.log('leaveMeet', this)
+    meetStore.meetId = ''
+
+    closeWebSocket()
 }
-export  const  meetStore = {
-    get meetId (){
-       return   new URLSearchParams(window.location.search).get('meetId')
+export const meetStore = {
+    get meetId() {
+        return new URLSearchParams(window.location.search).get('meetId')
     },
-    set meetId (value) {
+    set meetId(value) {
         const currentUrl = new URL(window.location.href);
         const urlParams = new URLSearchParams(currentUrl.search);
-        urlParams.set('meetId', value);
+
+        value ? urlParams.set('meetId', value) : urlParams.delete('meetId');
+
         currentUrl.search = urlParams.toString();
         history.replaceState(null, '', currentUrl);
     },

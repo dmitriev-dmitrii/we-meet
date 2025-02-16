@@ -1,10 +1,10 @@
 import {sendWebSocketMessage} from "../ws/ws.js";
 
-import {peerConnections} from "../../store/webRtcStore.js";
+import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
-import {WEB_SOCKET_EVENTS} from "../../constants/constants.js";
+import {WEB_SOCKET_EVENTS} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
@@ -26,7 +26,6 @@ export const useWebRtcConnections = () => {
     const createPeerConnection = async ({pairName, isHost, remoteUserId}) => {
 
         peerConnections[pairName] = new RTCPeerConnection(configuration);
-
 
         setupMediaStreamToPeer({pairName, remoteUserId})
 

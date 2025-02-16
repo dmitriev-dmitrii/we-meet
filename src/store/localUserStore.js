@@ -1,5 +1,3 @@
-import adapter from "webrtc-adapter";
-import {mediaStreams} from "@/store/webRtcStore.js";
 import {usersApi} from "@/api/usersApi.js";
 
 export const localUserStore = {
