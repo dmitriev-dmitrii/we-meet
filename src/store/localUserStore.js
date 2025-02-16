@@ -1,7 +1,8 @@
 import adapter from "webrtc-adapter";
 import {mediaStreams} from "@/store/webRtcStore.js";
+import {usersApi} from "@/api/usersApi.js";
 
-export default {
+export const localUserStore = {
 
     userId : adapter.browserDetails.browser,
 
@@ -49,5 +50,11 @@ export default {
             console.log('video set err', e)
             return false
         }
+    },
+
+    auth : async ()=> {
+      const {data} =   await usersApi.userAuth()
+        localUserStore.userName = data.userName
+        localUserStore.userId = data.userId
     }
 }

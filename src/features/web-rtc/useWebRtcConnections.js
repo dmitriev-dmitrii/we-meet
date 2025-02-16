@@ -5,7 +5,7 @@ import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
 import {WEB_SOCKET_EVENTS} from "../../constants/constants.js";
-import localUserStore from "@/store/localUserStore.js";
+import {localUserStore} from "@/store/localUserStore.js";
 
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
     // пусть имя хоста будет первым - проще для дебагинга

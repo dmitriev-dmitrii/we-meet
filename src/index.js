@@ -33,6 +33,8 @@ import {setupOnWsMessageCallbacks} from "./features/ws/ws.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./features/web-rtc/useWebRtcMediaStreams.js";
+import {meetStore} from "@/store/meetStore.js";
+import {localUserStore} from "@/store/localUserStore.js";
 
 const wsOnlineClientsDom = document.getElementById('wsOnlineClientsDom');
 const connectButton = document.getElementById('connectButton');
@@ -40,7 +42,6 @@ const webRtcChatForm = document.getElementById('webRtcChatForm');
 const webRtcChatInput = document.getElementById('webRtcChatInput');
 const webRtcChatMessages = document.getElementById('webRtcChatMessages');
 const webRtcMediaStreams = document.getElementById('webRtcMediaStreams');
-
 
 
 const {
@@ -67,20 +68,21 @@ const printChatMessage = (message) => {
     listItem.innerText = message
     webRtcChatMessages.append(listItem)
 }
-const onDataChanelMessage = ({ data, type, from, pairName }) => {
+const onDataChanelMessage = ({ data, type, from, pairName , }) => {
 
     if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_OPEN && remoteMediaStreamsDomMap.has(from)) {
-        const message = `[${from}] : DATA_CHANEL_OPEN`
+        const message = `[${from}] : joined meet`
         const remoteStream =  remoteMediaStreamsDomMap.get(from)
         remoteStream.updateAudioStatus(data.audio)
         remoteStream.updateVideoStatus(data.video)
         printChatMessage(message)
+
         return
     }
 
     if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_CLOSE && remoteMediaStreamsDomMap.has(from)) {
 
-        const message = `[${from}] : DATA_CHANEL_CLOSE`
+        const message = `[${from}] : leave meet`
         printChatMessage(message)
 
         remoteMediaStreamsDomMap.get(from).removeMediaStreamComponent()
@@ -136,10 +138,22 @@ setupMediaStreamsCallbacks({
 })
 
 connectButton.onclick = async () => {
+    try {
+
+    await localUserStore.auth()
+
+    meetStore.meetId ? await  meetStore.sendJoinMeetRequest()  : await meetStore.createMeet()
     await sendMeOffer()
+
+    }
+    catch(e) {
+        console.log(e)
+        alert( e.status +' '+ e.message )
+    }
 }
 
 webRtcChatForm.addEventListener('submit', (event) => {
+    // TODO в компонент
     try {
 
         event.preventDefault();

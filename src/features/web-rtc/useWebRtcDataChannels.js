@@ -1,7 +1,6 @@
 import {dataChannels } from "@/store/webRtcStore.js";
-import localUser from "../../store/localUserStore.js";
-import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "../../constants/constants.js";
-import localUserStore from "../../store/localUserStore.js";
+import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
+import {localUserStore} from "@/store/localUserStore.js";
 
 
 
@@ -45,8 +44,8 @@ export const useWebRtcDataChannels = () => {
             const payload = {
                 type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_OPEN,
                 data: {
-                    audio: localUser.audio,
-                    video: localUser.video
+                    audio: localUserStore.audio,
+                    video: localUserStore.video
                 }
             }
 

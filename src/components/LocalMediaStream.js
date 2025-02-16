@@ -1,8 +1,9 @@
 import {useWebRtcMediaStreams} from "../features/web-rtc/useWebRtcMediaStreams.js";
-import {mediaStreams,  remoteMediaStreamsDomMap} from "../store/webRtcStore.js";
-import localUserStore from "../store/localUserStore.js";
+import {mediaStreams} from "../store/webRtcStore.js";
+import {localUserStore} from "../store/localUserStore.js";
 import {useWebRtcDataChannels} from "../features/web-rtc/useWebRtcDataChannels.js";
 import {DATA_CHANNELS_MESSAGE_TYPE} from "../constants/constants.js";
+import  {meetStore} from "@/store/meetStore.js";
 
 const localMediaStreamTemplate = document.getElementById('local-media-stream-template');
 
@@ -49,18 +50,7 @@ export class LocalMediaStream extends HTMLElement {
 
         if (actionType === LOCAL_STREAM_ACTION_BAR_MAP.LEAVE_MEET) {
 
-            const payload = {
-                type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_CLOSE,
-                data: {
-
-                }
-            }
-
-            sendDataChanelMessage(payload)
-            remoteMediaStreamsDomMap.forEach((item)=>{
-                item.removeMediaStreamComponent()
-            })
-            remoteMediaStreamsDomMap.clear()
+           meetStore.leaveMeet()
 
             return;
         }
