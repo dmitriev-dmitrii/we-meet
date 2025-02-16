@@ -29,7 +29,7 @@ import {
 } from "./constants/constants.js";
 
 import {remoteMediaStreamsDomMap} from './store/webRtcStore.js'
-import {setupOnWsMessageCallbacks} from "./features/ws/ws.js";
+import {connectToWebSocket, setupOnWsMessageCallbacks} from "./features/ws/ws.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./features/web-rtc/useWebRtcMediaStreams.js";
@@ -143,6 +143,7 @@ connectButton.onclick = async () => {
     await localUserStore.auth()
 
     meetStore.meetId ? await  meetStore.sendJoinMeetRequest()  : await meetStore.createMeet()
+    await  connectToWebSocket()
     await sendMeOffer()
 
     }

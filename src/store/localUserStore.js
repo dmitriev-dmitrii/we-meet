@@ -4,13 +4,26 @@ import {usersApi} from "@/api/usersApi.js";
 
 export const localUserStore = {
 
-    userId : adapter.browserDetails.browser,
+    userId : '',
 
-    userName : 'hui',
+    userName : '',
+
+    userStreams : {
+
+    },
+
+    initLocalMediaStream : async () => {
+
+        localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        //cb navigator.mediaDevices.ondevicechange TODO
+        // TODO mani input device - select?
+
+        return localUserStore.userStreams
+    },
 
     get audio() {
         try {
-            return mediaStreams[this.userId].getAudioTracks().some((item) => item.enabled)
+            return this.userStreams.getAudioTracks().some((item) => item.enabled)
         } catch (e) {
             console.log('audio get err', e)
             return false
@@ -19,7 +32,7 @@ export const localUserStore = {
 
     set audio(value) {
         try {
-            mediaStreams[this.userId].getAudioTracks().find(({readyState}) => {
+            this.userStreams.getAudioTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
 
@@ -32,7 +45,7 @@ export const localUserStore = {
 
     get video() {
         try {
-            return mediaStreams[this.userId].getVideoTracks().some((item) => item.enabled)
+            return this.userStreams.getVideoTracks().some((item) => item.enabled)
         } catch (e) {
             console.log('video get err', e)
             return false
@@ -41,7 +54,7 @@ export const localUserStore = {
 
     set video(value) {
         try {
-            mediaStreams[this.userId].getVideoTracks().find(({readyState}) => {
+            this.userStreams.getVideoTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
 

@@ -13,9 +13,7 @@ const LOCAL_STREAM_ACTION_BAR_MAP = {
     AUDIO: 'audio',
 }
 
-
-const {initLocalMediaStream} = useWebRtcMediaStreams()
-const {sendDataChanelMessage , deleteDataChanel } = useWebRtcDataChannels()
+const {sendDataChanelMessage } = useWebRtcDataChannels()
 
 export class LocalMediaStream extends HTMLElement {
 
@@ -83,9 +81,9 @@ export class LocalMediaStream extends HTMLElement {
 
         this.userLabel.innerText = this.userName
 
-        await initLocalMediaStream()
+        await localUserStore.initLocalMediaStream()
         localUserStore.audio = false
-        this.videoTag.srcObject = mediaStreams[localUserStore.userId]
+        this.videoTag.srcObject = localUserStore.userStreams
 
         localUserStore.video ? this.videoToggleButton.classList.add('active') : this.videoToggleButton.classList.remove('active')
 

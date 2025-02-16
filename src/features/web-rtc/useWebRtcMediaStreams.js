@@ -7,18 +7,12 @@ const mediaStreamsCallbacksMap = new Map()
 export const useWebRtcMediaStreams = () => {
 
 
-    const initLocalMediaStream = async () => {
 
-        mediaStreams[localUserStore.userId] = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        //cb navigator.mediaDevices.ondevicechange
-
-        return mediaStreams[localUserStore.userId]
-    }
 
     const setupMediaStreamToPeer = ({pairName, remoteUserId}) => {
-
-        if (mediaStreams[localUserStore.userId]) {
-            mediaStreams[localUserStore.userId].getTracks().forEach(track => peerConnections[pairName].addTrack(track, mediaStreams[localUserStore.userId]));
+        console.log('localUserStore.userStreams' , localUserStore.userStreams)
+        if (localUserStore.userStreams?.active) {
+            localUserStore.userStreams.getTracks().forEach(track => peerConnections[pairName].addTrack(track, localUserStore.userStreams));
         }
 
         peerConnections[pairName].ontrack = function (e) {
@@ -66,7 +60,6 @@ export const useWebRtcMediaStreams = () => {
 
     return {
         deleteMediaStream,
-        initLocalMediaStream,
         setupMediaStreamToPeer,
         setupMediaStreamsCallbacks
     }
