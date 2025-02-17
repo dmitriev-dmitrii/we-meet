@@ -58,7 +58,7 @@ export const meetStore = {
         value ? urlParams.set('meetId', value) : urlParams.delete('meetId');
 
         currentUrl.search = urlParams.toString();
-        history.replaceState(null, '', currentUrl);
+        window.history.pushState(null, '', currentUrl)
     },
     users: [],
     sendJoinMeetRequest,
