@@ -41,29 +41,10 @@ export const useWebRtcDataChannels = () => {
 
         channel.onopen = async (e) => {
 
-            const payload = {
-                type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_OPEN,
-                data: {
-                    audio: localUserStore.audio,
-                    video: localUserStore.video
-                }
-            }
-
-            sendDataChanelMessage(payload)
-
         }
 
         channel.onclose = async (e) => {
 
-
-            const payload = {
-                type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_CLOSE,
-                data: {
-                    e
-                }
-            }
-
-            sendDataChanelMessage(payload)
         };
 
     }

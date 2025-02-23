@@ -1,11 +1,14 @@
 import {meetApi} from "@/api/meetApi.js";
 import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
-import {remoteMediaStreamsDomMap} from "@/store/webRtcStore.js";
+import {mediaStreams, remoteMediaStreamsDomMap} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {closeWebSocket} from "@/features/ws/ws.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
+import {RemoteMediaStream} from "@/components/mediaStreams/RemoteMediaStream.js";
+
+const webRtcMediaStreams = document.getElementById('webRtcMediaStreams');//TODO перенести куда то
 
 const {
     sendDataChanelMessage,
@@ -65,8 +68,21 @@ const leaveMeet = () => {
     closeWebSocket()
 }
 
-const appendUserToMeet = (user) => {
-    remoteMeetUsersMap.set(user.id, user)
+const appendUserToMeet = (payload) => {
+
+    const { remoteUserName, remoteUserId, pairName } = payload
+
+    remoteMeetUsersMap.set(remoteUserId, payload)
+
+
+
+    if (remoteMediaStreamsDomMap.has(remoteUserId)) {
+        return
+    }
+    const streams = mediaStreams[remoteUserId]
+    remoteMediaStreamsDomMap.set(remoteUserId, new RemoteMediaStream({ remoteUserName, remoteUserId, streams , pairName }))
+    webRtcMediaStreams.append(remoteMediaStreamsDomMap.get(remoteUserId))
+
 }
 
 const removeUserFromMeet = ({remoteUserId , pairName }) => {
