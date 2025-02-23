@@ -12,7 +12,6 @@ import {
     WEB_SOCKET_EVENTS,
     DATA_CHANNELS_EVENTS,
     DATA_CHANNELS_MESSAGE_TYPE,
-    MEDIA_STREAMS_EVENTS
 } from "./constants/constants.js";
 
 
@@ -25,9 +24,6 @@ import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js
 import {useWebRtcMediaStreams} from "./features/web-rtc/useWebRtcMediaStreams.js";
 import {meetStore} from "@/store/meetStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
-
-
-
 
 const meetForm = document.getElementById('meetForm')
 
@@ -52,38 +48,12 @@ const {
 
 } = useWebRtcDataChannels()
 
-const {
-    setupMediaStreamsCallbacks,
-} = useWebRtcMediaStreams()
-
 const printChatMessage = (message) => {
     const listItem = document.createElement('li')
     listItem.innerText = message
     webRtcChatMessages.append(listItem)
 }
 const onDataChanelMessage = ({ data, type, from, pairName , }) => {
-
-    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_OPEN && remoteMediaStreamsDomMap.has(from)) {
-        const message = `[${from}] : joined meet`
-        const remoteStream =  remoteMediaStreamsDomMap.get(from)
-
-
-        printChatMessage(message)
-        // remoteStream.updateAudioStatus(data.audio)
-        // remoteStream.updateVideoStatus(data.video)
-        return
-    }
-
-    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_CLOSE && remoteMediaStreamsDomMap.has(from)) {
-
-        const message = `[${from}] : leave meet`
-        printChatMessage(message)
-
-        //
-        // remoteMediaStreamsDomMap.get(from).removeMediaStreamComponent()
-        // remoteMediaStreamsDomMap.delete(from)
-        return
-    }
 
     if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE && remoteMediaStreamsDomMap.has(from)) {
 
@@ -97,22 +67,13 @@ const onDataChanelMessage = ({ data, type, from, pairName , }) => {
         printChatMessage(message)
     }
 
+    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE) {
+        const message = `[${from}] : ${data.text}`
+        printChatMessage(message)
+    }
 }
 const updateWsOnlineClients = ({data}) => {
     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
-}
-
-const onMediaStreamTrack = (event, {pairName, remoteUserId, remoteUserName}) => {
-
-    const streams = mediaStreams[remoteUserId]
-
-    if (remoteMediaStreamsDomMap.has(remoteUserId)) {
-        return
-    }
-
-    remoteMediaStreamsDomMap.set(remoteUserId, new RemoteMediaStream({ remoteUserName, remoteUserId, streams , pairName }))
-    webRtcMediaStreams.append(remoteMediaStreamsDomMap.get(remoteUserId))
-
 }
 
 setupOnWsMessageCallbacks({
@@ -129,9 +90,6 @@ setupDataChannelCallbacks({
     [DATA_CHANNELS_EVENTS.DATA_CHANEL_ON_MESSAGE]: onDataChanelMessage,
 })
 
-setupMediaStreamsCallbacks({
-    [MEDIA_STREAMS_EVENTS.MEDIA_STREAM_ON_TRACK]: onMediaStreamTrack,
-})
 
 meetForm.onsubmit = async (e) => {
     e.preventDefault()
@@ -190,8 +148,8 @@ webRtcChatForm.addEventListener('submit', (event) => {
 //
 // };
 //
-// window.onunload = function( event) {
-//     if (meetStore.meetId) {
-//         meetStore.leaveMeet()
-//     }
-// };
+window.onunload = function( event) {
+    if (meetStore.meetId) {
+        meetStore.leaveMeet()
+    }
+};

@@ -1,12 +1,7 @@
-import { mediaStreams, peerConnections} from "@/store/webRtcStore.js";
-import {MEDIA_STREAMS_EVENTS} from "@/constants/constants.js";
+import {mediaStreams, peerConnections} from "@/store/webRtcStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
 
-const mediaStreamsCallbacksMap = new Map()
-// TODO придумать как не дублировать код с евентами
 export const useWebRtcMediaStreams = () => {
-
-
     const setupMediaStreamToPeer = ({pairName, remoteUserId}) => {
 
         if (localUserStore.userStreams?.active) {
@@ -14,38 +9,15 @@ export const useWebRtcMediaStreams = () => {
         }
 
         peerConnections[pairName].ontrack = function (e) {
-
-            mediaStreams[this.remoteUserId] = e.streams
-
-            if (mediaStreamsCallbacksMap.has(MEDIA_STREAMS_EVENTS.MEDIA_STREAM_ON_TRACK)) {
-
-                mediaStreamsCallbacksMap.get(MEDIA_STREAMS_EVENTS.MEDIA_STREAM_ON_TRACK).forEach(function (cb) {
-                    cb(e, {pairName, remoteUserId})
-                })
-
-            }
-
-        }.bind({pairName, remoteUserId})
+            mediaStreams[remoteUserId] = e.streams
+        }
     }
 
-    const setupMediaStreamsCallbacks = (callbacksPayload) => {
-
-        Object.entries(callbacksPayload).forEach(([key, ...value]) => {
-
-            if (!mediaStreamsCallbacksMap.has(key)) {
-                mediaStreamsCallbacksMap.set(key, [])
-            }
-
-            mediaStreamsCallbacksMap.set(key, [...mediaStreamsCallbacksMap.get(key), ...value.flat()])
-        })
-
-    }
-
-    const deleteMediaStream  = (remoteUserId)=> {
+    const deleteMediaStream = (remoteUserId) => {
 
         if (mediaStreams[remoteUserId]) {
-            mediaStreams[remoteUserId].forEach((stream)=>{
-                stream.getTracks().forEach((track)=>{
+            mediaStreams[remoteUserId].forEach((stream) => {
+                stream.getTracks().forEach((track) => {
                     track.stop()
                 })
             })
@@ -59,6 +31,5 @@ export const useWebRtcMediaStreams = () => {
     return {
         deleteMediaStream,
         setupMediaStreamToPeer,
-        setupMediaStreamsCallbacks
     }
 }
