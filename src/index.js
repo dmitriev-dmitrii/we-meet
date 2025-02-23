@@ -17,11 +17,10 @@ import {
 
 
 
-import {mediaStreams, remoteMediaStreamsDomMap} from './store/webRtcStore.js'
+import { remoteMediaStreamsDomMap} from './store/webRtcStore.js'
 import {connectToWebSocket, setupOnWsMessageCallbacks} from "./features/ws/ws.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
-import {useWebRtcMediaStreams} from "./features/web-rtc/useWebRtcMediaStreams.js";
 import {meetStore} from "@/store/meetStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
 
@@ -145,11 +144,10 @@ webRtcChatForm.addEventListener('submit', (event) => {
 //         return  event.returnValue;
 //     }
 //
-//
 // };
 //
-window.onunload = function( event) {
-    if (meetStore.meetId) {
-        meetStore.leaveMeet()
-    }
-};
+// window.onunload = function( event) {
+//     if (meetStore.meetId) {
+//         meetStore.leaveMeet()
+//     }
+// };

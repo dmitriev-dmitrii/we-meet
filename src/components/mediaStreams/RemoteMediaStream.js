@@ -92,10 +92,6 @@ export class RemoteMediaStream extends HTMLElement {
         this.videoTag.muted = true
         this.videoTag.pause()
 
-        const {remoteUserId , pairName } = this
-
-        meetStore.removeUserFromMeet({remoteUserId , pairName })
-
         setTimeout(() => {
             this.remove();
         }, 300);

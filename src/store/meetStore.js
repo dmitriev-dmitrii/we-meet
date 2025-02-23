@@ -111,7 +111,7 @@ export const meetStore = {
         window.history.pushState(null, '', currentUrl)
     },
     get remoteUsers() {
-        return remoteMeetUsersMap.values()
+        return [...remoteMeetUsersMap.values()]
     },
     set remoteUsers(value) {
         remoteMeetUsersMap.clear()
