@@ -4,8 +4,24 @@ import {remoteMediaStreamsDomMap} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {closeWebSocket} from "@/features/ws/ws.js";
+import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
+import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 
-const {sendDataChanelMessage} = useWebRtcDataChannels()
+const {
+    sendDataChanelMessage,
+    deleteDataChanel
+} = useWebRtcDataChannels()
+
+const {
+    deleteMediaStream,
+} = useWebRtcMediaStreams()
+
+const {
+    deletePeerConnection
+} = useWebRtcConnections()
+
+const remoteMeetUsersMap = new Map()
+
 
 const createMeet = async () => {
 
@@ -42,11 +58,29 @@ const leaveMeet = () => {
     })
 
     remoteMediaStreamsDomMap.clear()
+    remoteMeetUsersMap.clear()
 
     meetStore.meetId = ''
 
     closeWebSocket()
 }
+
+const appendUserToMeet = (user) => {
+    remoteMeetUsersMap.set(user.id, user)
+}
+
+const removeUserFromMeet = ({remoteUserId , pairName }) => {
+    remoteMeetUsersMap.delete(remoteUserId)
+
+    deleteMediaStream(remoteUserId)
+    deleteDataChanel(pairName)
+    deletePeerConnection(pairName)
+
+    remoteMediaStreamsDomMap.get(remoteUserId).removeMediaStreamComponent()
+    remoteMediaStreamsDomMap.delete(remoteUserId)
+}
+
+
 export const meetStore = {
     get meetId() {
         return new URLSearchParams(window.location.search).get('meetId')
@@ -60,7 +94,17 @@ export const meetStore = {
         currentUrl.search = urlParams.toString();
         window.history.pushState(null, '', currentUrl)
     },
-    users: [],
+    get remoteUsers() {
+        return remoteMeetUsersMap.values()
+    },
+    set remoteUsers(value) {
+        remoteMeetUsersMap.clear()
+        value.forEach((item) => {
+            remoteMeetUsersMap.set(item.id, item)
+        })
+    },
+    removeUserFromMeet,
+    appendUserToMeet,
     sendJoinMeetRequest,
     createMeet,
     leaveMeet,

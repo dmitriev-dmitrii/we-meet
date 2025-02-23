@@ -1,0 +1,64 @@
+
+button {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 0.5em 1.25em;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+button,
+button[data-theme="default"] {
+    font-weight: 500;
+    background-color: #1a1a1a;
+}
+
+button[data-theme="primary"] {
+    /*cursor: wait;*/
+}
+
+button[data-theme="danger"] {
+    /*cursor: wait;*/
+}
+
+
+button[dat-size="sm"]
+{
+    font-size: 1.5rem;
+}
+
+button,
+button[dat-size="md"] {
+    font-size: 1.75rem;
+}
+
+button[dat-size="lg"] {
+    font-size: 2rem;
+}
+
+@media (hover: hover) {
+    button:hover {
+        border-color:var(--main-accent-color);
+    }
+}
+
+
+button:active {
+    border-color:var(--main-accent-color);
+}
+
+button:focus,
+button:focus-visible {
+    border-color:var(--main-accent-color);
+}
+
+button[data-loading="true"],
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+button[data-loading="true"] {
+    cursor: wait;
+}
+

@@ -1,0 +1,23 @@
+.remote-media-stream__status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+}
+
+.remote-media-stream__status-bar__audio-status {
+
+}
+
+.remote-media-stream__status-bar__audio-status.active {
+    color: dodgerblue;
+}
+
+.remote-media-stream__status-bar__video-status {
+
+}
+
+.remote-media-stream__status-bar__video-status.active {
+    color: dodgerblue;
+}

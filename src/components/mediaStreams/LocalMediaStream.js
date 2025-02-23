@@ -1,9 +1,10 @@
-import {useWebRtcMediaStreams} from "../features/web-rtc/useWebRtcMediaStreams.js";
-import {mediaStreams} from "../store/webRtcStore.js";
-import {localUserStore} from "../store/localUserStore.js";
-import {useWebRtcDataChannels} from "../features/web-rtc/useWebRtcDataChannels.js";
-import {DATA_CHANNELS_MESSAGE_TYPE} from "../constants/constants.js";
-import  {meetStore} from "@/store/meetStore.js";
+import {localUserStore} from "@/store/localUserStore.js";
+import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
+import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
+import {meetStore} from "@/store/meetStore.js";
+
+import mediaStreamStyles from './css/media-stream.css?inline'
+import localMediaStreamStyles from './css/local-media-stream.css?inline'
 
 const localMediaStreamTemplate = document.getElementById('local-media-stream-template');
 
@@ -13,27 +14,35 @@ const LOCAL_STREAM_ACTION_BAR_MAP = {
     AUDIO: 'audio',
 }
 
-const {sendDataChanelMessage } = useWebRtcDataChannels()
+const {sendDataChanelMessage} = useWebRtcDataChannels()
 
 export class LocalMediaStream extends HTMLElement {
-
 
     constructor() {
         super();
         this.userName = 'me'
 
-        this.attachShadow({mode: 'open'}).appendChild(
+        const shadow =   this.attachShadow({mode: 'open'})
+
+        const extraSheet = new CSSStyleSheet();
+        extraSheet.replaceSync(mediaStreamStyles + localMediaStreamStyles);
+
+        shadow.adoptedStyleSheets = [...shadow.adoptedStyleSheets, extraSheet]
+
+
+        shadow.appendChild(
             localMediaStreamTemplate.content.cloneNode(true)
         );
 
         this.videoTag = this.shadowRoot.querySelector('video')
         this.videoTag.muted = true
 
-        this.actionsBar = this.shadowRoot.querySelector('.actions-bar')
+        this.actionsBar = this.shadowRoot.querySelector('[data-role="actions-bar"]')
+
         this.audioToggleButton = this.actionsBar.querySelector('[data-action-type="audio"]')
         this.videoToggleButton = this.actionsBar.querySelector('[data-action-type="video"]')
 
-        this.userLabel = this.shadowRoot.querySelector('.user-label')
+        this.userLabel = this.shadowRoot.querySelector('[data-role="user-label"]')
 
     }
 
@@ -48,19 +57,19 @@ export class LocalMediaStream extends HTMLElement {
 
         if (actionType === LOCAL_STREAM_ACTION_BAR_MAP.LEAVE_MEET) {
 
-           meetStore.leaveMeet()
+            meetStore.leaveMeet()
 
             return;
         }
 
         if (actionType === LOCAL_STREAM_ACTION_BAR_MAP.AUDIO) {
             localUserStore.audio = !localUserStore.audio
-            localUserStore.audio ? eventTarget.classList.add('active') : eventTarget.classList.remove('active')
+            this.updateAudioStatus()
         }
 
         if (actionType === LOCAL_STREAM_ACTION_BAR_MAP.VIDEO) {
             localUserStore.video = !localUserStore.video
-            localUserStore.video ? eventTarget.classList.add('active') : eventTarget.classList.remove('active')
+            this.updateVideoStatus()
         }
 
 
@@ -76,23 +85,41 @@ export class LocalMediaStream extends HTMLElement {
 
     }
 
+    updateAudioStatus() {
+        localUserStore.audio ? this.audioToggleButton.classList.add('active') : this.audioToggleButton.classList.remove('active')
+    }
+
+    updateVideoStatus() {
+        if (localUserStore.video) {
+            this.videoToggleButton.classList.add('active')
+            this.videoTag.classList.add('active')
+            this.userLabel.classList.remove('active')
+            return
+        }
+
+        this.videoToggleButton.classList.remove('active')
+        this.videoTag.classList.remove('active')
+        this.userLabel.classList.add('active')
+
+    }
+
     async connectedCallback() {
-        this.actionsBar.addEventListener('click', this.onActionBarClick)
+        this.actionsBar.addEventListener('click', this.onActionBarClick.bind(this))
 
         this.userLabel.innerText = this.userName
 
         await localUserStore.initLocalMediaStream()
-        localUserStore.audio = false
+
         this.videoTag.srcObject = localUserStore.userStreams
 
-        localUserStore.video ? this.videoToggleButton.classList.add('active') : this.videoToggleButton.classList.remove('active')
-
-        localUserStore.audio ? this.audioToggleButton.classList.add('active') : this.audioToggleButton.classList.remove('active')
-
-
-
         await this.videoTag.play()
+
+        localUserStore.audio = false
+        this.updateVideoStatus()
+        this.updateAudioStatus()
+
     }
+
 
     disconnectedCallback() {
         console.log("Custom element removed from page.");

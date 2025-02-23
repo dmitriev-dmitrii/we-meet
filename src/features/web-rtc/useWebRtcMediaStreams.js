@@ -7,8 +7,6 @@ const mediaStreamsCallbacksMap = new Map()
 export const useWebRtcMediaStreams = () => {
 
 
-
-
     const setupMediaStreamToPeer = ({pairName, remoteUserId}) => {
 
         if (localUserStore.userStreams?.active) {

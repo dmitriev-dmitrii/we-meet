@@ -1,25 +1,12 @@
-import './style.css'
-import javascriptLogo from '/javascript.svg'
-import viteLogo from '/vite.svg'
+import '@/css/index.css'
+import adapter from "webrtc-adapter";
+import {LocalMediaStream} from "@/components/mediaStreams/LocalMediaStream.js";
+import {RemoteMediaStream} from "@/components/mediaStreams/RemoteMediaStream.js";
 
-document.querySelector('#app').innerHTML = `
-  <div>
-      <h1>Hello Vite!</h1>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-
-  </div>
-`
-
-import {LocalMediaStream} from "./components/LocalMediaStream.js";
-import {RemoteMediaStream} from "./components/RemoteMediaStream.js";
 
 customElements.define('remote-media-stream', RemoteMediaStream);
 customElements.define('local-media-stream', LocalMediaStream);
+
 
 import {
     WEB_SOCKET_EVENTS,
@@ -28,8 +15,10 @@ import {
     MEDIA_STREAMS_EVENTS
 } from "./constants/constants.js";
 
-import adapter from "webrtc-adapter";
-import {remoteMediaStreamsDomMap} from './store/webRtcStore.js'
+
+
+
+import {mediaStreams, remoteMediaStreamsDomMap} from './store/webRtcStore.js'
 import {connectToWebSocket, setupOnWsMessageCallbacks} from "./features/ws/ws.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
@@ -39,8 +28,9 @@ import {localUserStore} from "@/store/localUserStore.js";
 
 
 
-const wsOnlineClientsDom = document.getElementById('wsOnlineClientsDom');
-const connectButton = document.getElementById('connectButton');
+
+const meetForm = document.getElementById('meetForm')
+
 const webRtcChatForm = document.getElementById('webRtcChatForm');
 const webRtcChatInput = document.getElementById('webRtcChatInput');
 const webRtcChatMessages = document.getElementById('webRtcChatMessages');
@@ -76,10 +66,11 @@ const onDataChanelMessage = ({ data, type, from, pairName , }) => {
     if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_OPEN && remoteMediaStreamsDomMap.has(from)) {
         const message = `[${from}] : joined meet`
         const remoteStream =  remoteMediaStreamsDomMap.get(from)
-        remoteStream.updateAudioStatus(data.audio)
-        remoteStream.updateVideoStatus(data.video)
-        printChatMessage(message)
 
+
+        printChatMessage(message)
+        // remoteStream.updateAudioStatus(data.audio)
+        // remoteStream.updateVideoStatus(data.video)
         return
     }
 
@@ -88,8 +79,9 @@ const onDataChanelMessage = ({ data, type, from, pairName , }) => {
         const message = `[${from}] : leave meet`
         printChatMessage(message)
 
-        remoteMediaStreamsDomMap.get(from).removeMediaStreamComponent()
-        remoteMediaStreamsDomMap.delete(from)
+        //
+        // remoteMediaStreamsDomMap.get(from).removeMediaStreamComponent()
+        // remoteMediaStreamsDomMap.delete(from)
         return
     }
 
@@ -107,12 +99,12 @@ const onDataChanelMessage = ({ data, type, from, pairName , }) => {
 
 }
 const updateWsOnlineClients = ({data}) => {
-    wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
+    // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
 }
 
 const onMediaStreamTrack = (event, {pairName, remoteUserId, remoteUserName}) => {
 
-    const {streams} = event
+    const streams = mediaStreams[remoteUserId]
 
     if (remoteMediaStreamsDomMap.has(remoteUserId)) {
         return
@@ -120,6 +112,7 @@ const onMediaStreamTrack = (event, {pairName, remoteUserId, remoteUserName}) => 
 
     remoteMediaStreamsDomMap.set(remoteUserId, new RemoteMediaStream({ remoteUserName, remoteUserId, streams , pairName }))
     webRtcMediaStreams.append(remoteMediaStreamsDomMap.get(remoteUserId))
+
 }
 
 setupOnWsMessageCallbacks({
@@ -140,7 +133,9 @@ setupMediaStreamsCallbacks({
     [MEDIA_STREAMS_EVENTS.MEDIA_STREAM_ON_TRACK]: onMediaStreamTrack,
 })
 
-connectButton.onclick = async () => {
+meetForm.onsubmit = async (e) => {
+    e.preventDefault()
+
     try {
 
     await localUserStore.auth()
@@ -182,3 +177,21 @@ webRtcChatForm.addEventListener('submit', (event) => {
 
     }
 });
+
+
+// window.onbeforeunload = function( event) {
+//
+//     if (meetStore.meetId) {
+//         event.preventDefault();
+//         event.returnValue = true;
+//         return  event.returnValue;
+//     }
+//
+//
+// };
+//
+// window.onunload = function( event) {
+//     if (meetStore.meetId) {
+//         meetStore.leaveMeet()
+//     }
+// };

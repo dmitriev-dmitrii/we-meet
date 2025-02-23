@@ -1,0 +1,10 @@
+:root {
+    --main-accent-color: #646cff;
+    /*color: #535bf2; hover */
+    --main-text-color: rgba(255, 255, 255, 0.87);
+    --main-bg-color:  #242424;
+
+    --media-stream-size: 300;
+
+}
+

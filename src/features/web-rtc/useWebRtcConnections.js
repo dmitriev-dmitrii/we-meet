@@ -4,9 +4,11 @@ import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
-import {WEB_SOCKET_EVENTS} from "@/constants/constants.js";
+import {PEER_CONNECTIONS_STATE_STATUSES, WEB_SOCKET_EVENTS} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
+import {meetStore} from "@/store/meetStore.js";
 
+const DISCONNECTED_STATE_STATUSES = [ PEER_CONNECTIONS_STATE_STATUSES.FAILED ,PEER_CONNECTIONS_STATE_STATUSES.CLOSED , PEER_CONNECTIONS_STATE_STATUSES.DISCONNECTED ]
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
     // пусть имя хоста будет первым - проще для дебагинга
     return isHostPeer ? `[${localUserStore.userId}][${remoteUserId}]` : `[${remoteUserId}][${localUserStore.userId}]`
@@ -26,6 +28,8 @@ export const useWebRtcConnections = () => {
     const createPeerConnection = async ({pairName, isHost, remoteUserId}) => {
 
         peerConnections[pairName] = new RTCPeerConnection(configuration);
+
+        peerConnections[pairName].oniceconnectionstatechange = onIceConnectionStateChange.bind({ remoteUserId, pairName })
 
         setupMediaStreamToPeer({pairName, remoteUserId})
 
@@ -61,7 +65,21 @@ export const useWebRtcConnections = () => {
 
         sendWebSocketMessage(payload)
     }
+    function onIceConnectionStateChange(event) {
 
+        const status = event.target.iceConnectionState
+
+        if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTED){
+            // meetStore.appendUserToMeet()
+            return
+        }
+
+        if (DISCONNECTED_STATE_STATUSES.includes(status)) {
+            const{remoteUserId , pairName} = this
+            meetStore.removeUserFromMeet({ remoteUserId , pairName })
+        }
+
+    }
 
     const sendMeOffer = async () => {
         const payload = {

@@ -14,7 +14,7 @@ export const localUserStore = {
 
         localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         //cb navigator.mediaDevices.ondevicechange TODO
-        // TODO mani input device - select?
+        //TODO many media input device - select?
 
         return localUserStore.userStreams
     },

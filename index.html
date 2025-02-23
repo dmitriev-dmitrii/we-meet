@@ -1,94 +1,94 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>We Meet</title>
-  </head>
-  <body style="display: flex; flex-direction: column;">
-    <div id="app"></div>
-    <h1 style="text-align: center">Web-RTC connection </h1>
+</head>
+<body>
 
-    <h2>wsOnlineClients : <span id="wsOnlineClientsDom"></span></h2>
+<div id="app">
 
-    <template id="local-media-stream-template">
-      <div class="user-label"></div>
-      <video></video>
-      <div class="actions-bar">
-
-        <button class="actions-bar__audio" data-action-type="audio"> audio</button>
-
-        <button class="actions-bar__video" data-action-type="video"> video</button>
-
-        <button class="actions-bar__leave-meet" data-action-type="leave-meet"> leave meet</button>
-      </div>
-
-      <style>
-        .actions-bar__audio {
-
-        }
-
-        .actions-bar__audio.active {
-          color: dodgerblue;
-        }
-
-        .actions-bar__video {
-
-        }
-
-        .actions-bar__video.active {
-          color: dodgerblue;
-        }
-      </style>
-    </template>
-
-    <template id="remote-media-stream-template">
-      <div class="user-label"></div>
-      <video></video>
-      <div class="status-bar">
-        <div class="status-bar__audio">
-          audio
-        </div>
-        <div class="status-bar__video">
-          video
-        </div>
-      </div>
-      <style>
-        .status-bar__video {
-
-        }
-
-        .status-bar__video.active {
-          color: dodgerblue;
-        }
-
-        .status-bar__audio {
-
-        }
-
-        .status-bar__audio.active {
-          color: dodgerblue;
-        }
-      </style>
-    </template>
-
-    <button id="connectButton"> connectButton</button>
-
-    <div id="webRtc">
-
-      <div id="webRtcMediaStreams">
+    <div id="webRtcMediaStreams">
         <local-media-stream/>
-      </div>
-
-      <div id="webRtcChatWrapper">
-        <ul id="webRtcChatMessages"></ul>
-        <form id="webRtcChatForm">
-          <input type="text" id="webRtcChatInput" placeholder="Введите сообщение" required/>
-          <button type="submit">Отправить</button>
-        </form>
-      </div>
     </div>
-    <script type="module" src="/src/index.js"></script>
-  </body>
+
+    <div id="appForms">
+        <form id="meetForm">
+            <label>
+                userName
+                <input type="text">
+            </label>
+
+            <button type="submit" id="connectButton">
+                create meet / join meet
+            </button>
+
+            <button type="button">
+                copy meet link
+            </button>
+
+        </form>
+
+        <div>
+            <ul id="webRtcChatMessages"></ul>
+            <form id="webRtcChatForm">
+                <input type="text" id="webRtcChatInput" placeholder="Введите сообщение" required/>
+                <button type="submit">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<template id="local-media-stream-template">
+
+    <div class="media-stream">
+
+        <div class="media-stream__user-name-label active" data-role="user-label"></div>
+
+        <video class="media-stream__video"></video>
+
+        <div class="local-media-stream__actions-bar" data-role="actions-bar">
+
+            <button class="local-media-stream__actions-bar__audio-toggle" data-action-type="audio"> audio</button>
+
+            <button class="local-media-stream__actions-bar__video-toggle" data-action-type="video"> video</button>
+
+            <button class="local-media-stream__actions-bar__leave-meet" data-action-type="leave-meet"> leave meet
+            </button>
+        </div>
+    </div>
+</template>
+
+
+
+
+<template id="remote-media-stream-template">
+
+    <div class="media-stream">
+
+        <div class="media-stream__user-name-label active" data-role="user-label"></div>
+
+        <video class="media-stream__video"></video>
+
+        <div class="remote-media-stream__status-bar" data-role="status-bar">
+
+            <button class="remote-media-stream__status-bar__audio-status" data-status-type="audio"> audio</button>
+
+            <button class="remote-media-stream__status-bar__video-status" data-status-type="video"> video</button>
+
+        </div>
+
+    </div>
+
+    <style>
+
+
+    </style>
+</template>
+
+
+<script type="module" src="/src/index.js"></script>
+</body>
 </html>

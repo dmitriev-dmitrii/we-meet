@@ -1,7 +1,8 @@
+import {peerConnections} from "@/store/webRtcStore.js";
+
 export const WEB_SOCKET_EVENTS = {
     'WS_CONNECTION': 'ws-connection',
     'WS_CLOSE': 'ws-close',
-
 
     'RTC_OFFER': '1',
     'RTC_SEND_ME_OFFER': '2',
@@ -23,4 +24,11 @@ export const DATA_CHANNELS_MESSAGE_TYPE = {
 export const MEDIA_STREAMS_EVENTS = {
     'MEDIA_STREAM_ON_TRACK': 'ontrack',
 
+}
+
+export const PEER_CONNECTIONS_STATE_STATUSES = {
+    CONNECTED: "connected",
+    DISCONNECTED: "disconnected",
+    FAILED: "failed",
+    CLOSED: "closed",
 }

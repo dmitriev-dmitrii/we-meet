@@ -1,5 +1,4 @@
-import { fileURLToPath, URL } from 'node:url'
-
+import {fileURLToPath, URL} from 'node:url'
 import {defineConfig, loadEnv} from 'vite'
 
 // https://vitejs.dev/config/
@@ -10,19 +9,18 @@ const {VITE_APP_PORT } =    loadEnv(mode, process.cwd());
 
 const  publicPath = mode === "production" ? "/we-meet-frontend/" : "/"
 
-const config = {
-    server: {
-        port: parseInt(VITE_APP_PORT,10),
-    },
-    plugins: [],
-    resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  },
-    base: publicPath,
-}
+ return {
+     server: {
+         port: parseInt(VITE_APP_PORT, 10),
+     },
+     plugins: [
 
-
- return config
+     ],
+     resolve: {
+         alias: {
+             '@': fileURLToPath(new URL('./src', import.meta.url))
+         }
+     },
+     base: publicPath,
+ }
 })
