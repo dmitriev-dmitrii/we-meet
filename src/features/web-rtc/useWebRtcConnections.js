@@ -4,11 +4,13 @@ import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
-import {PEER_CONNECTIONS_STATE_STATUSES, WEB_SOCKET_EVENTS} from "@/constants/constants.js";
+import {
+    DISCONNECTED_STATE_STATUSES,
+    PEER_CONNECTIONS_STATE_STATUSES,
+    WEB_SOCKET_EVENTS
+} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {meetStore} from "@/store/meetStore.js";
-
-const DISCONNECTED_STATE_STATUSES = [PEER_CONNECTIONS_STATE_STATUSES.FAILED, PEER_CONNECTIONS_STATE_STATUSES.CLOSED, PEER_CONNECTIONS_STATE_STATUSES.DISCONNECTED]
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
     // пусть имя хоста будет первым - проще для дебагинга
     return isHostPeer ? `[${localUserStore.userId}][${remoteUserId}]` : `[${remoteUserId}][${localUserStore.userId}]`
@@ -69,6 +71,7 @@ export const useWebRtcConnections = () => {
     function onIceConnectionStateChange(event) {
 
         const status = event.target.iceConnectionState
+        console.log(status)
         const { remoteUserId, pairName } = this
 
         if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTED) {
@@ -175,7 +178,6 @@ export const useWebRtcConnections = () => {
         }
 
         delete peerConnections[pairName]
-
     }
 
     return {

@@ -1,6 +1,6 @@
 import {meetApi} from "@/api/meetApi.js";
 import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
-import {mediaStreams, remoteMediaStreamsDomMap} from "@/store/webRtcStore.js";
+import {mediaStreams, peerConnections, remoteMediaStreamsDomMap} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {closeWebSocket} from "@/features/ws/ws.js";
@@ -46,47 +46,31 @@ const sendJoinMeetRequest = async () => {
     // TODO  feature check   password
 }
 const leaveMeet = () => {
-
-    const payload = {
-        type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_CLOSE,
-        data: {
-            //TODO reason
-        }
-    }
-
-    sendDataChanelMessage(payload)
-
-    remoteMediaStreamsDomMap.forEach((item) => {
-        item.removeMediaStreamComponent()
+    meetStore.remoteUsers.forEach((item) => {
+        removeUserFromMeet(item)
     })
-
-    remoteMediaStreamsDomMap.clear()
-    remoteMeetUsersMap.clear()
-
-    meetStore.meetId = ''
-
     closeWebSocket()
+    meetStore.meetId = ''
 }
 
 const appendUserToMeet = (payload) => {
 
-    const { remoteUserName, remoteUserId, pairName } = payload
+    const {remoteUserName, remoteUserId, pairName} = payload
 
     remoteMeetUsersMap.set(remoteUserId, payload)
-
 
 
     if (remoteMediaStreamsDomMap.has(remoteUserId)) {
         return
     }
     const streams = mediaStreams[remoteUserId]
-    remoteMediaStreamsDomMap.set(remoteUserId, new RemoteMediaStream({ remoteUserName, remoteUserId, streams , pairName }))
+    remoteMediaStreamsDomMap.set(remoteUserId, new RemoteMediaStream({remoteUserName, remoteUserId, streams, pairName}))
     webRtcMediaStreams.append(remoteMediaStreamsDomMap.get(remoteUserId))
 
 }
 
-const removeUserFromMeet = ({remoteUserId , pairName }) => {
-    remoteMeetUsersMap.delete(remoteUserId)
+const removeUserFromMeet = ({remoteUserId, pairName}) => {
+
 
     deleteMediaStream(remoteUserId)
     deleteDataChanel(pairName)
@@ -94,6 +78,7 @@ const removeUserFromMeet = ({remoteUserId , pairName }) => {
 
     remoteMediaStreamsDomMap.get(remoteUserId).removeMediaStreamComponent()
     remoteMediaStreamsDomMap.delete(remoteUserId)
+    remoteMeetUsersMap.delete(remoteUserId)
 }
 
 
