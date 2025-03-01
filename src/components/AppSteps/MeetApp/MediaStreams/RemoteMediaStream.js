@@ -7,10 +7,6 @@ import remoteMediaStreamStyles from './css/remote-media-stream.css?inline'
 import {meetStore} from "@/store/meetStore.js";
 
 const remoteMediaStreamTemplate = document.getElementById('remote-media-stream-template');
-
-
-
-
 export class RemoteMediaStream extends HTMLElement {
 
     remoteUserName = '';
@@ -46,7 +42,6 @@ export class RemoteMediaStream extends HTMLElement {
         this.userLabel.innerText = this.remoteUserName || this.remoteUserId
 
     }
-
     async connectedCallback() {
         this.videoTag.srcObject = this.streams[0]
         await this.videoTag.play()

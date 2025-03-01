@@ -39,8 +39,9 @@ export class LocalMediaStream extends HTMLElement {
 
         this.actionsBar = this.shadowRoot.querySelector('[data-role="actions-bar"]')
 
-        this.audioToggleButton = this.actionsBar.querySelector('[data-action-type="audio"]')
-        this.videoToggleButton = this.actionsBar.querySelector('[data-action-type="video"]')
+        this.audioToggleButton = this.actionsBar.querySelector(`[data-action-type="${LOCAL_STREAM_ACTION_BAR_MAP.AUDIO}"]`)
+        this.videoToggleButton = this.actionsBar.querySelector(`[data-action-type="${LOCAL_STREAM_ACTION_BAR_MAP.VIDEO}"]`)
+        this.leaveMeetButton = this.actionsBar.querySelector(`[data-action-type="${LOCAL_STREAM_ACTION_BAR_MAP.LEAVE_MEET}"]`)
 
         this.userLabel = this.shadowRoot.querySelector('[data-role="user-label"]')
 
@@ -104,6 +105,11 @@ export class LocalMediaStream extends HTMLElement {
     }
 
     async connectedCallback() {
+
+        if (!meetStore.meetId) {
+            this.leaveMeetButton.hidden = true
+        }
+
         this.actionsBar.addEventListener('click', this.onActionBarClick.bind(this))
 
         this.userLabel.innerText = this.userName

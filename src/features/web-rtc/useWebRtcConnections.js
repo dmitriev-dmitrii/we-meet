@@ -1,4 +1,4 @@
-import {sendWebSocketMessage} from "../ws/ws.js";
+import {sendWebSocketMessage} from "../ws.js";
 
 import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";

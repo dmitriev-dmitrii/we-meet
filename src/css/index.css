@@ -1,6 +1,7 @@
 @import "reset-css";
 @import "vars.css";
 @import "button.css";
+@import "input-text.css";
 
 *{
   box-sizing: border-box;
@@ -23,32 +24,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#app {
-  font-size: 1.5rem;
-  width: 100%;
-  height: 100%;
-  margin: auto;
-  padding: 1rem;
-
-  display: flex;
-  align-items: center;
-
-  transition: all .3s;
-}
-
-#webRtcMediaStreams {
-  width: 100%;
-  display: flex;
-  margin: -.5rem;
-  padding: .5rem;
-}
 
 
 
-#appForms {
-  max-width: 30%;
-}
-
-#app.meet {
-
-}

@@ -1,10 +1,19 @@
 :root {
-    --main-accent-color: #646cff;
+    --main-accent-color: rgba(100, 108, 255, 0.67);
     /*color: #535bf2; hover */
     --main-text-color: rgba(255, 255, 255, 0.87);
     --main-bg-color:  #242424;
 
-    --media-stream-size: 300;
+    /*--color-primary: #007BFF;      !* Основной цвет интерфейса *!*/
+    /*--color-secondary: #6C757D;    !* Вторичный цвет, часто для акцентов *!*/
+    /*--color-accent: #F0AD4E;       !* Цвет акцента, например, кнопки или ссылок *!*/
+
+    /*--color-text: #333333;         !* Основной цвет текста *!*/
+
+    /*--color-error: #DC3545;        !* Цвет ошибок *!*/
+    /*--color-success: #28A745;      !* Цвет успешных операций *!*/
+
+    /*--media-stream-size: 300;*/
 
 }
 

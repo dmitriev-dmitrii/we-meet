@@ -1,0 +1,16 @@
+@import "@/css/button.css";
+@import "@/css/input-text.css";
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+}
+
+label span {
+    font-size: 1.4rem;
+}

@@ -1,20 +1,23 @@
 
-button {
+button
+{
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 0.5em 1.25em;
     cursor: pointer;
-    transition: border-color 0.25s;
+    transition: border-color 0.25s , opacity 0.25s;
+    overflow: hidden;
 }
+
 
 button,
 button[data-theme="default"] {
-    font-weight: 500;
     background-color: #1a1a1a;
 }
 
 button[data-theme="primary"] {
-    /*cursor: wait;*/
+    background-color :var(--main-accent-color);
+    font-weight: bold;
 }
 
 button[data-theme="danger"] {
@@ -22,22 +25,24 @@ button[data-theme="danger"] {
 }
 
 
-button[dat-size="sm"]
+button[data-size="sm"]
 {
     font-size: 1.5rem;
 }
 
 button,
-button[dat-size="md"] {
+button[data-size="md"] {
     font-size: 1.75rem;
 }
 
-button[dat-size="lg"] {
+button[data-size="lg"] {
     font-size: 2rem;
 }
 
 @media (hover: hover) {
-    button:hover {
+    button:hover,
+    button :not([data-loading="true"])
+    {
         border-color:var(--main-accent-color);
     }
 }
@@ -52,13 +57,38 @@ button:focus-visible {
     border-color:var(--main-accent-color);
 }
 
-button[data-loading="true"],
-button:disabled {
+button:disabled,
+button[data-loading="true"]
+{
     cursor: not-allowed;
-    pointer-events: none;
+    user-select: none;
+    opacity: 0.7;
 }
 
 button[data-loading="true"] {
     cursor: wait;
+    position: relative;
+}
+
+
+button[data-loading="false"]:after {
+    opacity: 0;
+    transition: 0.3s opacity;
+}
+
+
+button[data-loading="true"]:after {
+    content: 'loading...';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
 }
 

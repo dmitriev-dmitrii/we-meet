@@ -1,39 +1,37 @@
 import '@/css/index.css'
 import adapter from "webrtc-adapter";
-import {LocalMediaStream} from "@/components/mediaStreams/LocalMediaStream.js";
-import {RemoteMediaStream} from "@/components/mediaStreams/RemoteMediaStream.js";
+import {LocalMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/LocalMediaStream.js";
+import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/RemoteMediaStream.js";
+import {JoinMeetForm} from "@/components/AppSteps/JoinMeetForm/JoinMeetForm.js";
+import {CreateMeetForm} from "@/components/AppSteps/CreateMeetForm/CreateMeetForm.js";
 
-
-customElements.define('remote-media-stream', RemoteMediaStream);
-customElements.define('local-media-stream', LocalMediaStream);
-
+import {remoteMediaStreamsDomMap} from './store/webRtcStore.js'
+import {setupOnWsMessageCallbacks} from "./features/ws.js";
+import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
+import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
 
 import {
     WEB_SOCKET_EVENTS,
     DATA_CHANNELS_EVENTS,
     DATA_CHANNELS_MESSAGE_TYPE,
 } from "./constants/constants.js";
-
-
-
-
-import { remoteMediaStreamsDomMap} from './store/webRtcStore.js'
-import {connectToWebSocket, setupOnWsMessageCallbacks} from "./features/ws/ws.js";
-import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
-import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
 import {meetStore} from "@/store/meetStore.js";
-import {localUserStore} from "@/store/localUserStore.js";
+import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
+import {MeetApp} from "@/components/AppSteps/MeetApp/MeetApp.js";
 
-const meetForm = document.getElementById('meetForm')
+customElements.define('remote-media-stream', RemoteMediaStream);
+customElements.define('local-media-stream', LocalMediaStream);
+
+customElements.define('join-meet-form', JoinMeetForm);
+customElements.define('create-meet-form', CreateMeetForm);
+customElements.define('meet-app', MeetApp);
+
 
 const webRtcChatForm = document.getElementById('webRtcChatForm');
 const webRtcChatInput = document.getElementById('webRtcChatInput');
 const webRtcChatMessages = document.getElementById('webRtcChatMessages');
-const webRtcMediaStreams = document.getElementById('webRtcMediaStreams');
-
 
 const {
-    sendMeOffer,
     createPeerOffer,
     confirmPeerOffer,
     setupPeerAnswer,
@@ -52,7 +50,7 @@ const printChatMessage = (message) => {
     listItem.innerText = message
     webRtcChatMessages.append(listItem)
 }
-const onDataChanelMessage = ({ data, type, from, pairName , }) => {
+const onDataChanelMessage = ({data, type, from, pairName,}) => {
 
     if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE && remoteMediaStreamsDomMap.has(from)) {
 
@@ -89,25 +87,6 @@ setupDataChannelCallbacks({
     [DATA_CHANNELS_EVENTS.DATA_CHANEL_ON_MESSAGE]: onDataChanelMessage,
 })
 
-
-meetForm.onsubmit = async (e) => {
-    e.preventDefault()
-
-    try {
-
-    await localUserStore.auth()
-
-    meetStore.meetId ? await  meetStore.sendJoinMeetRequest()  : await meetStore.createMeet()
-    await  connectToWebSocket()
-    await sendMeOffer()
-
-    }
-    catch(e) {
-        console.log(e)
-        alert( e.status +' '+ e.message )
-    }
-}
-
 webRtcChatForm.addEventListener('submit', (event) => {
     // TODO в компонент
     try {
@@ -134,6 +113,21 @@ webRtcChatForm.addEventListener('submit', (event) => {
 
     }
 });
+
+const {setStep} = useAppSteps();
+
+(function ()  {
+
+    const meetIdParams = new URLSearchParams(window.location.search).get('meetId')
+
+    if (meetIdParams) {
+        meetStore.meetId = meetIdParams
+        setStep(APP_STEPS.JOIN_MEET_STEP)
+        return
+    }
+
+    setStep(APP_STEPS.CREATE_MEET_STEP)
+})()
 
 
 // window.onbeforeunload = function( event) {

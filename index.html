@@ -7,39 +7,92 @@
 </head>
 <body>
 
-<div id="app">
+<create-meet-form></create-meet-form>
+<join-meet-form></join-meet-form>
+<meet-app></meet-app>
 
-    <div id="webRtcMediaStreams">
-        <local-media-stream/>
-    </div>
+<!--    <div id="webRtcMediaStreams">-->
+<!--        <local-media-stream></local-media-stream>-->
+<!--    </div>-->
 
-    <div id="appForms">
-        <form id="meetForm">
-            <label>
-                userName
-                <input type="text">
-            </label>
+<div style="display: none">
+    <ul id="webRtcChatMessages"></ul>
+    <form id="webRtcChatForm">
+            <input type="text" id="webRtcChatInput" placeholder="Введите сообщение" required/>
+            <button type="submit">Отправить</button>
+    </form>
+ </div>
 
-            <button type="submit" id="connectButton">
-                create meet / join meet
-            </button>
 
-            <button type="button">
-                copy meet link
-            </button>
+<template id="meetAppTemplate">
 
-        </form>
+    <div class="meet-app">
+
+        <div class="media-streams">
+
+        </div>
 
         <div>
-            <ul id="webRtcChatMessages"></ul>
-            <form id="webRtcChatForm">
-                <input type="text" id="webRtcChatInput" placeholder="Введите сообщение" required/>
-                <button type="submit">Отправить</button>
-            </form>
+            form
         </div>
     </div>
 
-</div>
+</template>
+
+
+<template id="joinMeetFormTemplate">
+
+    <form>
+        <label>
+            <span>write you name if y wont</span>
+            <input type="text" data-input-type="user-name" placeholder="you name">
+        </label>
+
+        <label>
+            <span>this is private meet , enter password</span>
+            <input type="text"  data-input-type="meet-password" placeholder="password">
+        </label>
+
+        <button type="submit">
+            join meet
+        </button>
+
+    </form>
+
+</template>
+
+<template id="createMeetFormTemplate">
+<fieldset>
+    <legend><h1>We Meet</h1></legend>
+    <form>
+        <label>
+            <span>write you name if y wont</span>
+            <input type="text" data-size="lg" data-input-type="user-name" placeholder="you name">
+        </label>
+
+        <label>
+            <span>enter password if you want to create private meet </span>
+            <input type="text" data-size="lg"  data-input-type="meet-password" placeholder="password">
+        </label>
+
+        <div data-role="actions-bar">
+
+            <button data-size="lg" type="submit" data-theme="primary" data-action-type="create-meet" siz>
+                create meet
+            </button>
+
+            <button data-size="lg" type="button" data-action-type="copy-meet-link">
+                copy meet link
+            </button>
+
+            <button data-size="lg" type="button" data-theme="primary" data-action-type="go-to-meet">
+                to meet =>
+            </button>
+
+        </div>
+    </form>
+</fieldset>
+</template>
 
 <template id="local-media-stream-template">
 
@@ -53,16 +106,13 @@
 
             <button class="local-media-stream__actions-bar__audio-toggle" data-action-type="audio"> audio</button>
 
-            <button class="local-media-stream__actions-bar__video-toggle" data-action-type="video"> video</button>
+            <button class="local-media-stream__actions-bar__video-toggle hui" data-action-type="video"> video</button>
 
-            <button class="local-media-stream__actions-bar__leave-meet" data-action-type="leave-meet"> leave meet
+            <button class="local-media-stream__actions-bar__leave-meet " data-action-type="leave-meet"> leave meet
             </button>
         </div>
     </div>
 </template>
-
-
-
 
 <template id="remote-media-stream-template">
 
@@ -87,7 +137,6 @@
 
     </style>
 </template>
-
 
 <script type="module" src="/src/index.js"></script>
 </body>
