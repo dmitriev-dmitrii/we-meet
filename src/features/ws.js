@@ -4,7 +4,7 @@ import {meetStore} from "@/store/meetStore.js";
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
 
 const onMessageHandlers = new Map()
-
+//TODO переписать на use
 export const sendWebSocketMessage = (payload) => {
     socket.send(JSON.stringify(payload))
 }
