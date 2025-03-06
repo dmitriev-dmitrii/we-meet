@@ -1,27 +1,23 @@
-import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
-import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
-
 import mediaStreamStyles from './css/media-stream.css?inline'
 import remoteMediaStreamStyles from './css/remote-media-stream.css?inline'
+import {mediaStreams} from "@/store/webRtcStore.js";
+import {MEDIA_TRACK_KIND} from "@/constants/constants.js";
 import {meetStore} from "@/store/meetStore.js";
 
 const remoteMediaStreamTemplate = document.getElementById('remote-media-stream-template');
+
 export class RemoteMediaStream extends HTMLElement {
 
     remoteUserName = '';
-    pairName = ''
 
     streams = []
 
-    constructor({remoteUserName = '', remoteUserId = '', streams = [], pairName} = {}) {
+    constructor({remoteUserId = ''}) {
         super();
 
         this.remoteUserId = remoteUserId
-        this.remoteUserName = remoteUserName || remoteUserId
-        this.pairName = pairName
+        this.remoteUserName = ''
 
-        this.streams = streams
 
         const shadow = this.attachShadow({mode: 'open'})
 
@@ -34,17 +30,30 @@ export class RemoteMediaStream extends HTMLElement {
             remoteMediaStreamTemplate.content.cloneNode(true)
         );
 
-        this.videoTag = this.shadowRoot.querySelector('video')
-        this.audioStatus = this.shadowRoot.querySelector('[data-status-type="audio"]')
-        this.videoStatus = this.shadowRoot.querySelector('[data-status-type="video"]')
-        this.userLabel = this.shadowRoot.querySelector('[data-role="user-label"]')
-
-        this.userLabel.innerText = this.remoteUserName || this.remoteUserId
-
+        this.videoTagElement = this.shadowRoot.querySelector('video')
+        this.audioStatusButton = this.shadowRoot.querySelector('[data-status-type="audio"]')
+        this.videoStatusButton = this.shadowRoot.querySelector('[data-status-type="video"]')
+        this.userLabelElement = this.shadowRoot.querySelector('[data-role="user-label"]')
     }
+
     async connectedCallback() {
-        this.videoTag.srcObject = this.streams[0]
-        await this.videoTag.play()
+
+        this.remoteUserName = this.remoteUserId
+        this.userLabelElement.innerText = this.remoteUserName
+
+
+        const userStreams = mediaStreams.get(this.remoteUserId)
+
+        const [videoStream] = userStreams[MEDIA_TRACK_KIND.VIDEO].streams
+
+        this.videoTagElement.srcObject = videoStream
+
+        await this.videoTagElement.play()
+
+        const {audio, video} = meetStore.remoteMeetUsersMap.get(this.remoteUserId)
+
+        this.updateVideoStatus(video)
+        this.updateAudioStatus(audio)
 
     }
 
@@ -62,30 +71,29 @@ export class RemoteMediaStream extends HTMLElement {
     }
 
     updateAudioStatus(val = false) {
-        val ? this.audioStatus.classList.add('active') : this.audioStatus.classList.remove('active')
-
+        val ? this.audioStatusButton.classList.add('active') : this.audioStatusButton.classList.remove('active')
     }
 
     updateVideoStatus(val = false) {
-
         if (val) {
 
-            this.videoStatus.classList.add('active')
-            this.videoTag.classList.add('active')
+            this.videoStatusButton.classList.add('active')
+            this.videoTagElement.classList.add('active')
 
-            this.userLabel.classList.remove('active')
+            this.userLabelElement.classList.remove('active')
             return
         }
 
-        this.videoStatus.classList.remove('active')
-        this.videoTag.classList.remove('active')
-        this.userLabel.classList.add('active')
+        this.videoStatusButton.classList.remove('active')
+        this.videoTagElement.classList.remove('active')
+
+        this.userLabelElement.classList.add('active')
     }
 
     removeMediaStreamComponent() {
         this.classList.add('remove');
-        this.videoTag.muted = true
-        this.videoTag.pause()
+        this.videoTagElement.muted = true
+        this.videoTagElement.pause()
 
         setTimeout(() => {
             this.remove();

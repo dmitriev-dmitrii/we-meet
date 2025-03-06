@@ -5,7 +5,6 @@ import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/Remo
 import {JoinMeetForm} from "@/components/AppSteps/JoinMeetForm/JoinMeetForm.js";
 import {CreateMeetForm} from "@/components/AppSteps/CreateMeetForm/CreateMeetForm.js";
 
-import {remoteMediaStreamsDomMap} from './store/webRtcStore.js'
 import {setupOnWsMessageCallbacks} from "./features/ws.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
@@ -36,13 +35,11 @@ const {
     confirmPeerOffer,
     setupPeerAnswer,
     updatePeerIceCandidate,
-
 } = useWebRtcConnections()
 
 const {
     sendDataChanelMessage,
     setupDataChannelCallbacks,
-
 } = useWebRtcDataChannels()
 
 const printChatMessage = (message) => {
@@ -50,12 +47,14 @@ const printChatMessage = (message) => {
     listItem.innerText = message
     webRtcChatMessages.append(listItem)
 }
-const onDataChanelMessage = ({data, type, from, pairName,}) => {
+const onDataChanelMessage = (payload) => {
 
-    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE && remoteMediaStreamsDomMap.has(from)) {
+    const {data, type, from, pairName} = payload
 
-        remoteMediaStreamsDomMap.get(from).updateVideoStatus(data.video)
-        remoteMediaStreamsDomMap.get(from).updateAudioStatus(data.audio)
+    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE) {
+
+        meetStore.updateRemoteUserMediaTrackState({ remoteUserId:from , ...data})
+
         return;
     }
 

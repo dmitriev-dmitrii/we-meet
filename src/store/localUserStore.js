@@ -68,5 +68,9 @@ export const localUserStore = {
       const {data} =   await usersApi.userAuth(payload)
         localUserStore.userName = data.userName
         localUserStore.userId = data.userId
+    },
+
+    hui : ()=>{
+
     }
 }

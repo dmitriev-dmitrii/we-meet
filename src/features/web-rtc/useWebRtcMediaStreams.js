@@ -9,23 +9,28 @@ export const useWebRtcMediaStreams = () => {
         }
 
         peerConnections[pairName].ontrack = function (e) {
-            mediaStreams[remoteUserId] = e.streams
+
+            const streamPayload = {
+                ...mediaStreams.get(remoteUserId),
+                ...{[e.track.kind]: e}
+            }
+
+            mediaStreams.set(remoteUserId, streamPayload)
         }
     }
 
     const deleteMediaStream = (remoteUserId) => {
 
-        if (mediaStreams[remoteUserId]) {
-            mediaStreams[remoteUserId].forEach((stream) => {
+        if (mediaStreams.has(remoteUserId)) {
+            // TODO  надо ли останавилвать медиа потоки
+            mediaStreams.get(remoteUserId).forEach((stream) => {
                 stream.getTracks().forEach((track) => {
                     track.stop()
                 })
             })
         }
 
-
-        delete mediaStreams[remoteUserId]
-
+        mediaStreams.delete(remoteUserId)
     }
 
     return {

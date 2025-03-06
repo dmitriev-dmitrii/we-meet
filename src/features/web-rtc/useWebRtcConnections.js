@@ -11,6 +11,7 @@ import {
 } from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {meetStore} from "@/store/meetStore.js";
+
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
     // пусть имя хоста будет первым - проще для дебагинга
     return isHostPeer ? `[${localUserStore.userId}][${remoteUserId}]` : `[${remoteUserId}][${localUserStore.userId}]`
@@ -29,25 +30,34 @@ export const useWebRtcConnections = () => {
 
     const createPeerConnection = async ({pairName, isHost, remoteUserId}) => {
 
-        peerConnections[pairName] = new RTCPeerConnection(configuration);
+        try {
 
-        peerConnections[pairName].oniceconnectionstatechange = onIceConnectionStateChange.bind({remoteUserId, pairName})
+            peerConnections[pairName] = new RTCPeerConnection(configuration);
 
-        setupMediaStreamToPeer({pairName, remoteUserId})
+            peerConnections[pairName].oniceconnectionstatechange = onIceConnectionStateChange.bind({
+                remoteUserId,
+                pairName
+            })
 
-        if (isHost) {
-            const channel = await peerConnections[pairName].createDataChannel(pairName);
+            setupMediaStreamToPeer({pairName, remoteUserId})
 
-            setupDataChanelEvents({pairName, channel})
-        } else {
-            peerConnections[pairName].ondatachannel = (event) => {
-                const {channel} = event
+            if (isHost) {
+                const channel = await peerConnections[pairName].createDataChannel(pairName);
 
                 setupDataChanelEvents({pairName, channel})
-            }
-        }
+            } else {
+                peerConnections[pairName].ondatachannel = (event) => {
+                    const {channel} = event
 
-        return peerConnections[pairName]
+                    setupDataChanelEvents({pairName, channel})
+                }
+            }
+
+            return peerConnections[pairName]
+        } catch (e) {
+            console.log('createPeerConnection err', e)
+            alert(e)
+        }
     }
 
     function onIceCandidate(event) {
@@ -71,16 +81,15 @@ export const useWebRtcConnections = () => {
     function onIceConnectionStateChange(event) {
 
         const status = event.target.iceConnectionState
-        console.log(status)
-        const { remoteUserId, pairName } = this
+        const {remoteUserId, pairName} = this
 
         if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTED) {
-            meetStore.appendUserToMeet({ remoteUserId, pairName })
+            meetStore.appendUserToMeet({remoteUserId, pairName})
             return
         }
 
         if (DISCONNECTED_STATE_STATUSES.includes(status)) {
-            meetStore.removeUserFromMeet({ remoteUserId, pairName })
+            meetStore.removeUserFromMeet({remoteUserId, pairName})
         }
 
     }

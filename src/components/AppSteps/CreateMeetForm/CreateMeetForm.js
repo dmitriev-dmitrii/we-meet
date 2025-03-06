@@ -123,7 +123,7 @@ export class CreateMeetForm extends HTMLElement {
         }
     }
     copyMeetHref() {
-        console.log(window.location.href)
+        console.log('copyMeetHref', window.location.href)
     }
 
     onSubmitForm = async (e) => {

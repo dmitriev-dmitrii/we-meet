@@ -13,7 +13,6 @@ export class TrackedMap  extends Map {
 
         return    new Proxy( this , {
             get: (target, propKey, mapReceiver) => {
-
                 if (this._changeMapMethods.includes(propKey)) {
 
                     this._callbacksSet.forEach((item)=> {
@@ -37,7 +36,6 @@ export class TrackedMap  extends Map {
 
     // Метод для удаления колбэка
     unSubscribe = (callback) => {
-        console.log('unSubscribe called')
         return  this._callbacksSet.delete(callback)
     }
 
