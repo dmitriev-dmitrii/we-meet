@@ -9,12 +9,12 @@ fieldset {
     margin: 0 auto;
     border-radius: 8px;
     padding: 1.5rem ;
-    border: 1px solid rgba(0,0,0,0);
-    transition: border-color 0.5s 1s ease ;
+    /*border: 1px solid rgba(0,0,0,0);*/
+    /*transition: border-color 0.5s 1s ease ;*/
 }
 
 fieldset.mounted {
-    border-color:  currentColor;
+    /*border-color:  currentColor;*/
 }
 
 legend {
@@ -22,30 +22,30 @@ legend {
     white-space: nowrap;
     text-align: center;
     font-weight: bold;
-    font-size: 6rem;
-    letter-spacing: -10rem;
-    transition: letter-spacing 0.5s 0.5s ease, opacity 0.3s 0.5s linear , font-size 0.3s 1.3s ;
-    opacity: 0;
+    /*font-size: 6rem;*/
+    /*letter-spacing: -10rem;*/
+    /*transition: letter-spacing 0.5s 0.5s ease, opacity 0.3s 0.5s linear , font-size 0.3s 1.3s ;*/
+    /*opacity: 0;*/
 }
 
-legend.mounted {
-    font-size: 2rem;
-    letter-spacing: 0;
-    opacity: 1;
-}
+/*legend.mounted {*/
+/*    font-size: 2rem;*/
+/*    letter-spacing: 0;*/
+/*    opacity: 1;*/
+/*}*/
 
 form {
     display: flex;
     flex-direction: column;
-    transition: max-height  0.5s 1s ease , opacity  0.3s 1s ease  ;
+    /*transition: max-height  0.5s 1s ease , opacity  0.3s 1s ease  ;*/
     overflow: hidden;
-    max-height: 0;
-    opacity: 0;
+    /*max-height: 0;*/
+    /*opacity: 0;*/
 }
-form.mounted {
-    max-height: unset;
-    opacity: 1;
-}
+/*form.mounted {*/
+/*    max-height: unset;*/
+/*    opacity: 1;*/
+/*}*/
 
 form[disabled] {
     opacity: 0.5;
