@@ -119,13 +119,13 @@ const {setStep} = useAppSteps();
 
     const meetIdParams = new URLSearchParams(window.location.search).get('meetId')
 
-    if (meetIdParams) {
-        meetStore.meetId = meetIdParams
-        setStep(APP_STEPS.JOIN_MEET_STEP)
+    if (!meetIdParams) {
+        setStep(APP_STEPS.CREATE_MEET_STEP)
         return
     }
 
-    setStep(APP_STEPS.CREATE_MEET_STEP)
+    meetStore.meetId = meetIdParams
+    setStep(APP_STEPS.JOIN_MEET_STEP)
 })()
 
 

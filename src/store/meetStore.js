@@ -62,7 +62,7 @@ const leaveMeet = () => {
 
     meetStore.meetId = ''
 
-    meetStore.remoteUsers.forEach((item) => {
+    meetStore.remoteMeetUsersMap.forEach((item) => {
         removeUserFromMeet(item)
     })
 

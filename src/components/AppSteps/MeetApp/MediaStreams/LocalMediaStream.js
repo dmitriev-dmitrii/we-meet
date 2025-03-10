@@ -5,6 +5,7 @@ import {meetStore} from "@/store/meetStore.js";
 
 import mediaStreamStyles from './css/media-stream.css?inline'
 import localMediaStreamStyles from './css/local-media-stream.css?inline'
+import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
 
 const localMediaStreamTemplate = document.getElementById('local-media-stream-template');
 
@@ -13,6 +14,8 @@ const LOCAL_STREAM_ACTION_BAR_MAP = {
     VIDEO: 'video',
     AUDIO: 'audio',
 }
+
+const {setStep} = useAppSteps();
 
 const {sendDataChanelMessage} = useWebRtcDataChannels()
 
@@ -60,6 +63,7 @@ export class LocalMediaStream extends HTMLElement {
 
             meetStore.leaveMeet()
 
+            setStep(APP_STEPS.CREATE_MEET_STEP)
             return;
         }
 
