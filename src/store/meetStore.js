@@ -4,9 +4,8 @@ import {localUserStore} from "@/store/localUserStore.js";
 import {closeWebSocket, connectToWebSocket} from "@/features/ws.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
-import {TrackedMap} from "@/features/TrackedMap.js";
 
-const remoteMeetUsersMap = new TrackedMap()
+const remoteMeetUsersMap = new Map()
 
 const {sendMeOffer} = useWebRtcConnections()
 

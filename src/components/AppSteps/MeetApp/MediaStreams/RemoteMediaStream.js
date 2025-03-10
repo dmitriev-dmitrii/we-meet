@@ -36,25 +36,33 @@ export class RemoteMediaStream extends HTMLElement {
         this.userLabelElement = this.shadowRoot.querySelector('[data-role="user-label"]')
     }
 
-    async connectedCallback() {
+    async setupVideoStream() {
 
-        this.remoteUserName = this.remoteUserId
-        this.userLabelElement.innerText = this.remoteUserName
-
+        console.log(mediaStreams.values())
 
         const userStreams = mediaStreams.get(this.remoteUserId)
 
-        const [videoStream] = userStreams[MEDIA_TRACK_KIND.VIDEO].streams
+        const [videoStream] = userStreams[MEDIA_TRACK_KIND.VIDEO]?.streams
 
-        this.videoTagElement.srcObject = videoStream
+        if (videoStream) {
+            this.videoTagElement.srcObject = videoStream
+            await this.videoTagElement.play()
+        }
 
-        await this.videoTagElement.play()
+    }
+
+    async usersMapChangeHandle() {
+        await this.setupVideoStream()
 
         const {audio, video} = meetStore.remoteMeetUsersMap.get(this.remoteUserId)
 
         this.updateVideoStatus(video)
         this.updateAudioStatus(audio)
+    }
 
+    async connectedCallback() {
+        this.remoteUserName = this.remoteUserId
+        this.userLabelElement.innerText = this.remoteUserName
     }
 
     disconnectedCallback() {

@@ -1,11 +1,9 @@
 import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/RemoteMediaStream.js";
-
-const meetAppTemplate = document.getElementById('meetAppTemplate');
 import meetAppStyles from './css/meet-app.css?inline'
 import {LocalMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/LocalMediaStream.js";
-
 import {meetStore} from "@/store/meetStore.js";
 
+const meetAppTemplate = document.getElementById('meetAppTemplate');
 export class MeetApp extends HTMLElement {
 
     remoteMediaStreamsComponentsMap = new Map()
@@ -28,16 +26,13 @@ export class MeetApp extends HTMLElement {
 
     }
 
+    mountRemoteMediaStreams () {
 
-    remoteMeetUsersMapChangeCallback = (mapValue, eventName) => {
-
-        mapValue.entries().forEach(([remoteUserId, user]) => {
+        meetStore.remoteMeetUsersMap.forEach(({remoteUserId ,video, audio }) => {
 
             if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
 
                 const component = this.remoteMediaStreamsComponentsMap.get(remoteUserId)
-
-                const {video, audio} = user
 
                 component.updateAudioStatus(audio)
                 component.updateVideoStatus(video)
@@ -49,18 +44,14 @@ export class MeetApp extends HTMLElement {
             this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
 
         })
-
     }
 
     async connectedCallback() {
         this.mediaStreamsWrapper.append(new LocalMediaStream())
-
-        meetStore.remoteMeetUsersMap.subscribe(this.remoteMeetUsersMapChangeCallback)
-        console.log('meetApp mounted ', meetStore.remoteMeetUsersMap.values())
+        this.mountRemoteMediaStreams()
     }
 
     disconnectedCallback() {
-        meetStore.remoteMeetUsersMap.unSubscribe(this.remoteMeetUsersMapChangeCallback)
         console.log("Custom element removed from page.");
     }
 
