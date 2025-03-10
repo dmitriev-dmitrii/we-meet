@@ -12,7 +12,9 @@ import {
 import {localUserStore} from "@/store/localUserStore.js";
 import {meetStore} from "@/store/meetStore.js";
 
+// TODO обернуть функции в try catch
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
+    // TODO выпилить логику pairName в webrtc store
     // пусть имя хоста будет первым - проще для дебагинга
     return isHostPeer ? `[${localUserStore.userId}][${remoteUserId}]` : `[${remoteUserId}][${localUserStore.userId}]`
 }
@@ -102,7 +104,6 @@ export const useWebRtcConnections = () => {
 
         sendWebSocketMessage(payload)
     }
-
 
     const createPeerOffer = async ({from}) => {
 

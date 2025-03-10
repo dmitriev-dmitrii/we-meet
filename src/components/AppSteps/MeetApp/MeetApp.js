@@ -28,22 +28,24 @@ export class MeetApp extends HTMLElement {
 
     mountRemoteMediaStreams () {
 
-        meetStore.remoteMeetUsersMap.forEach(({remoteUserId ,video, audio }) => {
+        // TODO как следить за обновлением стора?
 
-            if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-
-                const component = this.remoteMediaStreamsComponentsMap.get(remoteUserId)
-
-                component.updateAudioStatus(audio)
-                component.updateVideoStatus(video)
-
-                return
-            }
-
-            this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
-            this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
-
-        })
+        // meetStore.remoteMeetUsersMap.forEach(({remoteUserId ,video, audio }) => {
+        //
+        //     if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
+        //
+        //         const component = this.remoteMediaStreamsComponentsMap.get(remoteUserId)
+        //
+        //         component.updateAudioStatus(audio)
+        //         component.updateVideoStatus(video)
+        //
+        //         return
+        //     }
+        //
+        //     this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
+        //     this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
+        //
+        // })
     }
 
     async connectedCallback() {

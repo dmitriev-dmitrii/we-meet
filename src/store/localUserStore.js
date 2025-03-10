@@ -54,7 +54,7 @@ export const localUserStore = {
         try {
             this.userStreams.getVideoTracks().find(({readyState}) => {
                 return readyState === 'live'
-            }).enabled = !!value
+            }).enabled = value
 
             return value
         } catch (e) {

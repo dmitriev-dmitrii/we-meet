@@ -61,9 +61,9 @@ const leaveMeet = () => {
 
     meetStore.meetId = ''
 
-    meetStore.remoteMeetUsersMap.forEach((item) => {
-        removeUserFromMeet(item)
-    })
+    // meetStore.remoteMeetUsersMap.forEach((item) => {
+    //     removeUserFromMeet(item)
+    // })
 
     closeWebSocket()
 }
@@ -79,11 +79,10 @@ const updateRemoteUserMediaTrackState = ({remoteUserId, video, audio}) => {
 }
 const appendUserToMeet = (payload) => {
 
-    const defaultUserMediaState = {audio: false, video: false}
+    const {remoteUserId , pairName , } = payload
 
-    const {remoteUserId} = payload
 
-    remoteMeetUsersMap.set(remoteUserId, {...defaultUserMediaState, ...payload})
+    remoteMeetUsersMap.set(remoteUserId, { ...payload })
 }
 
 const removeUserFromMeet = ({remoteUserId, pairName}) => {
@@ -97,7 +96,6 @@ export const meetStore = {
     get localUserIsOwner() {
         return meetStore.meetId && meetStore.ownerUserId === localUserStore.userId
     },
-    remoteMeetUsersMap,
     updateRemoteUserMediaTrackState,
     removeUserFromMeet,
     appendUserToMeet,

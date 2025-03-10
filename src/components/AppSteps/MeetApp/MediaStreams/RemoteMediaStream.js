@@ -18,7 +18,6 @@ export class RemoteMediaStream extends HTMLElement {
         this.remoteUserId = remoteUserId
         this.remoteUserName = ''
 
-
         const shadow = this.attachShadow({mode: 'open'})
 
         const extraSheet = new CSSStyleSheet();
@@ -38,26 +37,24 @@ export class RemoteMediaStream extends HTMLElement {
 
     async setupVideoStream() {
 
-        console.log(mediaStreams.values())
-
-        const userStreams = mediaStreams.get(this.remoteUserId)
-
-        const [videoStream] = userStreams[MEDIA_TRACK_KIND.VIDEO]?.streams
-
-        if (videoStream) {
-            this.videoTagElement.srcObject = videoStream
-            await this.videoTagElement.play()
-        }
+        // const userStreams = mediaStreams.get(this.remoteUserId)
+        //
+        // const [videoStream] = userStreams[MEDIA_TRACK_KIND.VIDEO]?.streams
+        //
+        // if (videoStream) {
+        //     this.videoTagElement.srcObject = videoStream
+        //     await this.videoTagElement.play()
+        // }
 
     }
 
     async usersMapChangeHandle() {
-        await this.setupVideoStream()
+        // await this.setupVideoStream()
 
-        const {audio, video} = meetStore.remoteMeetUsersMap.get(this.remoteUserId)
+        // const {audio, video} = meetStore.remoteMeetUsersMap.get(this.remoteUserId)
 
-        this.updateVideoStatus(video)
-        this.updateAudioStatus(audio)
+        // this.updateVideoStatus(video)
+        // this.updateAudioStatus(audio)
     }
 
     async connectedCallback() {
