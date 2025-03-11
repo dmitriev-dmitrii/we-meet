@@ -21,7 +21,6 @@ import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js
 
 import {
     WEB_SOCKET_EVENTS,
-    DATA_CHANNELS_EVENTS,
     DATA_CHANNELS_MESSAGE_TYPE, BUS_EVENTS,
 } from "./constants/constants.js";
 import {meetStore} from "@/store/meetStore.js";
@@ -43,17 +42,13 @@ const {
 
 const {
     sendDataChanelMessage,
-    setupDataChannelCallbacks,
 } = useWebRtcDataChannels()
 
 const {
-    dispatchEvent
+    dispatchEvent,
+    listenEvent,
 } = useEventBus()
-const printChatMessage = (message) => {
-    const listItem = document.createElement('li')
-    listItem.innerText = message
-    webRtcChatMessages.append(listItem)
-}
+
 const onDataChanelMessage = (payload) => {
 
     const {data, type, from} = payload
@@ -71,6 +66,16 @@ const onDataChanelMessage = (payload) => {
     }
 
 }
+
+listenEvent(BUS_EVENTS.DATA_CHANEL_MESSAGE, onDataChanelMessage)
+const printChatMessage = (message) => {
+    const listItem = document.createElement('li')
+    listItem.innerText = message
+    webRtcChatMessages.append(listItem)
+}
+
+
+
 const updateWsOnlineClients = ({data}) => {
     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
 }
@@ -84,11 +89,6 @@ setupOnWsMessageCallbacks({
     [WEB_SOCKET_EVENTS.WS_CONNECTION]: updateWsOnlineClients,
     [WEB_SOCKET_EVENTS.WS_CLOSE]: updateWsOnlineClients,
 })
-
-setupDataChannelCallbacks({
-    [DATA_CHANNELS_EVENTS.DATA_CHANEL_ON_MESSAGE]: onDataChanelMessage,
-})
-
 webRtcChatForm.addEventListener('submit', (event) => {
     // TODO в компонент
     try {
