@@ -118,7 +118,9 @@ export class LocalMediaStream extends HTMLElement {
 
         this.userLabel.innerText = this.userName
 
-        await localUserStore.initLocalMediaStream()
+        if (!localUserStore.userStreams?.active) {
+            await localUserStore.initLocalMediaStream()
+        }
 
         this.videoTag.srcObject = localUserStore.userStreams
 

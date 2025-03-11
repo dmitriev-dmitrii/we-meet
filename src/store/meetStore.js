@@ -6,6 +6,7 @@ import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 
 const remoteMeetUsersMap = new Map()
+// remoteMeetUsersMap TODO выпилить
 
 const {sendMeOffer} = useWebRtcConnections()
 

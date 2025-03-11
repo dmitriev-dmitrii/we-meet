@@ -1,16 +1,27 @@
 import mediaStreamStyles from './css/media-stream.css?inline'
 import remoteMediaStreamStyles from './css/remote-media-stream.css?inline'
 import {mediaStreams} from "@/store/webRtcStore.js";
-import {MEDIA_TRACK_KIND} from "@/constants/constants.js";
-import {meetStore} from "@/store/meetStore.js";
+import {MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
 
 const remoteMediaStreamTemplate = document.getElementById('remote-media-stream-template');
+
+const COMPONENT_CONNECTION_STATE = {
+    LOADING: "loading",
+    CONNECTED: "connected",
+    DISCONNECTED: "disconnected",
+}
+
+
+const COMPONENT_CONNECTION_STATE_BY_PEER_STATUS = {
+    [PEER_CONNECTIONS_STATE_STATUSES.CHECKING]: COMPONENT_CONNECTION_STATE.LOADING,
+    [PEER_CONNECTIONS_STATE_STATUSES.CONNECTED]: COMPONENT_CONNECTION_STATE.LOADING
+}
+
 
 export class RemoteMediaStream extends HTMLElement {
 
     remoteUserName = '';
-
-    streams = []
+    connectionState = COMPONENT_CONNECTION_STATE.LOADING
 
     constructor({remoteUserId = ''}) {
         super();
@@ -35,45 +46,38 @@ export class RemoteMediaStream extends HTMLElement {
         this.userLabelElement = this.shadowRoot.querySelector('[data-role="user-label"]')
     }
 
-    async setupVideoStream() {
+    setupRemoteMediaStream() {
 
-        // const userStreams = mediaStreams.get(this.remoteUserId)
-        //
-        // const [videoStream] = userStreams[MEDIA_TRACK_KIND.VIDEO]?.streams
-        //
-        // if (videoStream) {
-        //     this.videoTagElement.srcObject = videoStream
-        //     await this.videoTagElement.play()
-        // }
+        const {streams: [remoteVideoStream]} = mediaStreams[this.remoteUserId][MEDIA_TRACK_KIND.VIDEO]
 
+        if (!remoteVideoStream) {
+            return
+        }
+
+        this.videoTagElement.srcObject = remoteVideoStream
+        this.videoTagElement.play()
+
+        this.updateConnectionState(COMPONENT_CONNECTION_STATE.CONNECTED)
     }
 
-    async usersMapChangeHandle() {
-        // await this.setupVideoStream()
+    peerStatusChangeHandle(status) {
 
-        // const {audio, video} = meetStore.remoteMeetUsersMap.get(this.remoteUserId)
+        const connectionState = COMPONENT_CONNECTION_STATE_BY_PEER_STATUS[status]
 
-        // this.updateVideoStatus(video)
-        // this.updateAudioStatus(audio)
+        this.updateConnectionState(connectionState)
     }
 
-    async connectedCallback() {
-        this.remoteUserName = this.remoteUserId
-        this.userLabelElement.innerText = this.remoteUserName
+    updateConnectionState(state) {
+
+        if (!Object.values(COMPONENT_CONNECTION_STATE).includes(state)) {
+            return
+        }
+
+        this.connectionState = state
+        this.classList.remove(...Object.values(COMPONENT_CONNECTION_STATE))
+        this.classList.add(state)
     }
 
-    disconnectedCallback() {
-        console.log(this.remoteUserName, "RemoteMediaStream removed from dom");
-    }
-
-    adoptedCallback() {
-
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`Attribute ${name} has changed.`);
-
-    }
 
     updateAudioStatus(val = false) {
         val ? this.audioStatusButton.classList.add('active') : this.audioStatusButton.classList.remove('active')
@@ -94,6 +98,27 @@ export class RemoteMediaStream extends HTMLElement {
 
         this.userLabelElement.classList.add('active')
     }
+
+
+    async connectedCallback() {
+        this.remoteUserName = this.remoteUserId
+        this.userLabelElement.innerText = this.remoteUserName
+        this.setupRemoteMediaStream()
+    }
+
+    disconnectedCallback() {
+        console.log(this.remoteUserName, "RemoteMediaStream removed from dom");
+    }
+
+    adoptedCallback() {
+
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        console.log(`Attribute ${name} has changed.`);
+
+    }
+
 
     removeMediaStreamComponent() {
         this.classList.add('remove');

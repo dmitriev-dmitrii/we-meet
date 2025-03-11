@@ -5,12 +5,14 @@ import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
 import {
+    BUS_EVENTS,
     DISCONNECTED_STATE_STATUSES,
     PEER_CONNECTIONS_STATE_STATUSES,
     WEB_SOCKET_EVENTS
 } from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {meetStore} from "@/store/meetStore.js";
+import {useEventBus} from "@/features/useEventBus.js";
 
 // TODO обернуть функции в try catch
 const buildConnectionsName = (remoteUserId, isHostPeer = false) => {
@@ -29,6 +31,7 @@ export const useWebRtcConnections = () => {
 
     const {setupDataChanelEvents} = useWebRtcDataChannels()
     const {setupMediaStreamToPeer} = useWebRtcMediaStreams()
+    const {dispatchEvent} = useEventBus()
 
     const createPeerConnection = async ({pairName, isHost, remoteUserId}) => {
 
@@ -41,7 +44,7 @@ export const useWebRtcConnections = () => {
                 pairName
             })
 
-            setupMediaStreamToPeer({pairName, remoteUserId})
+            await  setupMediaStreamToPeer({pairName, remoteUserId})
 
             if (isHost) {
                 const channel = await peerConnections[pairName].createDataChannel(pairName);
@@ -83,17 +86,14 @@ export const useWebRtcConnections = () => {
     function onIceConnectionStateChange(event) {
 
         const status = event.target.iceConnectionState
-        const {remoteUserId, pairName} = this
+        const {remoteUserId} = this
 
-        if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTED) {
-            meetStore.appendUserToMeet({remoteUserId, pairName})
+        if (status) {
+            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId})
             return
         }
 
-        if (DISCONNECTED_STATE_STATUSES.includes(status)) {
-            meetStore.removeUserFromMeet({remoteUserId, pairName})
-        }
-
+        console.warn('onIceConnectionStateChange', 'no event status')
     }
 
     const sendMeOffer = async () => {

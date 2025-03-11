@@ -2,8 +2,13 @@ import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/Remo
 import meetAppStyles from './css/meet-app.css?inline'
 import {LocalMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/LocalMediaStream.js";
 import {meetStore} from "@/store/meetStore.js";
+import {useEventBus} from "@/features/useEventBus.js";
+import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
 
 const meetAppTemplate = document.getElementById('meetAppTemplate');
+
+const {listenEvent} = useEventBus()
+
 export class MeetApp extends HTMLElement {
 
     remoteMediaStreamsComponentsMap = new Map()
@@ -26,31 +31,37 @@ export class MeetApp extends HTMLElement {
 
     }
 
-    mountRemoteMediaStreams () {
+    updatePeerStatusHandle(eventData) {
 
-        // TODO как следить за обновлением стора?
+        const {remoteUserId, status} = eventData
 
-        // meetStore.remoteMeetUsersMap.forEach(({remoteUserId ,video, audio }) => {
-        //
-        //     if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-        //
-        //         const component = this.remoteMediaStreamsComponentsMap.get(remoteUserId)
-        //
-        //         component.updateAudioStatus(audio)
-        //         component.updateVideoStatus(video)
-        //
-        //         return
-        //     }
-        //
-        //     this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
-        //     this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
-        //
-        // })
+        if (status === PEER_CONNECTIONS_STATE_STATUSES.CHECKING) {
+            this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
+            this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
+        }
+
+        if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
+            this.remoteMediaStreamsComponentsMap.get(remoteUserId).peerStatusChangeHandle(status)
+        }
+
+    }
+
+    updateMediaStreamHandle(eventData) {
+
+        const {remoteUserId} = eventData
+
+        if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
+            this.remoteMediaStreamsComponentsMap.get(remoteUserId).setupRemoteMediaStream()
+        }
+
     }
 
     async connectedCallback() {
         this.mediaStreamsWrapper.append(new LocalMediaStream())
-        this.mountRemoteMediaStreams()
+
+        listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, this.updatePeerStatusHandle.bind(this))
+        listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, this.updateMediaStreamHandle.bind(this))
+
     }
 
     disconnectedCallback() {
