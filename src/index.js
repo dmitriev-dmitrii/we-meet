@@ -19,15 +19,12 @@ customElements.define('meet-chat', MeetChat);
 
 import { useWebSocket } from "./features/useWebSocket.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
-import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
 
 import {
     WEB_SOCKET_EVENTS,
-    DATA_CHANNELS_MESSAGE_TYPE, BUS_EVENTS,
 } from "./constants/constants.js";
 import {meetStore} from "@/store/meetStore.js";
 import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
-import {useEventBus} from "@/features/useEventBus.js";
 
 const {setupOnWsMessageCallbacks} = useWebSocket()
 
@@ -37,10 +34,6 @@ const {
     setupPeerAnswer,
     updatePeerIceCandidate,
 } = useWebRtcConnections()
-
-const {
-    sendDataChanelMessage,
-} = useWebRtcDataChannels()
 
 const updateWsOnlineClients = ({data}) => {
     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
