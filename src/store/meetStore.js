@@ -5,9 +5,6 @@ import {closeWebSocket, connectToWebSocket} from "@/features/ws.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 
-const remoteMeetUsersMap = new Map()
-// remoteMeetUsersMap TODO выпилить
-
 const {sendMeOffer} = useWebRtcConnections()
 
 const {
@@ -21,8 +18,6 @@ const {
 const {
     deletePeerConnection
 } = useWebRtcConnections()
-
-
 const createMeet = async ({password}) => {
 
     const payload = {
@@ -62,18 +57,7 @@ const leaveMeet = () => {
 
     meetStore.meetId = ''
 
-    // meetStore.remoteMeetUsersMap.forEach((item) => {
-    //     removeUserFromMeet(item)
-    // })
-
     closeWebSocket()
-}
-const appendUserToMeet = (payload) => {
-
-    const {remoteUserId , pairName , } = payload
-
-
-    remoteMeetUsersMap.set(remoteUserId, { ...payload })
 }
 
 const removeUserFromMeet = ({remoteUserId, pairName}) => {
@@ -88,7 +72,6 @@ export const meetStore = {
         return meetStore.meetId && meetStore.ownerUserId === localUserStore.userId
     },
     removeUserFromMeet,
-    appendUserToMeet,
     joinMeet,
     createMeet,
     leaveMeet,
