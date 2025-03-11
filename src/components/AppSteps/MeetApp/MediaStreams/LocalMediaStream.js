@@ -78,16 +78,6 @@ export class LocalMediaStream extends HTMLElement {
         }
 
 
-        const payload = {
-            type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
-            data: {
-                video: localUserStore.video,
-                audio: localUserStore.audio
-            }
-        }
-
-        sendDataChanelMessage(payload)
-
     }
 
     updateAudioStatus() {

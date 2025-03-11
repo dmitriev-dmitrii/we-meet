@@ -1,9 +1,9 @@
 import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/RemoteMediaStream.js";
 import meetAppStyles from './css/meet-app.css?inline'
 import {LocalMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/LocalMediaStream.js";
-import {meetStore} from "@/store/meetStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
+import {MeetChat} from "@/components/AppSteps/MeetApp/MeetChat/MeetChat.js";
 
 const meetAppTemplate = document.getElementById('meetAppTemplate');
 
@@ -28,6 +28,7 @@ export class MeetApp extends HTMLElement {
         );
 
         this.mediaStreamsWrapper = this.shadowRoot.querySelector('[data-role="media-streams-wrapper"]')
+        this.meetChatWrapper = this.shadowRoot.querySelector('[data-role="meet-chat-wrapper"]')
 
     }
 
@@ -58,19 +59,19 @@ export class MeetApp extends HTMLElement {
 
     updateMediaTrackStateHandle(eventData) {
 
-        const {remoteUserId, audio, video} = eventData
+        const {from, data} = eventData
 
-        if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-            this.remoteMediaStreamsComponentsMap.get(remoteUserId).updateVideoStatus(video)
-            this.remoteMediaStreamsComponentsMap.get(remoteUserId).updateAudioStatus(audio)
+        if (this.remoteMediaStreamsComponentsMap.has(from)) {
+            const {audio, video} = data
+
+            this.remoteMediaStreamsComponentsMap.get(from).updateVideoStatus(video)
+            this.remoteMediaStreamsComponentsMap.get(from).updateAudioStatus(audio)
         }
 
     }
 
 
     async connectedCallback() {
-        this.mediaStreamsWrapper.append(new LocalMediaStream())
-
         listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, this.updatePeerStatusHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, this.updateMediaStreamHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, this.updateMediaTrackStateHandle.bind(this))

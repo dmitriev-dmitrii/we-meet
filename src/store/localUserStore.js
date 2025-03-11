@@ -1,5 +1,8 @@
 import {usersApi} from "@/api/usersApi.js";
+import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
+import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 
+const {sendDataChanelMessage} = useWebRtcDataChannels()
 export const localUserStore = {
 
     userId : '',
@@ -18,6 +21,18 @@ export const localUserStore = {
 
         return localUserStore.userStreams
     },
+    sendMediaTrackLocalState :  () => {
+    // отправить участникам мита состояние медиа треков
+        const payload = {
+            type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
+            data: {
+                video: localUserStore.video,
+                audio: localUserStore.audio
+            }
+        }
+
+        sendDataChanelMessage(payload)
+    },
 
     get audio() {
         try {
@@ -33,7 +48,7 @@ export const localUserStore = {
             this.userStreams.getAudioTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
-
+            this.sendMediaTrackLocalState()
             return value
         } catch (e) {
             console.log('audio set err', e)
@@ -55,7 +70,7 @@ export const localUserStore = {
             this.userStreams.getVideoTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = value
-
+            this.sendMediaTrackLocalState()
             return value
         } catch (e) {
             console.log('video set err', e)

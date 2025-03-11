@@ -11,13 +11,24 @@
 <join-meet-form></join-meet-form>
 <meet-app></meet-app>
 
-<div >
-    <ul id="webRtcChatMessages"></ul>
-    <form id="webRtcChatForm">
-            <input type="text" id="webRtcChatInput" placeholder="Введите сообщение" required/>
-            <button type="submit">Отправить</button>
+<template id="meetChatTemplate">
+
+    <ul data-role="messages-list">
+
+    </ul>
+
+    <form>
+        <label>
+            <input type="text" data-input-type="text-message" placeholder="write message">
+        </label>
+
+        <button type="submit">
+            send
+        </button>
+
     </form>
- </div>
+
+</template>
 
 
 <template id="meetAppTemplate">
@@ -25,11 +36,11 @@
     <div class="meet-app">
 
         <div data-role="media-streams-wrapper">
-
+            <local-media-stream></local-media-stream>
         </div>
 
-        <div>
-          chat
+        <div data-role="meet-chat-wrapper">
+            <meet-chat></meet-chat>
         </div>
     </div>
 
@@ -46,7 +57,7 @@
 
         <label>
             <span>this is private meet , enter password</span>
-            <input type="text"  data-input-type="meet-password" placeholder="password">
+            <input type="text" data-input-type="meet-password" placeholder="password">
         </label>
 
         <button type="submit">
@@ -58,36 +69,36 @@
 </template>
 
 <template id="createMeetFormTemplate">
-<fieldset>
-    <legend><h1>We Meet</h1></legend>
-    <form>
-        <label>
-            <span>write you name if y wont</span>
-            <input type="text" data-size="lg" data-input-type="user-name" placeholder="you name">
-        </label>
+    <fieldset>
+        <legend><h1>We Meet</h1></legend>
+        <form>
+            <label>
+                <span>write you name if y wont</span>
+                <input type="text" data-size="lg" data-input-type="user-name" placeholder="you name">
+            </label>
 
-        <label>
-            <span>enter password if you want to create private meet </span>
-            <input type="text" data-size="lg"  data-input-type="meet-password" placeholder="password">
-        </label>
+            <label>
+                <span>enter password if you want to create private meet </span>
+                <input type="text" data-size="lg" data-input-type="meet-password" placeholder="password">
+            </label>
 
-        <div data-role="actions-bar">
+            <div data-role="actions-bar">
 
-            <button data-size="lg" type="submit" data-theme="primary" data-action-type="create-meet">
-                create meet
-            </button>
+                <button data-size="lg" type="submit" data-theme="primary" data-action-type="create-meet">
+                    create meet
+                </button>
 
-            <button data-size="lg" type="button" data-action-type="copy-meet-link">
-                copy meet link
-            </button>
+                <button data-size="lg" type="button" data-action-type="copy-meet-link">
+                    copy meet link
+                </button>
 
-            <button data-size="lg" type="button" data-theme="primary" data-action-type="go-to-meet">
-                to meet =>
-            </button>
+                <button data-size="lg" type="button" data-theme="primary" data-action-type="go-to-meet">
+                    to meet =>
+                </button>
 
-        </div>
-    </form>
-</fieldset>
+            </div>
+        </form>
+    </fieldset>
 </template>
 
 <template id="local-media-stream-template">

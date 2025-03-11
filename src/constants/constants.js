@@ -1,5 +1,3 @@
-import {peerConnections} from "@/store/webRtcStore.js";
-
 export const WEB_SOCKET_EVENTS = {
     'WS_CONNECTION': 'ws-connection',
     'WS_CLOSE': 'ws-close',
@@ -10,8 +8,8 @@ export const WEB_SOCKET_EVENTS = {
     'RTC_ICE_CANDIDATE': '4',
 }
 export const DATA_CHANNELS_MESSAGE_TYPE = {
-    'DATA_CHANEL_TEXT_MESSAGE': '1',
-    'DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE': '2',
+    DATA_CHANEL_TEXT_MESSAGE: '1',
+    DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE: '2',
 }
 
 export const PEER_CONNECTIONS_STATE_STATUSES = {
@@ -36,8 +34,7 @@ export const BUS_EVENTS = {
 
     DATA_CHANEL_OPEN: '3',
     DATA_CHANEL_CLOSE: '4',
-    DATA_CHANEL_MESSAGE: '5',
-
+    DATA_CHANEL_TEXT_MESSAGE: '5',
 
 };
 

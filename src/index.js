@@ -7,6 +7,7 @@ import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/Remo
 import {JoinMeetForm} from "@/components/AppSteps/JoinMeetForm/JoinMeetForm.js";
 import {CreateMeetForm} from "@/components/AppSteps/CreateMeetForm/CreateMeetForm.js";
 import {MeetApp} from "@/components/AppSteps/MeetApp/MeetApp.js";
+import {MeetChat} from "@/components/AppSteps/MeetApp/MeetChat/MeetChat.js";
 
 customElements.define('remote-media-stream', RemoteMediaStream);
 customElements.define('local-media-stream', LocalMediaStream);
@@ -14,6 +15,7 @@ customElements.define('local-media-stream', LocalMediaStream);
 customElements.define('join-meet-form', JoinMeetForm);
 customElements.define('create-meet-form', CreateMeetForm);
 customElements.define('meet-app', MeetApp);
+customElements.define('meet-chat', MeetChat);
 
 import { useWebSocket } from "./features/useWebSocket.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
@@ -26,10 +28,6 @@ import {
 import {meetStore} from "@/store/meetStore.js";
 import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
 import {useEventBus} from "@/features/useEventBus.js";
-
-const webRtcChatForm = document.getElementById('webRtcChatForm');
-const webRtcChatInput = document.getElementById('webRtcChatInput');
-const webRtcChatMessages = document.getElementById('webRtcChatMessages');
 
 const {setupOnWsMessageCallbacks} = useWebSocket()
 
@@ -44,38 +42,6 @@ const {
     sendDataChanelMessage,
 } = useWebRtcDataChannels()
 
-const {
-    dispatchEvent,
-    listenEvent,
-} = useEventBus()
-
-const onDataChanelMessage = (payload) => {
-
-    const {data, type, from} = payload
-
-    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE) {
-
-        dispatchEvent( BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, { remoteUserId:from , ...data} )
-
-        return;
-    }
-
-    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE) {
-        const message = `[${from}] : ${data.text}`
-        printChatMessage(message)
-    }
-
-}
-
-listenEvent(BUS_EVENTS.DATA_CHANEL_MESSAGE, onDataChanelMessage)
-const printChatMessage = (message) => {
-    const listItem = document.createElement('li')
-    listItem.innerText = message
-    webRtcChatMessages.append(listItem)
-}
-
-
-
 const updateWsOnlineClients = ({data}) => {
     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
 }
@@ -89,32 +55,7 @@ setupOnWsMessageCallbacks({
     [WEB_SOCKET_EVENTS.WS_CONNECTION]: updateWsOnlineClients,
     [WEB_SOCKET_EVENTS.WS_CLOSE]: updateWsOnlineClients,
 })
-webRtcChatForm.addEventListener('submit', (event) => {
-    // TODO в компонент
-    try {
 
-        event.preventDefault();
-
-        if (!webRtcChatInput.value) {
-            return
-        }
-
-        const payload = {
-            type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE,
-            data: {
-                text: webRtcChatInput.value,
-            }
-        }
-
-        sendDataChanelMessage(payload)
-
-        printChatMessage(`[me] : ${webRtcChatInput.value}`)
-
-        webRtcChatInput.value = '';
-    } catch (e) {
-
-    }
-});
 
 const {setStep} = useAppSteps();
 
