@@ -68,16 +68,6 @@ const leaveMeet = () => {
 
     closeWebSocket()
 }
-const updateRemoteUserMediaTrackState = ({remoteUserId, video, audio}) => {
-    if (!remoteMeetUsersMap.has(remoteUserId)) {
-        return
-    }
-
-    remoteMeetUsersMap.set(remoteUserId, {
-        ...remoteMeetUsersMap.get(remoteUserId),
-        ...{audio, video}
-    })
-}
 const appendUserToMeet = (payload) => {
 
     const {remoteUserId , pairName , } = payload
@@ -97,7 +87,6 @@ export const meetStore = {
     get localUserIsOwner() {
         return meetStore.meetId && meetStore.ownerUserId === localUserStore.userId
     },
-    updateRemoteUserMediaTrackState,
     removeUserFromMeet,
     appendUserToMeet,
     joinMeet,

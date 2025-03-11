@@ -1,21 +1,11 @@
 import '@/css/index.css'
 import adapter from "webrtc-adapter";
+
 import {LocalMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/LocalMediaStream.js";
 import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/RemoteMediaStream.js";
+
 import {JoinMeetForm} from "@/components/AppSteps/JoinMeetForm/JoinMeetForm.js";
 import {CreateMeetForm} from "@/components/AppSteps/CreateMeetForm/CreateMeetForm.js";
-
-import {setupOnWsMessageCallbacks} from "./features/ws.js";
-import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
-import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
-
-import {
-    WEB_SOCKET_EVENTS,
-    DATA_CHANNELS_EVENTS,
-    DATA_CHANNELS_MESSAGE_TYPE,
-} from "./constants/constants.js";
-import {meetStore} from "@/store/meetStore.js";
-import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
 import {MeetApp} from "@/components/AppSteps/MeetApp/MeetApp.js";
 
 customElements.define('remote-media-stream', RemoteMediaStream);
@@ -25,6 +15,18 @@ customElements.define('join-meet-form', JoinMeetForm);
 customElements.define('create-meet-form', CreateMeetForm);
 customElements.define('meet-app', MeetApp);
 
+import {setupOnWsMessageCallbacks} from "./features/ws.js";
+import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
+import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
+
+import {
+    WEB_SOCKET_EVENTS,
+    DATA_CHANNELS_EVENTS,
+    DATA_CHANNELS_MESSAGE_TYPE, BUS_EVENTS,
+} from "./constants/constants.js";
+import {meetStore} from "@/store/meetStore.js";
+import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
+import {useEventBus} from "@/features/useEventBus.js";
 
 const webRtcChatForm = document.getElementById('webRtcChatForm');
 const webRtcChatInput = document.getElementById('webRtcChatInput');
@@ -42,6 +44,9 @@ const {
     setupDataChannelCallbacks,
 } = useWebRtcDataChannels()
 
+const {
+    dispatchEvent
+} = useEventBus()
 const printChatMessage = (message) => {
     const listItem = document.createElement('li')
     listItem.innerText = message
@@ -49,11 +54,11 @@ const printChatMessage = (message) => {
 }
 const onDataChanelMessage = (payload) => {
 
-    const {data, type, from, pairName} = payload
+    const {data, type, from} = payload
 
     if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE) {
 
-        meetStore.updateRemoteUserMediaTrackState({ remoteUserId:from , ...data})
+        dispatchEvent( BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, { remoteUserId:from , ...data} )
 
         return;
     }
@@ -63,10 +68,6 @@ const onDataChanelMessage = (payload) => {
         printChatMessage(message)
     }
 
-    if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE) {
-        const message = `[${from}] : ${data.text}`
-        printChatMessage(message)
-    }
 }
 const updateWsOnlineClients = ({data}) => {
     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])

@@ -56,11 +56,24 @@ export class MeetApp extends HTMLElement {
 
     }
 
+    updateMediaTrackStateHandle(eventData) {
+
+        const {remoteUserId, audio, video} = eventData
+
+        if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
+            this.remoteMediaStreamsComponentsMap.get(remoteUserId).updateVideoStatus(video)
+            this.remoteMediaStreamsComponentsMap.get(remoteUserId).updateAudioStatus(audio)
+        }
+
+    }
+
+
     async connectedCallback() {
         this.mediaStreamsWrapper.append(new LocalMediaStream())
 
         listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, this.updatePeerStatusHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, this.updateMediaStreamHandle.bind(this))
+        listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, this.updateMediaTrackStateHandle.bind(this))
 
     }
 

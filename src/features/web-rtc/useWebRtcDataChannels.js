@@ -1,4 +1,4 @@
-import {dataChannels } from "@/store/webRtcStore.js";
+import {dataChannels} from "@/store/webRtcStore.js";
 import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 
@@ -53,7 +53,7 @@ export const useWebRtcDataChannels = () => {
 
         Object.values(dataChannels).forEach((item) => {
 
-            const data = JSON.stringify({...payload, from: localUserStore.userId , pairName:item.label })
+            const data = JSON.stringify({...payload, from: localUserStore.userId})
 
             if (item.readyState === 'open') {
                 item.send(data)
@@ -63,13 +63,13 @@ export const useWebRtcDataChannels = () => {
 
     }
 
-   const  deleteDataChanel = (pairName)=> {
+    const deleteDataChanel = (pairName) => {
 
         if (dataChannels[pairName]) {
             dataChannels[pairName].close()
         }
 
-       delete dataChannels[pairName]
+        delete dataChannels[pairName]
 
     }
 

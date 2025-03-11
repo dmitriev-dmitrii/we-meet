@@ -14,7 +14,11 @@ const COMPONENT_CONNECTION_STATE = {
 
 const COMPONENT_CONNECTION_STATE_BY_PEER_STATUS = {
     [PEER_CONNECTIONS_STATE_STATUSES.CHECKING]: COMPONENT_CONNECTION_STATE.LOADING,
-    [PEER_CONNECTIONS_STATE_STATUSES.CONNECTED]: COMPONENT_CONNECTION_STATE.LOADING
+    [PEER_CONNECTIONS_STATE_STATUSES.CONNECTED]:COMPONENT_CONNECTION_STATE.LOADING,
+
+    [PEER_CONNECTIONS_STATE_STATUSES.FAILED]: COMPONENT_CONNECTION_STATE.DISCONNECTED,
+    [PEER_CONNECTIONS_STATE_STATUSES.CLOSED]: COMPONENT_CONNECTION_STATE.DISCONNECTED,
+    [PEER_CONNECTIONS_STATE_STATUSES.DISCONNECTED]: COMPONENT_CONNECTION_STATE.DISCONNECTED,
 }
 
 
@@ -48,11 +52,11 @@ export class RemoteMediaStream extends HTMLElement {
 
     setupRemoteMediaStream() {
 
-        const {streams: [remoteVideoStream]} = mediaStreams[this.remoteUserId][MEDIA_TRACK_KIND.VIDEO]
-
-        if (!remoteVideoStream) {
+        if (!mediaStreams[this.remoteUserId]?.video) {
             return
         }
+
+        const { streams  : [remoteVideoStream] } = mediaStreams[this.remoteUserId][MEDIA_TRACK_KIND.VIDEO]
 
         this.videoTagElement.srcObject = remoteVideoStream
         this.videoTagElement.play()
