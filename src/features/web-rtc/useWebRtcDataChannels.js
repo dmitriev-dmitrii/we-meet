@@ -2,8 +2,6 @@ import {dataChannels} from "@/store/webRtcStore.js";
 import {DATA_CHANNELS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 
-
-
 const dataChannelsCallbacksMap = new Map();
 // TODO придумать как не дублировать код с евентами
 export const useWebRtcDataChannels = () => {
@@ -20,9 +18,9 @@ export const useWebRtcDataChannels = () => {
 
     }
 
-    const setupDataChanelEvents = ({channel, pairName}) => {
+    const setupDataChanelEvents = ({channel,remoteUserId}) => {
 
-        dataChannels[pairName] = channel
+        dataChannels[remoteUserId] = channel
 
         channel.onmessage = async (e) => {
 
@@ -34,7 +32,7 @@ export const useWebRtcDataChannels = () => {
             const data = JSON.parse(e.data)
 
             dataChannelsCallbacksMap.get(DATA_CHANNELS_EVENTS.DATA_CHANEL_ON_MESSAGE).forEach((cb) => {
-                cb(data, {pairName})
+                cb(data, {remoteUserId})
             })
 
         }
@@ -63,13 +61,13 @@ export const useWebRtcDataChannels = () => {
 
     }
 
-    const deleteDataChanel = (pairName) => {
+    const deleteDataChanel = (remoteUserId) => {
 
-        if (dataChannels[pairName]) {
-            dataChannels[pairName].close()
+        if (dataChannels[remoteUserId]) {
+            dataChannels[remoteUserId].close()
         }
 
-        delete dataChannels[pairName]
+        delete dataChannels[remoteUserId]
 
     }
 

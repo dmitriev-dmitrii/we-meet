@@ -60,11 +60,11 @@ const leaveMeet = () => {
     closeWebSocket()
 }
 
-const removeUserFromMeet = ({remoteUserId, pairName}) => {
+const removeUserFromMeet = ({remoteUserId}) => {
 
     deleteMediaStream(remoteUserId)
-    deleteDataChanel(pairName)
-    deletePeerConnection(pairName)
+    deleteDataChanel(remoteUserId)
+    deletePeerConnection(remoteUserId)
 }
 export const meetStore = {
     meetId: '',
