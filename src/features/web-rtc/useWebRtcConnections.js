@@ -1,4 +1,4 @@
-import {sendWebSocketMessage} from "../ws.js";
+import { useWebSocket } from "../useWebSocket.js";
 
 import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
@@ -22,6 +22,7 @@ export const useWebRtcConnections = () => {
     const {setupDataChanelEvents} = useWebRtcDataChannels()
     const {setupMediaStreamToPeer} = useWebRtcMediaStreams()
     const {dispatchEvent} = useEventBus()
+    const {sendWebSocketMessage} = useWebSocket()
 
     const createPeerConnection = async ({remoteUserId}) => {
 

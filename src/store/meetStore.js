@@ -1,11 +1,13 @@
 import {meetApi} from "@/api/meetApi.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {localUserStore} from "@/store/localUserStore.js";
-import {closeWebSocket, connectToWebSocket} from "@/features/ws.js";
+import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 
 const {sendMeOffer} = useWebRtcConnections()
+
+const {closeWebSocket, connectToWebSocket} = useWebSocket()
 
 const {
     deleteDataChanel

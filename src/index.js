@@ -15,7 +15,7 @@ customElements.define('join-meet-form', JoinMeetForm);
 customElements.define('create-meet-form', CreateMeetForm);
 customElements.define('meet-app', MeetApp);
 
-import {setupOnWsMessageCallbacks} from "./features/ws.js";
+import { useWebSocket } from "./features/useWebSocket.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
 import {useWebRtcDataChannels} from "./features/web-rtc/useWebRtcDataChannels.js";
 
@@ -31,6 +31,8 @@ import {useEventBus} from "@/features/useEventBus.js";
 const webRtcChatForm = document.getElementById('webRtcChatForm');
 const webRtcChatInput = document.getElementById('webRtcChatInput');
 const webRtcChatMessages = document.getElementById('webRtcChatMessages');
+
+const {setupOnWsMessageCallbacks} = useWebSocket()
 
 const {
     createPeerOffer,
