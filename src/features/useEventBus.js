@@ -48,7 +48,7 @@ export const useEventBus = () => {
     const listenEvent = (eventKey, callback) => {
 
         if (!Object.values(BUS_EVENTS).includes(eventKey)) {
-            throw new Error('event must be registered in BUS_EVENTS')
+            throw new Error(`not correct eventKey "${eventKey}" must be registered in BUS_EVENTS`)
         }
 
         CALLBACKS_MAP.get(eventKey).add(callback)
