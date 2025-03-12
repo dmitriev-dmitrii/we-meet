@@ -14,7 +14,7 @@ const COMPONENT_CONNECTION_STATE = {
 
 const COMPONENT_CONNECTION_STATE_BY_PEER_STATUS = {
     [PEER_CONNECTIONS_STATE_STATUSES.CONNECTING]: COMPONENT_CONNECTION_STATE.LOADING,
-    [PEER_CONNECTIONS_STATE_STATUSES.CONNECTED]:COMPONENT_CONNECTION_STATE.LOADING,
+    [PEER_CONNECTIONS_STATE_STATUSES.CONNECTED]:COMPONENT_CONNECTION_STATE.CONNECTED,
 
     [PEER_CONNECTIONS_STATE_STATUSES.FAILED]: COMPONENT_CONNECTION_STATE.DISCONNECTED,
     [PEER_CONNECTIONS_STATE_STATUSES.CLOSED]: COMPONENT_CONNECTION_STATE.DISCONNECTED,
@@ -44,6 +44,7 @@ export class RemoteMediaStream extends HTMLElement {
             remoteMediaStreamTemplate.content.cloneNode(true)
         );
 
+        this.mediaStremWrapperElement = this.shadowRoot.querySelector('.media-stream')
         this.videoTagElement = this.shadowRoot.querySelector('video')
         this.audioStatusButton = this.shadowRoot.querySelector('[data-status-type="audio"]')
         this.videoStatusButton = this.shadowRoot.querySelector('[data-status-type="video"]')
@@ -78,8 +79,8 @@ export class RemoteMediaStream extends HTMLElement {
         }
 
         this.connectionState = state
-        this.classList.remove(...Object.values(COMPONENT_CONNECTION_STATE))
-        this.classList.add(state)
+        this.mediaStremWrapperElement.classList.remove(...Object.values(COMPONENT_CONNECTION_STATE))
+        this.mediaStremWrapperElement.classList.add(state)
     }
 
 
