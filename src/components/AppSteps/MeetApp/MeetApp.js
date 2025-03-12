@@ -36,7 +36,7 @@ export class MeetApp extends HTMLElement {
 
         const {remoteUserId, status} = eventData
 
-        if (status === PEER_CONNECTIONS_STATE_STATUSES.CHECKING) {
+        if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTING) {
             this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
             this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
         }

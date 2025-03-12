@@ -13,7 +13,8 @@ export const DATA_CHANNELS_MESSAGE_TYPE = {
 }
 
 export const PEER_CONNECTIONS_STATE_STATUSES = {
-    CHECKING:'checking',
+    NEW:'new',
+    CONNECTING:'connecting',
     CONNECTED: "connected",
     DISCONNECTED: "disconnected",
     FAILED: "failed",

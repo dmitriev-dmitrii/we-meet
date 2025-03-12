@@ -1,4 +1,4 @@
-import { useWebSocket } from "../useWebSocket.js";
+import {useWebSocket} from "../useWebSocket.js";
 
 import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
@@ -30,7 +30,7 @@ export const useWebRtcConnections = () => {
 
             peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
 
-            peerConnections[remoteUserId].oniceconnectionstatechange = onIceConnectionStateChange.bind({
+            peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({
                 remoteUserId,
             })
 
@@ -61,17 +61,15 @@ export const useWebRtcConnections = () => {
         sendWebSocketMessage(payload)
     }
 
-    function onIceConnectionStateChange(event) {
+    function onPeerConnectionStateChange(event) {
 
-        const status = event.target.iceConnectionState
         const {remoteUserId} = this
+        const status = peerConnections[remoteUserId].connectionState
 
         if (status) {
             dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId})
-            return
         }
 
-        console.warn('onIceConnectionStateChange', 'no event status')
     }
 
     const sendMeOffer = async () => {
@@ -84,11 +82,6 @@ export const useWebRtcConnections = () => {
     }
 
     const createPeerOffer = async ({from: remoteUserId}) => {
-
-        // if (peerConnections[pairName] || peerConnections[buildConnectionsName(from)]) {
-        //     console.warn('aborted createPeerOffer, pairName already eat :', pairName)
-        //     return
-        // }
 
         await createPeerConnection({remoteUserId})
 
@@ -148,10 +141,10 @@ export const useWebRtcConnections = () => {
 
     }
 
-    const updatePeerIceCandidate = async ({data , from: remoteUserId}) => {
+    const updatePeerIceCandidate = async ({data, from: remoteUserId}) => {
         try {
 
-            const { candidate } = data
+            const {candidate} = data
 
             if (!candidate?.candidate) {
                 console.warn('updatePeerIceCandidate , candidate is empty', remoteUserId)
