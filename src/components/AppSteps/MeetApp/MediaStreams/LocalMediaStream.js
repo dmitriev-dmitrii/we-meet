@@ -1,6 +1,4 @@
 import {localUserStore} from "@/store/localUserStore.js";
-import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {meetStore} from "@/store/meetStore.js";
 
 import mediaStreamStyles from './css/media-stream.css?inline'
@@ -17,15 +15,13 @@ const LOCAL_STREAM_ACTION_BAR_MAP = {
 
 const {setStep} = useAppSteps();
 
-const {sendDataChanelMessage} = useWebRtcDataChannels()
-
 export class LocalMediaStream extends HTMLElement {
 
     constructor() {
         super();
         this.userName = 'me'
 
-        const shadow =   this.attachShadow({mode: 'open'})
+        const shadow = this.attachShadow({mode: 'open'})
 
         const extraSheet = new CSSStyleSheet();
         extraSheet.replaceSync(mediaStreamStyles + localMediaStreamStyles);
@@ -99,10 +95,6 @@ export class LocalMediaStream extends HTMLElement {
     }
 
     async connectedCallback() {
-
-        if (!meetStore.meetId) {
-            this.leaveMeetButton.hidden = true
-        }
 
         this.actionsBar.addEventListener('click', this.onActionBarClick.bind(this))
 

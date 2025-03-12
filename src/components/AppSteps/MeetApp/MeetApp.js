@@ -1,9 +1,7 @@
 import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/RemoteMediaStream.js";
 import meetAppStyles from './css/meet-app.css?inline'
-import {LocalMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/LocalMediaStream.js";
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
-import {MeetChat} from "@/components/AppSteps/MeetApp/MeetChat/MeetChat.js";
 
 const meetAppTemplate = document.getElementById('meetAppTemplate');
 
