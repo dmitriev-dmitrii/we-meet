@@ -1,4 +1,4 @@
-import {RemoteMediaStream} from "@/components/AppSteps/MeetApp/MediaStreams/RemoteMediaStream.js";
+import {RemoteMediaStream} from "@/components/MeetApp/MediaStreams/RemoteMediaStream.js";
 import meetAppStyles from './css/meet-app.css?inline'
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";

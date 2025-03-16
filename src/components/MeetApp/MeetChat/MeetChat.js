@@ -50,7 +50,7 @@ export class MeetChat extends HTMLElement {
         this.printChatMessage({ userName:fromUserName, text})
     }
 
-    onDataChanelMessage (eventData){
+    onDataChanelTextMessage (eventData){
         const { data , type , fromUserName } = eventData
 
         if (type !== DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE ) {
@@ -89,7 +89,7 @@ export class MeetChat extends HTMLElement {
 
     async connectedCallback() {
         this.formTag.onsubmit = this.onSubmitForm
-        listenEvent(BUS_EVENTS.DATA_CHANEL_TEXT_MESSAGE, this.onDataChanelMessage.bind(this))
+        listenEvent(BUS_EVENTS.DATA_CHANEL_TEXT_MESSAGE, this.onDataChanelTextMessage.bind(this))
         listenEvent(BUS_EVENTS.DATA_CHANEL_OPEN, this.onDataChanelOpen.bind(this))
     }
 
