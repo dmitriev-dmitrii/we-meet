@@ -81,7 +81,11 @@ export const useWebRtcConnections = () => {
         sendWebSocketMessage(payload)
     }
 
-    const createPeerOffer = async ({from: remoteUserId}) => {
+    const createPeerOffer = async ({ fromUser }   ) => {
+
+       const {
+           userId: remoteUserId
+       } = fromUser
 
         await createPeerConnection({remoteUserId})
 
@@ -103,8 +107,11 @@ export const useWebRtcConnections = () => {
         sendWebSocketMessage(payload)
     }
 
-    const confirmPeerOffer = async ({from: remoteUserId, data}) => {
+    const confirmPeerOffer = async ({fromUser, data}) => {
         try {
+            const {
+                userId: remoteUserId
+            } = fromUser
             await createPeerConnection({remoteUserId})
 
             peerConnections[remoteUserId].ondatachannel = (event) => {
@@ -132,17 +139,24 @@ export const useWebRtcConnections = () => {
 
     }
 
-    const setupPeerAnswer = async ({data, from}) => {
+    const setupPeerAnswer = async ({data, fromUser}) => {
         try {
-            await peerConnections[from].setRemoteDescription(data.answer)
+            const {
+                userId: remoteUserId
+            } = fromUser
+
+            await peerConnections[remoteUserId].setRemoteDescription(data.answer)
         } catch (e) {
             console.error('setupPeerAnswer', e)
         }
 
     }
 
-    const updatePeerIceCandidate = async ({data, from: remoteUserId}) => {
+    const updatePeerIceCandidate = async ({data, fromUser}) => {
         try {
+            const {
+                userId: remoteUserId
+            } = fromUser
 
             const {candidate} = data
 
