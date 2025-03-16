@@ -33,6 +33,7 @@ export class JoinMeetForm extends HTMLElement {
         e.preventDefault()
 
         try {
+            localUserStore.userName =  this.userNameInput.value
             await  meetStore.joinMeet()
             setStep(APP_STEPS.MEETING_STEP)
         }
@@ -43,6 +44,8 @@ export class JoinMeetForm extends HTMLElement {
     }
 
     async connectedCallback() {
+        this.meetPaswordInput.hidden = true
+
         this.formTag.onsubmit = this.onSubmitForm
         this.userNameInput.value = localUserStore.userName
     }

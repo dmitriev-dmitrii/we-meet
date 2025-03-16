@@ -24,15 +24,17 @@ export const useWebRtcConnections = () => {
     const {dispatchEvent} = useEventBus()
     const {sendWebSocketMessage} = useWebSocket()
 
-    const createPeerConnection = async ({remoteUserId}) => {
+    const createPeerConnection = async (fromUser) => {
+        const {
+            userId: remoteUserId,
+            userName:remoteUserName
+        } = fromUser
 
         try {
 
             peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
 
-            peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({
-                remoteUserId,
-            })
+            peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({remoteUserName , remoteUserId})
 
             await setupMediaStreamToPeer({remoteUserId})
 
@@ -63,11 +65,12 @@ export const useWebRtcConnections = () => {
 
     function onPeerConnectionStateChange(event) {
 
-        const {remoteUserId} = this
+        const { remoteUserId , remoteUserName } = this
+
         const status = peerConnections[remoteUserId].connectionState
 
         if (status) {
-            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId})
+            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId , remoteUserName})
         }
 
     }
@@ -87,11 +90,11 @@ export const useWebRtcConnections = () => {
            userId: remoteUserId
        } = fromUser
 
-        await createPeerConnection({remoteUserId})
+        await createPeerConnection(fromUser)
 
         const channel = await peerConnections[remoteUserId].createDataChannel(localUserStore.userId);
 
-        setupDataChanelEvents({remoteUserId, channel})
+        setupDataChanelEvents({ fromUser , channel})
 
         peerConnections[remoteUserId].onicecandidate = onIceCandidate.bind({remoteUserId});
 
@@ -112,7 +115,7 @@ export const useWebRtcConnections = () => {
             const {
                 userId: remoteUserId
             } = fromUser
-            await createPeerConnection({remoteUserId})
+            await createPeerConnection(fromUser)
 
             peerConnections[remoteUserId].ondatachannel = (event) => {
                 const {channel} = event

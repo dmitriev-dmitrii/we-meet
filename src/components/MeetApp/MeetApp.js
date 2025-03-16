@@ -32,10 +32,13 @@ export class MeetApp extends HTMLElement {
 
     updatePeerStatusHandle(eventData) {
 
-        const {remoteUserId, status} = eventData
+        const {remoteUserId, remoteUserName, status} = eventData
 
         if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTING) {
-            this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
+            this.remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({
+                remoteUserId,
+                remoteUserName
+            }))
             this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
         }
 
@@ -73,7 +76,6 @@ export class MeetApp extends HTMLElement {
         listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, this.updatePeerStatusHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, this.updateMediaStreamHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, this.updateMediaTrackStateHandle.bind(this))
-
     }
 
     disconnectedCallback() {

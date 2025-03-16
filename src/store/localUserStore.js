@@ -3,6 +3,7 @@ import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 
 const {sendDataChanelMessage} = useWebRtcDataChannels()
+
 export const localUserStore = {
 
     userId : '',
@@ -78,14 +79,19 @@ export const localUserStore = {
         }
     },
 
-    auth : async (payload)=> {
-        // {userName : 'hui'}
-      const {data} =   await usersApi.userAuth(payload)
+    auth : async ()=> {
+
+        const {userName} = localUserStore
+
+        const payload = {
+            userName
+        }
+
+        const {data} =   await usersApi.userAuth(payload)
+
         localUserStore.userName = data.userName
         localUserStore.userId = data.userId
     },
-
-    hui : ()=>{
-
-    }
 }
+
+

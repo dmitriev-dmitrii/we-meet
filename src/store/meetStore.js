@@ -4,6 +4,7 @@ import {localUserStore} from "@/store/localUserStore.js";
 import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
+import {peerConnections} from "@/store/webRtcStore.js";
 
 const {sendMeOffer} = useWebRtcConnections()
 
@@ -35,9 +36,9 @@ const createMeet = async ({password}) => {
 const joinMeet = async () => {
     await localUserStore.auth()
     const {meetId} = meetStore
-    const {userId, userName} = localUserStore
+    const {userId} = localUserStore
 
-    const {data} = await meetApi.joinMeetRequest({meetId, userId, userName})
+    const {data} = await meetApi.joinMeetRequest({meetId, userId})
 
     await connectToWebSocket()
     await sendMeOffer()
@@ -59,10 +60,14 @@ const leaveMeet = () => {
 
     meetStore.meetId = ''
 
+    Object.keys(peerConnections).forEach((remoteUserId)=>{
+        removeUserFromMeet(remoteUserId)
+    })
+
     closeWebSocket()
 }
 
-const removeUserFromMeet = ({remoteUserId}) => {
+const removeUserFromMeet = (remoteUserId) => {
 
     deleteMediaStream(remoteUserId)
     deleteDataChanel(remoteUserId)
@@ -70,9 +75,6 @@ const removeUserFromMeet = ({remoteUserId}) => {
 }
 export const meetStore = {
     meetId: '',
-    get localUserIsOwner() {
-        return meetStore.meetId && meetStore.ownerUserId === localUserStore.userId
-    },
     removeUserFromMeet,
     joinMeet,
     createMeet,

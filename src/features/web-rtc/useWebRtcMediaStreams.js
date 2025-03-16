@@ -6,8 +6,6 @@ import {useEventBus} from "@/features/useEventBus.js";
 export const useWebRtcMediaStreams = () => {
 
     const {dispatchEvent} = useEventBus()
-
-
     const setupMediaStreamToPeer = async ({remoteUserId}) => {
 
         if (!localUserStore.userStreams?.active) {

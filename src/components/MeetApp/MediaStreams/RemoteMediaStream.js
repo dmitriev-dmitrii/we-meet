@@ -2,6 +2,7 @@ import mediaStreamStyles from './css/media-stream.css?inline'
 import remoteMediaStreamStyles from './css/remote-media-stream.css?inline'
 import {mediaStreams} from "@/store/webRtcStore.js";
 import {MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
+import {meetStore} from "@/store/meetStore.js";
 
 const remoteMediaStreamTemplate = document.getElementById('remote-media-stream-template');
 
@@ -26,11 +27,10 @@ export class RemoteMediaStream extends HTMLElement {
     remoteUserName = '';
     connectionState = COMPONENT_CONNECTION_STATE.LOADING
 
-    constructor({remoteUserId = ''}) {
+    constructor({remoteUserId = '' , remoteUserName= ''}) {
         super();
-
         this.remoteUserId = remoteUserId
-        this.remoteUserName = ''
+        this.remoteUserName = remoteUserName
 
         const shadow = this.attachShadow({mode: 'open'})
 
@@ -69,6 +69,10 @@ export class RemoteMediaStream extends HTMLElement {
         const connectionState = COMPONENT_CONNECTION_STATE_BY_PEER_STATUS[status]
 
         this.updateConnectionState(connectionState)
+
+        if (this.connectionState === COMPONENT_CONNECTION_STATE.DISCONNECTED) {
+            this.removeMediaStreamComponent()
+        }
     }
 
     updateConnectionState(state) {
@@ -105,7 +109,6 @@ export class RemoteMediaStream extends HTMLElement {
 
 
     async connectedCallback() {
-        this.remoteUserName = this.remoteUserId
         this.userLabelElement.innerText = this.remoteUserName
         this.setupRemoteMediaStream()
     }
@@ -120,7 +123,6 @@ export class RemoteMediaStream extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         console.log(`Attribute ${name} has changed.`);
-
     }
 
 
@@ -128,6 +130,7 @@ export class RemoteMediaStream extends HTMLElement {
         this.classList.add('remove');
         this.videoTagElement.muted = true
         this.videoTagElement.pause()
+        meetStore.removeUserFromMeet(this.remoteUserId)
 
         setTimeout(() => {
             this.remove();

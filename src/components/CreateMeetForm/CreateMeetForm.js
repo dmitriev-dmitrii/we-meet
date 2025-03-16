@@ -105,7 +105,7 @@ export class CreateMeetForm extends HTMLElement {
             this.copyMeetLinkButton.disabled = true
             this.goToMeetButton.disabled = true
 
-            await localUserStore.auth({userName: this.userNameInput.value})
+            await localUserStore.auth()
             await meetStore.createMeet({password: this.meetPaswordInput.value})
 
             if (meetStore.meetId) {
@@ -128,18 +128,11 @@ export class CreateMeetForm extends HTMLElement {
 
     onSubmitForm = async (e) => {
         e.preventDefault()
-
-        if (meetStore.meetId) {
-            await this.joinMeet()
-            return
-        }
-
+        localUserStore.userName =  this.userNameInput.value
         await this.createMeet()
     }
 
     async connectedCallback() {
-
-
 
         this.actionsBar.addEventListener('click', this.onActionBarClick.bind(this))
         this.formTag.onsubmit = this.onSubmitForm
@@ -149,17 +142,12 @@ export class CreateMeetForm extends HTMLElement {
 
         this.userNameInput.value = localUserStore.userName
 
-
         setTimeout(()=>{
             this.legendTag.classList.add('mounted')
             this.fieldsetTag.classList.add('mounted')
             this.formTag.classList.add('mounted')
 
         },100)
-    }
-
-    async removeJoinMeetForm() {
-        this.remove()
     }
 
     disconnectedCallback() {
