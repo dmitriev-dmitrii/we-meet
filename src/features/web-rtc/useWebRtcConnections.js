@@ -119,7 +119,7 @@ export const useWebRtcConnections = () => {
 
             peerConnections[remoteUserId].ondatachannel = (event) => {
                 const {channel} = event
-                setupDataChanelEvents({remoteUserId, channel})
+                setupDataChanelEvents({ fromUser, channel})
             }
 
             peerConnections[remoteUserId].onicecandidate = onIceCandidate.bind({remoteUserId});

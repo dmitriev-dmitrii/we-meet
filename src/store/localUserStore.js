@@ -6,24 +6,25 @@ const {sendDataChanelMessage} = useWebRtcDataChannels()
 
 export const localUserStore = {
 
-    userId : '',
+    userId: '',
 
-    userName : '',
+    userName: '',
 
-    userStreams : {
+    userStreams: {},
+
+    initLocalMediaStream: async () => {
+        try {
+            localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+            //cb navigator.mediaDevices.ondevicechange TODO
+            //TODO many media input device - select?
+
+        } catch (e) {
+            console.log('initLocalMediaStream err', e)
+        }
 
     },
-
-    initLocalMediaStream : async () => {
-
-        localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        //cb navigator.mediaDevices.ondevicechange TODO
-        //TODO many media input device - select?
-
-        return localUserStore.userStreams
-    },
-    sendMediaTrackLocalState :  () => {
-    // отправить участникам мита состояние медиа треков
+    sendMediaTrackLocalState: () => {
+        // отправить участникам мита состояние медиа треков
         const payload = {
             type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
             data: {
@@ -39,7 +40,6 @@ export const localUserStore = {
         try {
             return this.userStreams.getAudioTracks().some((item) => item.enabled)
         } catch (e) {
-            console.log('audio get err', e)
             return false
         }
     },
@@ -52,7 +52,6 @@ export const localUserStore = {
             this.sendMediaTrackLocalState()
             return value
         } catch (e) {
-            console.log('audio set err', e)
             return false
         }
     },
@@ -61,7 +60,7 @@ export const localUserStore = {
         try {
             return this.userStreams.getVideoTracks().some((item) => item.enabled)
         } catch (e) {
-            console.log('video get err', e)
+
             return false
         }
     },
@@ -74,12 +73,12 @@ export const localUserStore = {
             this.sendMediaTrackLocalState()
             return value
         } catch (e) {
-            console.log('video set err', e)
+
             return false
         }
     },
 
-    auth : async ()=> {
+    auth: async () => {
 
         const {userName} = localUserStore
 
@@ -87,7 +86,7 @@ export const localUserStore = {
             userName
         }
 
-        const {data} =   await usersApi.userAuth(payload)
+        const {data} = await usersApi.userAuth(payload)
 
         localUserStore.userName = data.userName
         localUserStore.userId = data.userId

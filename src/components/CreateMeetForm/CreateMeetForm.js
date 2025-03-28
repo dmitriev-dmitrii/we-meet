@@ -105,7 +105,7 @@ export class CreateMeetForm extends HTMLElement {
             this.copyMeetLinkButton.disabled = true
             this.goToMeetButton.disabled = true
 
-            await localUserStore.auth()
+
             await meetStore.createMeet({password: this.meetPaswordInput.value})
 
             if (meetStore.meetId) {

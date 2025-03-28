@@ -2,7 +2,6 @@ import {RemoteMediaStream} from "@/components/MeetApp/MediaStreams/RemoteMediaSt
 import meetAppStyles from './css/meet-app.css?inline'
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
-
 const meetAppTemplate = document.getElementById('meetAppTemplate');
 
 const {listenEvent} = useEventBus()
@@ -24,6 +23,7 @@ export class MeetApp extends HTMLElement {
         shadow.appendChild(
             meetAppTemplate.content.cloneNode(true)
         );
+
 
         this.mediaStreamsWrapper = this.shadowRoot.querySelector('[data-role="media-streams-wrapper"]')
         this.meetChatWrapper = this.shadowRoot.querySelector('[data-role="meet-chat-wrapper"]')
@@ -73,9 +73,14 @@ export class MeetApp extends HTMLElement {
 
 
     async connectedCallback() {
+
+        this.meetChatWrapper.append(document.createElement('meet-chat'))
+
         listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, this.updatePeerStatusHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, this.updateMediaStreamHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, this.updateMediaTrackStateHandle.bind(this))
+
+
     }
 
     disconnectedCallback() {

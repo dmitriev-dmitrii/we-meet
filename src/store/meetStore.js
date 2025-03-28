@@ -22,49 +22,64 @@ const {
     deletePeerConnection
 } = useWebRtcConnections()
 const createMeet = async ({password}) => {
+    try {
+        await localUserStore.auth()
 
-    const payload = {
-        userName: localUserStore.userName,
-        userId: localUserStore.userId,
-        password
+        const payload = {
+            userName: localUserStore.userName,
+            userId: localUserStore.userId,
+            password
+        }
+        const {data} = await meetApi.createMeet(payload)
+        meetStore.meetId = data.meetId
+        meetStore.ownerUserId = data.ownerUserId
+    } catch (e) {
+        alert('createMeet err' + e.message)
     }
-    const {data} = await meetApi.createMeet(payload)
-    meetStore.meetId = data.meetId
-    meetStore.ownerUserId = data.ownerUserId
 }
 
 const joinMeet = async () => {
-    await localUserStore.auth()
-    const {meetId} = meetStore
-    const {userId} = localUserStore
+    try {
 
-    const {data} = await meetApi.joinMeetRequest({meetId, userId})
 
-    await connectToWebSocket()
-    await sendMeOffer()
+        await localUserStore.auth()
+        const {meetId} = meetStore
+        const {userId} = localUserStore
 
-    const currentUrl = new URL(window.location.href);
-    const urlParams = new URLSearchParams(currentUrl.search);
+        const {data} = await meetApi.joinMeetRequest({meetId, userId})
 
-    urlParams.set('meetId', meetId)
-    currentUrl.search = urlParams.toString();
-    window.history.pushState(null, '', currentUrl)
+        await connectToWebSocket()
+        await sendMeOffer()
+
+        const currentUrl = new URL(window.location.href);
+        const urlParams = new URLSearchParams(currentUrl.search);
+
+        urlParams.set('meetId', meetId)
+        currentUrl.search = urlParams.toString();
+        window.history.replaceState(null, '', currentUrl)
+    } catch (e) {
+        alert('joinMeet err' + e.message)
+    }
+
 }
 const leaveMeet = () => {
+    try {
+        const currentUrl = new URL(window.location.href);
+        const urlParams = new URLSearchParams(currentUrl.search);
+        urlParams.delete('meetId');
+        currentUrl.search = urlParams.toString();
+        window.history.replaceState(null, '', currentUrl)
 
-    const currentUrl = new URL(window.location.href);
-    const urlParams = new URLSearchParams(currentUrl.search);
-    urlParams.delete('meetId');
-    currentUrl.search = urlParams.toString();
-    window.history.pushState(null, '', currentUrl)
+        meetStore.meetId = ''
 
-    meetStore.meetId = ''
+        Object.keys(peerConnections).forEach((remoteUserId) => {
+            removeUserFromMeet(remoteUserId)
+        })
 
-    Object.keys(peerConnections).forEach((remoteUserId)=>{
-        removeUserFromMeet(remoteUserId)
-    })
-
-    closeWebSocket()
+        closeWebSocket()
+    } catch (e) {
+        alert('leaveMeet err' + e.message)
+    }
 }
 
 const removeUserFromMeet = (remoteUserId) => {

@@ -1,2 +1,24 @@
 @import "@/css/button.css";
 @import "@/css/input-text.css";
+
+meet-chat {
+    /*TODO не работает*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    border-radius: 8px;
+    border: 1px solid currentColor;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+}
+label {
+    display: block;
+    flex: 1;
+}
+input {
+    width: 100%;
+}

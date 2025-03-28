@@ -1,4 +1,3 @@
-
 import joinMeetFormStyles from './css/join-meet-form.css?inline'
 import {localUserStore} from "@/store/localUserStore.js";
 import {meetStore} from "@/store/meetStore.js";
@@ -7,12 +6,13 @@ import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
 const joinMeetFormTemplate = document.getElementById('joinMeetFormTemplate');
 
 const {setStep} = useAppSteps();
+
 export class JoinMeetForm extends HTMLElement {
 
     constructor() {
         super();
 
-        const shadow =   this.attachShadow({mode: 'open'})
+        const shadow = this.attachShadow({mode: 'open'})
 
         const extraSheet = new CSSStyleSheet();
         extraSheet.replaceSync(joinMeetFormStyles);
@@ -31,23 +31,20 @@ export class JoinMeetForm extends HTMLElement {
 
     onSubmitForm = async (e) => {
         e.preventDefault()
+        localUserStore.userName = this.userNameInput.value
+        await meetStore.joinMeet()
+        setStep(APP_STEPS.MEETING_STEP)
 
-        try {
-            localUserStore.userName =  this.userNameInput.value
-            await  meetStore.joinMeet()
-            setStep(APP_STEPS.MEETING_STEP)
-        }
-        catch(e) {
-            console.log(e)
-            alert( e.status +' '+ e.message )
-        }
     }
 
     async connectedCallback() {
+
         this.meetPaswordInput.hidden = true
 
         this.formTag.onsubmit = this.onSubmitForm
         this.userNameInput.value = localUserStore.userName
+
+
     }
 
 

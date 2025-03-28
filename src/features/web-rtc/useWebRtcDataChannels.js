@@ -6,7 +6,9 @@ export const useWebRtcDataChannels = () => {
 
     const {dispatchEvent} = useEventBus()
 
-    const setupDataChanelEvents = ( { channel , remoteUserId , remoteUserName } ) => {
+    const setupDataChanelEvents = ( { channel , fromUser  } ) => {
+
+        const {  userId:remoteUserId , userName: remoteUserName } = fromUser
 
         dataChannels[remoteUserId] = channel
 

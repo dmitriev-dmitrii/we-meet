@@ -35,11 +35,12 @@ export class MeetChat extends HTMLElement {
     }
 
     onDataChanelOpen(eventData){
-        const {  fromUserName } = eventData
+
+        const {  remoteUserName  } = eventData
 
         const text = 'joinedMeet'
 
-        this.printChatMessage({ userName:fromUserName, text})
+        this.printChatMessage({ userName:remoteUserName , text})
     }
 
     onDataChanelClose(eventData){

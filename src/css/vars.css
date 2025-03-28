@@ -1,4 +1,6 @@
 :root {
+
+
     --main-accent-color: rgba(100, 108, 255, 0.67);
     /*color: #535bf2; hover */
     --main-text-color: rgba(255, 255, 255, 0.87);
@@ -13,7 +15,7 @@
     /*--color-error: #DC3545;        !* Цвет ошибок *!*/
     /*--color-success: #28A745;      !* Цвет успешных операций *!*/
 
-    /*--media-stream-size: 300;*/
+    --media-stream-size: 320;
 
 }
 

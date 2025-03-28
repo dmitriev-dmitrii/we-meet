@@ -1,12 +1,22 @@
 
 .meet-app {
+    height: 100%;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .5rem;
 }
 
-.media-streams {
+[data-role="media-streams-wrapper"] {
+    flex: 1;
+    min-width: 320px;
+
     width: 100%;
+
     display: flex;
-    margin: -.5rem;
-    padding: .5rem;
+    gap: .5rem;
 }
 
+[data-role="meet-chat-wrapper"] {
+    width: 320px;
+}

@@ -6,19 +6,18 @@
     overflow: hidden;
     position: relative;
     border: 1px solid currentColor;
-    margin: .5rem;
-
     transition: all 0.3s ease;
+    min-width: 320px;
 }
 
 
 
 .media-stream.loading {
-    box-shadow:azure  0px 0px 10px 10px;
+    box-shadow : dodgerblue  0px 0px 10px 10px;
 }
 
 .media-stream.connected {
-    box-shadow: dodgerblue 0px 0px 10px 10px;
+    /*box-shadow: dodgerblue 0px 0px 10px 10px;*/
 }
 
 .media-stream.disconnected {
