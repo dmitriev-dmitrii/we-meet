@@ -12,6 +12,7 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@vitejs/plugin-legacy": "^6.0.2",
     "vite": "^6.1.0"
   },
   "dependencies": {
