@@ -1,0 +1,102 @@
+<template>
+    <ul data-role="messages-list">
+
+    </ul>
+
+    <form>
+        <label>
+            <input type="text" data-input-type="text-message" placeholder="write message">
+        </label>
+
+        <button type="submit">
+            send
+        </button>
+    </form>
+</template>
+
+<script>
+
+    import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
+    import {localUserStore} from "@/store/localUserStore.js";
+    import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
+    import {useEventBus} from "@/features/useEventBus.js";
+    const {listenEvent} = useEventBus()
+    const formTag = this.querySelector('form');
+    const textMessageInput = this.querySelector('[data-input-type="text-message"]');
+    const messagesList = this.querySelector('[data-role="messages-list"]');
+
+    const {sendDataChanelMessage} = useWebRtcDataChannels();
+    const printChatMessage = ({userName, text}) => {
+        const listItem = document.createElement('li')
+        listItem.innerText = `[${userName}] : ${text}`
+        messagesList.append(listItem)
+    }
+    const onDataChanelOpen = (eventData) => {
+
+        const {remoteUserName} = eventData
+
+        const text = 'joinedMeet'
+
+        printChatMessage({userName: remoteUserName, text})
+    }
+
+    const onDataChanelClose = (eventData) => {
+
+        const {fromUserName} = eventData
+
+        const text = 'leaveMeet'
+
+        printChatMessage({userName: fromUserName, text})
+    }
+
+    const onDataChanelTextMessage = (eventData) => {
+        const {data, type, fromUserName} = eventData
+
+        if (type !== DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE) {
+            return
+        }
+
+        const {text} = data
+
+        printChatMessage({userName: fromUserName, text})
+    }
+
+
+    const onSubmitForm = async (e) => {
+        e.preventDefault()
+
+        const text = textMessageInput.value
+
+        if (!text) {
+            return
+        }
+
+        const payload = {
+            type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE,
+            data: {
+                text,
+            }
+        }
+
+        sendDataChanelMessage(payload)
+
+
+        printChatMessage({userName: localUserStore.userName, text})
+
+        textMessageInput.value = '';
+    }
+
+    formTag.onsubmit = onSubmitForm
+
+    listenEvent(BUS_EVENTS.DATA_CHANEL_TEXT_MESSAGE, onDataChanelTextMessage)
+    listenEvent(BUS_EVENTS.DATA_CHANEL_OPEN, onDataChanelOpen)
+    listenEvent(BUS_EVENTS.DATA_CHANEL_CLOSE, onDataChanelClose)
+
+</script>
+
+<style>
+
+</style>
+
+
+

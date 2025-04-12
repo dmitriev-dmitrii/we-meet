@@ -2,16 +2,13 @@ import '@/css/index.css'
 import  "webrtc-adapter";
 
 import  "@/components/MeetApp/meet-app.component.html";
-
-import {MeetChat} from "@/components/MeetApp/MeetChat/MeetChat.js";
+import  "@/components/MeetApp/MeetChat/meet-chat.component.html";
 
 import  "@/components/CreateMeetForm/create-meet-form.component.html";
 import  "@/components/JoinMeetForm/join-meet-form.component.html";
 
 import  "@/components/MeetApp/MediaStreams/local-media-stream.component.html";
 import  "@/components/MeetApp/MediaStreams/remote-media-stream.component.html";
-
-customElements.define('meet-chat', MeetChat);
 
 import { useWebSocket } from "./features/useWebSocket.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
