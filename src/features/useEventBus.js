@@ -56,8 +56,13 @@ export const useEventBus = () => {
         eventBusElement.addEventListener(eventKey, eventBusHandle)
     }
 
+    const unListenEvent =  ()=>{
+        // TODO
+    }
 
     return {
-        dispatchEvent, listenEvent,
+        dispatchEvent,
+        listenEvent,
+        unListenEvent,
     };
 };
