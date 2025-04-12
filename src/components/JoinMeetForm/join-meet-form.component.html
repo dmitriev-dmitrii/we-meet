@@ -1,0 +1,61 @@
+<template>
+    <form>
+        <label>
+            <span>write you name if y wont</span>
+            <input type="text" data-input-type="user-name" placeholder="you name">
+        </label>
+
+        <label style="display: none">
+            <span>this is private meet , enter password</span>
+            <input type="text" data-input-type="meet-password" placeholder="password">
+        </label>
+
+        <button type="submit">
+            join meet
+        </button>
+
+    </form>
+</template>
+
+<script>
+
+    import {localUserStore} from "@/store/localUserStore.js";
+    import {meetStore} from "@/store/meetStore.js";
+    import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
+
+    const formTag = this.querySelector('form')
+
+    const userNameInput = formTag.querySelector('[data-input-type="user-name"]')
+    const meetPasswordInput = formTag.querySelector('[data-input-type="meet-password"]')
+
+    const {setStep} = useAppSteps();
+
+    const onSubmitForm = async (e) => {
+        e.preventDefault()
+        localUserStore.userName = userNameInput.value
+        await meetStore.joinMeet()
+        setStep(APP_STEPS.MEETING_STEP)
+    }
+
+    formTag.onsubmit = onSubmitForm
+
+</script>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label span {
+        font-size: 1.4rem;
+    }
+</style>
+
+
+

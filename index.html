@@ -7,6 +7,10 @@
 </head>
 <body>
 
+<create-meet-form-ept/>
+
+
+
 <create-meet-form></create-meet-form>
 <join-meet-form></join-meet-form>
 <meet-app></meet-app>
@@ -44,59 +48,6 @@
 </template>
 
 
-<template id="joinMeetFormTemplate">
-
-    <form>
-        <label>
-            <span>write you name if y wont</span>
-            <input type="text" data-input-type="user-name" placeholder="you name">
-        </label>
-
-        <label style="display: none">
-            <span>this is private meet , enter password</span>
-            <input type="text" data-input-type="meet-password" placeholder="password">
-        </label>
-
-        <button type="submit">
-            join meet
-        </button>
-
-    </form>
-
-</template>
-
-<template id="createMeetFormTemplate">
-    <fieldset>
-        <legend><h1>We Meet</h1></legend>
-        <form>
-            <label>
-                <span>write you name if y wont</span>
-                <input type="text" data-size="lg" data-input-type="user-name" placeholder="you name">
-            </label>
-
-            <label style="display: none">
-                <span>enter password if you want to create private meet </span>
-                <input type="text" data-size="lg" data-input-type="meet-password" placeholder="password">
-            </label>
-
-            <div data-role="actions-bar">
-
-                <button data-size="lg" type="submit" data-theme="primary" data-action-type="create-meet">
-                    create meet
-                </button>
-
-                <button data-size="lg" type="button" data-action-type="copy-meet-link">
-                    copy meet link
-                </button>
-
-                <button data-size="lg" type="button" data-theme="primary" data-action-type="go-to-meet">
-                    to meet =>
-                </button>
-
-            </div>
-        </form>
-    </fieldset>
-</template>
 
 
 
