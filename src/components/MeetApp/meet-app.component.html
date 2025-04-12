@@ -1,0 +1,66 @@
+<template>
+
+        <div data-role="media-streams-wrapper">
+            <local-media-stream></local-media-stream>
+        </div>
+
+        <div data-role="meet-chat-wrapper">
+
+        </div>
+</template>
+
+<script>
+    import RemoteMediaStream from '@/components/MeetApp/MediaStreams/remote-media-stream.component.html'
+    import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
+    import {useEventBus} from "@/features/useEventBus.js";
+
+    const mediaStreamsWrapper = this.querySelector('[data-role="media-streams-wrapper"]')
+    const meetChatWrapper = this.querySelector('[data-role="meet-chat-wrapper"]')
+
+    const remoteMediaStreamsComponentsMap = new Map()
+
+    const {listenEvent} = useEventBus()
+
+    const updatePeerStatusHandle = (eventData) => {
+
+        const {remoteUserId, remoteUserName, status} = eventData
+
+        if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTING) {
+            remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({
+                remoteUserId,
+                remoteUserName
+            }))
+
+            mediaStreamsWrapper.append(remoteMediaStreamsComponentsMap.get(remoteUserId))
+        }
+
+        if (remoteMediaStreamsComponentsMap.has(remoteUserId)) {
+           remoteMediaStreamsComponentsMap.get(remoteUserId).setAttribute('peerStatus', status)
+        }
+
+    }
+    const updateMediaTrackStateHandle = (eventData) => {
+
+        const {from, data} = eventData
+
+        if (remoteMediaStreamsComponentsMap.has(from)) {
+            const {audio, video} = data
+
+            remoteMediaStreamsComponentsMap.get(from).setAttribute('mediaTrackState', data)
+        }
+    }
+
+    listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, updatePeerStatusHandle.bind(this))
+    listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, updateMediaTrackStateHandle.bind(this))
+
+    meetChatWrapper.append(document.createElement('meet-chat'))
+</script>
+
+<style>
+    meet-app{
+        display: flex;
+    }
+</style>
+
+
+
