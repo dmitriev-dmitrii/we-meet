@@ -1,0 +1,104 @@
+<template>
+
+    <div class="media-stream">
+
+        <div class="media-stream__user-name-label active" data-role="user-label"></div>
+
+        <video class="media-stream__video"></video>
+
+        <div class="local-media-stream__actions-bar">
+
+            <button class="local-media-stream__actions-bar__audio-toggle" data-action-type="audio"> audio</button>
+
+            <button class="local-media-stream__actions-bar__video-toggle hui" data-action-type="video"> video</button>
+
+            <button class="local-media-stream__actions-bar__leave-meet " data-action-type="leave-meet"> leave meet
+            </button>
+        </div>
+    </div>
+
+</template>
+
+<script>
+
+    import {meetStore} from "@/store/meetStore.js";
+    import {localUserStore} from "@/store/localUserStore.js";
+
+    const LOCAL_STREAM_ACTION_BAR_MAP = {
+        LEAVE_MEET: 'leave-meet',
+        VIDEO: 'video',
+        AUDIO: 'audio',
+    }
+
+    const audioToggleButton = this.querySelector(`[data-action-type="${LOCAL_STREAM_ACTION_BAR_MAP.AUDIO}"]`)
+    const videoToggleButton = this.querySelector(`[data-action-type="${LOCAL_STREAM_ACTION_BAR_MAP.VIDEO}"]`)
+    const leaveMeetButton = this.querySelector(`[data-action-type="${LOCAL_STREAM_ACTION_BAR_MAP.LEAVE_MEET}"]`)
+
+    const userLabelElement = this.querySelector('[data-role="user-label"]')
+
+    const videoTagElement = this.querySelector('video')
+
+    videoTagElement.muted = true
+    videoTagElement.autoplay = true
+
+    this.props = {
+        userName: 'me'
+    }
+
+    userLabelElement.innerText = this.props.userName
+
+    // const {setStep} = useAppSteps();
+
+    const updateAudioStatus = () => localUserStore.audio ? audioToggleButton.classList.add('active') : audioToggleButton.classList.remove('active')
+
+    const updateVideoStatus = () => {
+        if (localUserStore.video) {
+            videoToggleButton.classList.add('active')
+            videoTagElement.classList.add('active')
+            userLabelElement.classList.remove('active')
+            return
+        }
+
+        videoToggleButton.classList.remove('active')
+        videoTagElement.classList.remove('active')
+        userLabelElement.classList.add('active')
+
+    }
+
+    audioToggleButton.onclick = () => {
+        localUserStore.audio = !localUserStore.audio
+        updateAudioStatus()
+    }
+
+    videoToggleButton.onclick = () => {
+        localUserStore.video = !localUserStore.video
+        updateVideoStatus()
+    }
+
+    leaveMeetButton.onclick = () => {
+        meetStore.leaveMeet()
+        // setStep(APP_STEPS.CREATE_MEET_STEP)
+    }
+    const setupLocalMediaStream = async () => {
+
+        if (!localUserStore.userStreams?.active) {
+            await localUserStore.initLocalMediaStream()
+        }
+
+        videoTagElement.srcObject = localUserStore.userStreams
+        localUserStore.audio = false
+        updateVideoStatus()
+        updateAudioStatus()
+
+    }
+
+    setupLocalMediaStream()
+
+</script>
+
+<style>
+
+</style>
+
+
+

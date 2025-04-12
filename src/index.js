@@ -1,5 +1,5 @@
 import '@/css/index.css'
-import "webrtc-adapter";
+import  "webrtc-adapter";
 
 import {MeetApp} from "@/components/MeetApp/MeetApp.js";
 import {MeetChat} from "@/components/MeetApp/MeetChat/MeetChat.js";
@@ -8,6 +8,7 @@ customElements.define('remote-media-stream', RemoteMediaStream);
 import  "@/components/CreateMeetForm/create-meet-form.component.html";
 import  "@/components/JoinMeetForm/join-meet-form.component.html";
 
+import  "@/components/MeetApp/MediaStreams/local-media-stream.component.html";
 import  "@/components/MeetApp/MediaStreams/remote-media-stream.component.html";
 
 customElements.define('local-media-stream', LocalMediaStream);

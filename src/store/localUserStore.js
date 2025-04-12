@@ -1,8 +1,8 @@
 import {usersApi} from "@/api/usersApi.js";
 import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
-import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
+// import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 
-const {sendDataChanelMessage} = useWebRtcDataChannels()
+// const {sendDataChanelMessage} = useWebRtcDataChannels() //TODO придумать shared store
 
 export const localUserStore = {
 
@@ -33,7 +33,7 @@ export const localUserStore = {
             }
         }
 
-        sendDataChanelMessage(payload)
+        // sendDataChanelMessage(payload)
     },
 
     get audio() {
