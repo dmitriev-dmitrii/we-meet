@@ -23,7 +23,7 @@ export const useWebRtcMediaStreams = () => {
                 ...{[e.track.kind]: e}
             }
 
-            dispatchEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, {remoteUserId})
+            dispatchEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM_TRACK, {remoteUserId})
         }
 
 

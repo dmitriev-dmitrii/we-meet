@@ -1,8 +1,8 @@
-import {RemoteMediaStream} from "@/components/MeetApp/MediaStreams/RemoteMediaStream.js";
 import meetAppStyles from './css/meet-app.css?inline'
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
 const meetAppTemplate = document.getElementById('meetAppTemplate');
+import RemoteMediaStream from '@/components/MeetApp/MediaStreams/remote-media-stream.component.html'
 
 const {listenEvent} = useEventBus()
 
@@ -39,21 +39,22 @@ export class MeetApp extends HTMLElement {
                 remoteUserId,
                 remoteUserName
             }))
+
             this.mediaStreamsWrapper.append(this.remoteMediaStreamsComponentsMap.get(remoteUserId))
         }
 
         if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-            this.remoteMediaStreamsComponentsMap.get(remoteUserId).peerStatusChangeHandle(status)
+            this.remoteMediaStreamsComponentsMap.get(remoteUserId).setAttribute('peerStatus' , status)
         }
 
     }
 
-    updateMediaStreamHandle(eventData) {
-
+    remoteUserOnTrackHandle(eventData) {
+    
         const {remoteUserId} = eventData
 
         if (this.remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-            this.remoteMediaStreamsComponentsMap.get(remoteUserId).setupRemoteMediaStream()
+            // this.remoteMediaStreamsComponentsMap.get(remoteUserId).setupRemoteMediaStream()
         }
 
     }
@@ -63,10 +64,9 @@ export class MeetApp extends HTMLElement {
         const {from, data} = eventData
 
         if (this.remoteMediaStreamsComponentsMap.has(from)) {
-            const {audio, video} = data
+            const { audio, video } = data
 
-            this.remoteMediaStreamsComponentsMap.get(from).updateVideoStatus(video)
-            this.remoteMediaStreamsComponentsMap.get(from).updateAudioStatus(audio)
+            this.remoteMediaStreamsComponentsMap.get(from).setAttribute('mediaTrackState', data )
         }
 
     }
@@ -77,7 +77,7 @@ export class MeetApp extends HTMLElement {
         this.meetChatWrapper.append(document.createElement('meet-chat'))
 
         listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, this.updatePeerStatusHandle.bind(this))
-        listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM, this.updateMediaStreamHandle.bind(this))
+        listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM_TRACK, this.remoteUserOnTrackHandle.bind(this))
         listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, this.updateMediaTrackStateHandle.bind(this))
 
 
