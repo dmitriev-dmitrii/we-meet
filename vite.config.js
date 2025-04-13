@@ -1,44 +1,52 @@
 import {fileURLToPath, URL} from 'node:url'
 import {defineConfig, loadEnv} from 'vite'
-import legacy from '@vitejs/plugin-legacy'
 import webComponentPlugin from "./webComponentPlugin.js";
+import path from "path";
 // https://vitejs.dev/config/
 
-export default defineConfig(( { command, mode, isSsrBuild, isPreview })=> {
+export default defineConfig(({command, mode, isSsrBuild, isPreview}) => {
 
-const {VITE_APP_PORT } =    loadEnv(mode, process.cwd());
+    const {VITE_APP_PORT} = loadEnv(mode, process.cwd());
 
-const  publicPath = mode === "production" ? "/we-meet-frontend/" : "/"
+    const isProdMode = mode === 'production'
+    const publicPath = isProdMode ? "/we-meet-frontend/" : "/"
 
- return {
-     server: {
-         port: parseInt(VITE_APP_PORT, 10),
-     },
-     plugins: [
-         webComponentPlugin(),
-         legacy({
-             targets: ['defaults','IE 11'],
-         }),
-     ],
-     resolve: {
-         alias: {
-             '@': fileURLToPath(new URL('./src', import.meta.url))
-         }
-     },
-     base: publicPath,
-     build: {
-         rollupOptions: {
-             output: {
-                 manualChunks(id) {
-                     if (id.includes('use')) {
-                         return 'features';
-                     }
-                     if (id.includes('components')) {
-                         return 'components';
-                     }
-                 }
-             }
-         }
-     },
- }
+    return {
+        server: {
+            port: parseInt(VITE_APP_PORT, 10),
+        },
+        preview: {
+            port: parseInt(VITE_APP_PORT, 10),
+        },
+        plugins: [
+            webComponentPlugin(),
+        ],
+        resolve: {
+            alias: {
+                '@': fileURLToPath(new URL('./src', import.meta.url))
+            }
+        },
+        base: publicPath,
+        build: {
+            minify: isProdMode ,
+            cssMinify: isProdMode,
+            sourcemap: true,
+            rollupOptions: {
+                output: {
+                    chunkFileNames: ({name}) => {
+                        if (name.includes('.component')) {
+                            return `components/[name]-[hash].js`;
+                        }
+                        return `assets/[name]-[hash].js`;
+                    },
+                    manualChunks(id) {
+                        if (id.includes('.component')) {
+                            const fileName = path.basename(id).split('.')[0];
+                            return `components/${fileName}`; // "component-button.js"
+                        }
+                    }
+                }
+            },
+        },
+    }
 })

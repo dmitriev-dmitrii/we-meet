@@ -184,7 +184,6 @@ export default function webComponentPlugin() {
                     importer,
                     {...options, skipSelf: true}
                 );
-                console.log(resolved)
                 return resolved || {id: source.replace('.html', '.js')};
             }
 
