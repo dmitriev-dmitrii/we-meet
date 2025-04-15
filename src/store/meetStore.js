@@ -35,6 +35,7 @@ const createMeet = async ({password}) => {
         meetStore.ownerUserId = data.ownerUserId
     } catch (e) {
         alert('createMeet err' + e.message)
+        throw e
     }
 }
 
@@ -59,6 +60,7 @@ const joinMeet = async () => {
         window.history.replaceState(null, '', currentUrl)
     } catch (e) {
         alert('joinMeet err' + e.message)
+        throw e
     }
 
 }
@@ -79,6 +81,7 @@ const leaveMeet = () => {
         closeWebSocket()
     } catch (e) {
         alert('leaveMeet err' + e.message)
+        throw e
     }
 }
 
