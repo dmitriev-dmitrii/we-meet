@@ -1,6 +1,6 @@
 import {useWebSocket} from "../useWebSocket.js";
 
-import {peerConnections} from "@/store/webRtcStore.js";
+import {peerConnections, webRtcStore} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 
@@ -10,36 +10,11 @@ import {
 } from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
-import freeice from "freeice";
+
+
 
 const configuration = {
-
-    iceServers: [
-        {
-            "urls": "stun:stun.relay.metered.ca:80"
-        },
-        {
-            "urls": "turn:global.relay.metered.ca:80",
-            "username": "5b7f85303fd4107bd7a6b7c3",
-            "credential": "VdhAPYdLbvLzCqk+"
-        },
-        {
-            "urls": "turn:global.relay.metered.ca:80?transport=tcp",
-            "username": "5b7f85303fd4107bd7a6b7c3",
-            "credential": "VdhAPYdLbvLzCqk+"
-        },
-        {
-            "urls": "turn:global.relay.metered.ca:443",
-            "username": "5b7f85303fd4107bd7a6b7c3",
-            "credential": "VdhAPYdLbvLzCqk+"
-        },
-        {
-            "urls": "turns:global.relay.metered.ca:443?transport=tcp",
-            "username": "5b7f85303fd4107bd7a6b7c3",
-            "credential": "VdhAPYdLbvLzCqk+"
-        }
-    ] ,
-
+    iceServers: webRtcStore.iceServers,
 };
 
 export const useWebRtcConnections = () => {

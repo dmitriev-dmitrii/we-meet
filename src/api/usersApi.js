@@ -6,6 +6,11 @@ const userAuth = (payload) => {
     return axios.post(`${USERS_API_URL}/auth`, payload)
 }
 
+const getIceServers = () => {
+    return axios.get(`${USERS_API_URL}/ice-servers`)
+}
+
 export const usersApi = Object.freeze({
-    userAuth
+    userAuth,
+    getIceServers
 })

@@ -18,6 +18,7 @@ import {
 } from "./constants/constants.js";
 import {meetStore} from "@/store/meetStore.js";
 import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
+import {webRtcStore} from "@/store/webRtcStore.js";
 
 const {setupOnWsMessageCallbacks} = useWebSocket()
 
@@ -42,10 +43,11 @@ setupOnWsMessageCallbacks({
     [WEB_SOCKET_EVENTS.WS_CLOSE]: updateWsOnlineClients,
 })
 
-
 const {setStep} = useAppSteps();
 
-(function ()  {
+(async function ()  {
+
+    await webRtcStore.fetchIceServers()
 
     const meetIdParams = new URLSearchParams(window.location.search).get('meetId')
 
@@ -57,6 +59,7 @@ const {setStep} = useAppSteps();
     meetStore.meetId = meetIdParams
     setStep(APP_STEPS.JOIN_MEET_STEP)
 })()
+
 
 
 // window.onbeforeunload = function( event) {
