@@ -72,7 +72,6 @@ export const useWebRtcConnections = () => {
             console.log(event)
         }
         if (status) {
-            console.log('onPeerConnectionStateChange' ,{status, remoteUserId , remoteUserName} )
             dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId , remoteUserName})
         }
 
