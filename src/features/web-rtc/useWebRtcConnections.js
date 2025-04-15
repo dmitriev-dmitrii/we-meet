@@ -14,28 +14,6 @@ import freeice from "freeice";
 
 const configuration = {
     iceServers: freeice()
-    // iceServers: [
-    //     // STUN от Google (базовый)
-    //     { urls: "stun:stun.l.google.com:19302" },
-    //
-    //     // Бесплатный TURN-сервер (резервный)
-    //     {
-    //         urls: "turn:openrelay.metered.ca:80",
-    //         username: "openrelayproject",
-    //         credential: "openrelayproject"
-    //     },
-    //     {
-    //         urls: "turn:openrelay.metered.ca:443",
-    //         username: "openrelayproject",
-    //         credential: "openrelayproject"
-    //     },
-    //     {
-    //         urls: "turn:openrelay.metered.ca:443?transport=tcp",
-    //         username: "openrelayproject",
-    //         credential: "openrelayproject"
-    //     }
-    // ],
-    // iceTransportPolicy: "relay" // Форсировать TURN, если не работает P2P
 };
 
 export const useWebRtcConnections = () => {
@@ -194,7 +172,7 @@ export const useWebRtcConnections = () => {
                 console.warn('updatePeerIceCandidate , remoteUserId is empty', remoteUserId)
             }
 
-            await peerConnections[remoteUserId].addIceCandidate(new RTCIceCandidate(candidate));
+            await peerConnections[remoteUserId].addIceCandidate(candidate);
         } catch (e) {
             console.error('updatePeerIceCandidate', e)
         }
