@@ -23,6 +23,7 @@
 
     import {meetStore} from "@/store/meetStore.js";
     import {localUserStore} from "@/store/localUserStore.js";
+    import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
 
     const LOCAL_STREAM_ACTION_BAR_MAP = {
         LEAVE_MEET: 'leave-meet',
@@ -47,7 +48,7 @@
 
     userLabelElement.innerText = this.props.userName
 
-    // const {setStep} = useAppSteps();
+    const {setStep} = useAppSteps();
 
     const updateAudioStatus = () => localUserStore.audio ? audioToggleButton.classList.add('active') : audioToggleButton.classList.remove('active')
 
@@ -77,7 +78,7 @@
 
     leaveMeetButton.onclick = () => {
         meetStore.leaveMeet()
-        // setStep(APP_STEPS.CREATE_MEET_STEP)
+        setStep(APP_STEPS.CREATE_MEET_STEP)
     }
     const setupLocalMediaStream = async () => {
 
@@ -85,7 +86,10 @@
             await localUserStore.initLocalMediaStream()
         }
 
-        videoTagElement.srcObject = localUserStore.userStreams
+        if (localUserStore.userStreams instanceof MediaStream) {
+            videoTagElement.srcObject = localUserStore.userStreams
+        }
+
         localUserStore.audio = false
         updateVideoStatus()
         updateAudioStatus()

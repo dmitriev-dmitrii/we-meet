@@ -87,7 +87,9 @@
         videoTagElement.autoplay = true
         const {streams: [remoteVideoStream]} = mediaStreams[remoteUserId][MEDIA_TRACK_KIND.VIDEO]
 
-        videoTagElement.srcObject = remoteVideoStream
+        if (remoteVideoStream instanceof MediaStream) {
+            videoTagElement.srcObject = remoteVideoStream
+        }
     }
 
     const updateAudioStatus = (val = false) => {
