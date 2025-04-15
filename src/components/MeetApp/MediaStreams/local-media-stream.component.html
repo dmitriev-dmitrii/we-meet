@@ -82,9 +82,9 @@
     }
     const setupLocalMediaStream = async () => {
 
-        // if (!localUserStore.userStreams?.active) {
-        //     await localUserStore.initLocalMediaStream()
-        // }
+        if (!localUserStore.userStreams?.active) {
+            await localUserStore.initLocalMediaStream()
+        }
 
         if (localUserStore.userStreams instanceof MediaStream) {
             videoTagElement.srcObject = localUserStore.userStreams

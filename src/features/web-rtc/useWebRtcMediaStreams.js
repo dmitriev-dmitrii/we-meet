@@ -8,23 +8,23 @@ export const useWebRtcMediaStreams = () => {
     const {dispatchEvent} = useEventBus()
     const setupMediaStreamToPeer = async ({remoteUserId}) => {
 
-        // if (!localUserStore.userStreams?.active) {
-        //     await localUserStore.initLocalMediaStream()
-        // }
-        //
-        // localUserStore.userStreams.getTracks().forEach(track => {
-        //     peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
-        // });
-        //
-        // peerConnections[remoteUserId].ontrack = function (e) {
-        //
-        //     mediaStreams[remoteUserId] =  {
-        //         ...mediaStreams[remoteUserId],
-        //         ...{[e.track.kind]: e}
-        //     }
-        //
-        //     dispatchEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM_TRACK, {remoteUserId})
-        // }
+        if (!localUserStore.userStreams?.active) {
+            await localUserStore.initLocalMediaStream()
+        }
+
+        localUserStore.userStreams.getTracks().forEach(track => {
+            peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
+        });
+
+        peerConnections[remoteUserId].ontrack = function (e) {
+
+            mediaStreams[remoteUserId] =  {
+                ...mediaStreams[remoteUserId],
+                ...{[e.track.kind]: e}
+            }
+
+            dispatchEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_STREAM_TRACK, {remoteUserId})
+        }
 
 
     }
