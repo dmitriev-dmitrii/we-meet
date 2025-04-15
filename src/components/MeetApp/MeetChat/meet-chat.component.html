@@ -42,11 +42,11 @@
 
     const onDataChanelClose = (eventData) => {
 
-        const {fromUserName} = eventData
+        const {remoteUserName} = eventData
 
         const text = 'leaveMeet'
 
-        printChatMessage({userName: fromUserName, text})
+        printChatMessage({userName: remoteUserName, text})
     }
 
     const onDataChanelTextMessage = (eventData) => {
