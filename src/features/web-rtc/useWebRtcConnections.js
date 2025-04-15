@@ -13,7 +13,33 @@ import {useEventBus} from "@/features/useEventBus.js";
 import freeice from "freeice";
 
 const configuration = {
-    iceServers: freeice()
+
+    iceServers: [
+        {
+            "urls": "stun:stun.relay.metered.ca:80"
+        },
+        {
+            "urls": "turn:global.relay.metered.ca:80",
+            "username": "5b7f85303fd4107bd7a6b7c3",
+            "credential": "VdhAPYdLbvLzCqk+"
+        },
+        {
+            "urls": "turn:global.relay.metered.ca:80?transport=tcp",
+            "username": "5b7f85303fd4107bd7a6b7c3",
+            "credential": "VdhAPYdLbvLzCqk+"
+        },
+        {
+            "urls": "turn:global.relay.metered.ca:443",
+            "username": "5b7f85303fd4107bd7a6b7c3",
+            "credential": "VdhAPYdLbvLzCqk+"
+        },
+        {
+            "urls": "turns:global.relay.metered.ca:443?transport=tcp",
+            "username": "5b7f85303fd4107bd7a6b7c3",
+            "credential": "VdhAPYdLbvLzCqk+"
+        }
+    ] ,
+
 };
 
 export const useWebRtcConnections = () => {
