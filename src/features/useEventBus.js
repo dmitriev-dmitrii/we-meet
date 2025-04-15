@@ -32,6 +32,7 @@ export const useEventBus = () => {
 
     const eventBusHandle = ({detail = {}, type: eventKey }) => {
 
+        console.log('eventBusHandle' , detail , eventKey)
 
         if (!CALLBACKS_MAP.get(eventKey).size) {
             return
