@@ -21,3 +21,5 @@ export const webRtcStore = {
     iceServers: [],
     fetchIceServers,
 }
+window.webRtcStore = webRtcStore
+console.log(webRtcStore)
