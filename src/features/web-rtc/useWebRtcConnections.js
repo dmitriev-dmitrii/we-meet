@@ -31,7 +31,7 @@ export const useWebRtcConnections = () => {
         } = fromUser
 
         try {
-
+            console.log(configuration)
             peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
 
             peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({remoteUserName , remoteUserId})

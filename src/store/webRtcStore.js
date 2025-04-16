@@ -7,7 +7,10 @@ export const mediaStreams = {};
 
 const fetchIceServers = async () => {
     try {
-        webRtcStore.iceServers = await usersApi.getIceServers()
+        const {data} = await usersApi.getIceServers()
+
+        webRtcStore.iceServers = data
+
     } catch (err) {
         alert('fetchIceServers err ' + err.message)
         throw err
