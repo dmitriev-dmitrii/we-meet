@@ -12,7 +12,6 @@ import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
 
 
-
 const configuration = {
     iceServers: webRtcStore.iceServers,
 };
@@ -27,87 +26,105 @@ export const useWebRtcConnections = () => {
     const createPeerConnection = async (fromUser) => {
         const {
             userId: remoteUserId,
-            userName:remoteUserName
+            userName: remoteUserName
         } = fromUser
 
         try {
-            console.log(configuration)
+
             peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
 
-            peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({remoteUserName , remoteUserId})
+            peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({
+                remoteUserName,
+                remoteUserId
+            })
 
             await setupMediaStreamToPeer({remoteUserId})
 
             return peerConnections[remoteUserId]
         } catch (e) {
             console.log('createPeerConnection err', e)
-            alert(e)
         }
     }
 
     function onIceCandidate(event) {
+        try {
 
-        if (!event.candidate) {
-            return
-        }
-        console.log(event)
-        const payload = {
-            to: this.remoteUserId,
-            type: WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE,
-            data: {
-                pairName: this.pairName,
-                candidate: event.candidate
+            if (!event.candidate) {
+                return
             }
-        }
 
-        sendWebSocketMessage(payload)
+            const payload = {
+                to: this.remoteUserId,
+                type: WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE,
+                data: {
+                    pairName: this.pairName,
+                    candidate: event.candidate
+                }
+            }
+
+            sendWebSocketMessage(payload)
+
+        } catch (e) {
+            console.log('onIceCandidate err', e)
+        }
     }
 
     function onPeerConnectionStateChange(event) {
 
-        const { remoteUserId , remoteUserName } = this
+        const {remoteUserId, remoteUserName} = this
 
         const status = peerConnections[remoteUserId].connectionState
 
         if (status) {
-            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId , remoteUserName})
+            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId, remoteUserName})
         }
 
     }
 
     const sendMeOffer = async () => {
-        const payload = {
-            type: WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER,
-            data: {}
-        }
+        try {
+            const payload = {
+                type: WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER,
+                data: {}
+            }
 
-        sendWebSocketMessage(payload)
+            sendWebSocketMessage(payload)
+        } catch
+            (e) {
+            console.log('sendMeOffer err', e)
+
+        }
     }
 
-    const createPeerOffer = async ({ fromUser }   ) => {
+    const createPeerOffer = async ({fromUser}) => {
+        try {
 
-       const {
-           userId: remoteUserId
-       } = fromUser
 
-        await createPeerConnection(fromUser)
+            const {
+                userId: remoteUserId
+            } = fromUser
 
-        const channel = await peerConnections[remoteUserId].createDataChannel(localUserStore.userId);
+            await createPeerConnection(fromUser)
 
-        setupDataChanelEvents({ fromUser , channel})
+            const channel = await peerConnections[remoteUserId].createDataChannel(localUserStore.userId);
 
-        peerConnections[remoteUserId].onicecandidate = onIceCandidate.bind({remoteUserId});
+            setupDataChanelEvents({fromUser, channel})
 
-        const offer = await peerConnections[remoteUserId].createOffer()
-        await peerConnections[remoteUserId].setLocalDescription(offer)
+            peerConnections[remoteUserId].onicecandidate = onIceCandidate.bind({remoteUserId});
 
-        const payload = {
-            type: WEB_SOCKET_EVENTS.RTC_OFFER,
-            to: remoteUserId,
-            data: {offer}
+            const offer = await peerConnections[remoteUserId].createOffer()
+            await peerConnections[remoteUserId].setLocalDescription(offer)
+
+            const payload = {
+                type: WEB_SOCKET_EVENTS.RTC_OFFER,
+                to: remoteUserId,
+                data: {offer}
+            }
+
+            sendWebSocketMessage(payload)
+        } catch (e) {
+            console.log('createPeerConnection err', e)
         }
-
-        sendWebSocketMessage(payload)
     }
 
     const confirmPeerOffer = async ({fromUser, data}) => {
@@ -119,7 +136,7 @@ export const useWebRtcConnections = () => {
 
             peerConnections[remoteUserId].ondatachannel = (event) => {
                 const {channel} = event
-                setupDataChanelEvents({ fromUser, channel})
+                setupDataChanelEvents({fromUser, channel})
             }
 
             peerConnections[remoteUserId].onicecandidate = onIceCandidate.bind({remoteUserId});
@@ -137,7 +154,7 @@ export const useWebRtcConnections = () => {
 
             sendWebSocketMessage(payload)
         } catch (e) {
-            console.error('confirmPeerOffer', e)
+            console.error('confirmPeerOffer err', e)
         }
 
     }
@@ -150,7 +167,7 @@ export const useWebRtcConnections = () => {
 
             await peerConnections[remoteUserId].setRemoteDescription(data.answer)
         } catch (e) {
-            console.error('setupPeerAnswer', e)
+            console.error('setupPeerAnswer err', e)
         }
 
     }
@@ -174,7 +191,7 @@ export const useWebRtcConnections = () => {
 
             await peerConnections[remoteUserId].addIceCandidate(candidate);
         } catch (e) {
-            console.error('updatePeerIceCandidate', e)
+            console.error('updatePeerIceCandidate err', e)
         }
 
     }

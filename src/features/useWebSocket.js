@@ -44,12 +44,12 @@ export const useWebSocket = () => {
 
             }
 
-            ws.onclose = () => {
-                console.log('Соединение с сервером закрыто');
+            ws.onclose = (event) => {
+                console.log('ws closed ', event);
             };
 
-            ws.onopen = () => {
-                console.log('Соединение с сервером установлено');
+            ws.onopen = (event) => {
+                console.log('ws open ');
                 resolve()
             };
 
