@@ -1,7 +1,8 @@
 @import "reset-css";
 @import "vars.css";
-@import "button.css";
-@import "input-text.css";
+@import "ui/button.css";
+@import "ui/input-text.css";
+@import "media-stream.css";
 
 *{
   box-sizing: border-box;
@@ -27,7 +28,4 @@ body {
   max-height: 100vh;
   overflow: hidden;
 }
-
-
-
 

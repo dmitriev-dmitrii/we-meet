@@ -1,5 +1,5 @@
-@import "@/css/button.css";
-@import "@/css/input-text.css";
+@import "@/css/ui/button.css";
+@import "@/css/ui/input-text.css";
 
 form {
     display: flex;

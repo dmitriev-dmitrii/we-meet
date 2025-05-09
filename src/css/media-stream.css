@@ -1,0 +1,36 @@
+
+.media-stream {
+    width: calc(var(--media-stream-size) * 1px) ;
+    height: calc(var(--media-stream-size) * 1px) ;
+    border-radius:8px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid currentColor;
+    transition: all 0.3s ease;
+    min-width: 320px;
+}
+
+.media-stream.loading {
+    box-shadow : dodgerblue  0px 0px 10px 10px;
+}
+
+.media-stream.connected {
+    box-shadow: lightgreen 0px 0px 10px 10px;
+}
+
+.media-stream.disconnected {
+    box-shadow: red 0px 0px 10px 10px;
+}
+
+.media-stream__video{
+    display: block;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.media-stream__video.active{
+    opacity: 1;
+}
