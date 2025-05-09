@@ -1,12 +1,12 @@
 <template>
 
-        <div data-role="media-streams-wrapper">
-            <local-media-stream></local-media-stream>
-        </div>
+    <div data-role="media-streams-wrapper">
+        <local-media-stream></local-media-stream>
+    </div>
 
-        <div data-role="meet-chat-wrapper">
+    <div data-role="meet-chat-wrapper">
 
-        </div>
+    </div>
 </template>
 
 <script>
@@ -23,19 +23,16 @@
 
     const updatePeerStatusHandle = (eventData) => {
 
-        const {remoteUserId, remoteUserName, status} = eventData
+        const {remoteUserId, status} = eventData
 
-        if (status === PEER_CONNECTIONS_STATE_STATUSES.CONNECTING) {
-            remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({
-                remoteUserId,
-                remoteUserName
-            }))
+        if (status === PEER_CONNECTIONS_STATE_STATUSES.NEW) {
+            remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
 
             mediaStreamsWrapper.append(remoteMediaStreamsComponentsMap.get(remoteUserId))
         }
 
         if (remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-           remoteMediaStreamsComponentsMap.get(remoteUserId).setAttribute('peerStatus', status)
+            remoteMediaStreamsComponentsMap.get(remoteUserId).setAttribute('peerStatus', status)
         }
 
     }
@@ -57,7 +54,7 @@
 </script>
 
 <style>
-    meet-app{
+    meet-app {
         display: flex;
     }
 </style>

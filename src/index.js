@@ -33,6 +33,11 @@ const updateWsOnlineClients = ({data}) => {
     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
 }
 
+const removeUserOncloseWs =  ({data , fromUser }) => {
+    meetStore.removeUserFromMeet(fromUser.userId)
+}
+
+
 setupOnWsMessageCallbacks({
     [WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER]: [createPeerOffer],
     [WEB_SOCKET_EVENTS.RTC_OFFER]: confirmPeerOffer,
@@ -40,7 +45,7 @@ setupOnWsMessageCallbacks({
     [WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE]: updatePeerIceCandidate,
 
     [WEB_SOCKET_EVENTS.WS_CONNECTION]: updateWsOnlineClients,
-    [WEB_SOCKET_EVENTS.WS_CLOSE]: updateWsOnlineClients,
+    [WEB_SOCKET_EVENTS.WS_CLOSE]: [updateWsOnlineClients,removeUserOncloseWs],
 })
 
 const {setStep} = useAppSteps();

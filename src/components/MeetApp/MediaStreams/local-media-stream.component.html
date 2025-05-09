@@ -10,7 +10,7 @@
 
             <button class="local-media-stream__actions-bar__audio-toggle" data-action-type="audio"> audio</button>
 
-            <button class="local-media-stream__actions-bar__video-toggle hui" data-action-type="video"> video</button>
+            <button class="local-media-stream__actions-bar__video-toggle " data-action-type="video"> video</button>
 
             <button class="local-media-stream__actions-bar__leave-meet " data-action-type="leave-meet"> leave meet
             </button>
@@ -101,7 +101,28 @@
 </script>
 
 <style>
+    .local-media-stream__actions-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: flex;
+    }
 
+    .local-media-stream__actions-bar__audio-toggle {
+
+    }
+
+    .local-media-stream__actions-bar__audio-toggle.active {
+        color: dodgerblue;
+    }
+
+    .local-media-stream__actions-bar__video-toggle {
+
+    }
+
+    .local-media-stream__actions-bar__video-toggle.active {
+        color: dodgerblue;
+    }
 </style>
 
 

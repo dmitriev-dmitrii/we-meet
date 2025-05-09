@@ -60,18 +60,18 @@ export const useWebRtcDataChannels = () => {
 
     }
 
-    const deleteDataChanel = (remoteUserId) => {
+    const closeDataChanel = (remoteUserId) => {
 
         if (dataChannels[remoteUserId]) {
             dataChannels[remoteUserId].close()
         }
 
-        delete dataChannels[remoteUserId]
+       dataChannels[remoteUserId] = null
 
     }
 
     return {
-        deleteDataChanel,
+        closeDataChanel,
         sendDataChanelMessage,
         setupDataChanelEvents,
     }

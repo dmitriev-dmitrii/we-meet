@@ -23,18 +23,26 @@ export const useWebRtcConnections = () => {
     const {dispatchEvent} = useEventBus()
     const {sendWebSocketMessage} = useWebSocket()
 
+    const dispatchUpdatePeerStatus = (remoteUserId)=>{
+        const status = peerConnections[remoteUserId].connectionState
+
+        if (status) {
+            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId})
+        }
+
+    }
+
     const createPeerConnection = async (fromUser) => {
         const {
             userId: remoteUserId,
-            userName: remoteUserName
         } = fromUser
 
         try {
 
             peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
+            dispatchUpdatePeerStatus(remoteUserId)
 
             peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({
-                remoteUserName,
                 remoteUserId
             })
 
@@ -71,13 +79,9 @@ export const useWebRtcConnections = () => {
 
     function onPeerConnectionStateChange(event) {
 
-        const {remoteUserId, remoteUserName} = this
+        const {remoteUserId} = this
 
-        const status = peerConnections[remoteUserId].connectionState
-
-        if (status) {
-            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId, remoteUserName})
-        }
+        dispatchUpdatePeerStatus(remoteUserId)
 
     }
 
@@ -197,13 +201,15 @@ export const useWebRtcConnections = () => {
     }
 
 
-    const deletePeerConnection = (remoteUserId) => {
+    const closePeerConnection = (remoteUserId) => {
 
         if (peerConnections[remoteUserId]) {
             peerConnections[remoteUserId].close()
         }
 
-        delete peerConnections[remoteUserId]
+        dispatchUpdatePeerStatus(remoteUserId)
+
+        peerConnections[remoteUserId] = null
     }
 
     return {
@@ -212,7 +218,7 @@ export const useWebRtcConnections = () => {
         createPeerOffer,
         confirmPeerOffer,
         setupPeerAnswer,
-        deletePeerConnection,
+        closePeerConnection,
     }
 }
 

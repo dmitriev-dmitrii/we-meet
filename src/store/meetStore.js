@@ -11,7 +11,7 @@ const {sendMeOffer} = useWebRtcConnections()
 const {closeWebSocket, connectToWebSocket} = useWebSocket()
 
 const {
-    deleteDataChanel
+    closeDataChanel
 } = useWebRtcDataChannels()
 
 const {
@@ -19,7 +19,7 @@ const {
 } = useWebRtcMediaStreams()
 
 const {
-    deletePeerConnection
+    closePeerConnection
 } = useWebRtcConnections()
 const createMeet = async ({password}) => {
     try {
@@ -88,8 +88,8 @@ const leaveMeet = () => {
 const removeUserFromMeet = (remoteUserId) => {
 
     deleteMediaStream(remoteUserId)
-    deleteDataChanel(remoteUserId)
-    deletePeerConnection(remoteUserId)
+    closeDataChanel(remoteUserId)
+    closePeerConnection(remoteUserId)
 }
 export const meetStore = {
     meetId: '',
