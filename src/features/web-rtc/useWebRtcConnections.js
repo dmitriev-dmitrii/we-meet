@@ -6,6 +6,7 @@ import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, WEB_SOCKET_EVENTS} from "@/constants/constants.js";
 import {createSharedComposable} from "@/utils/sharedComposable.js";
+
 export const useWebRtcConnections = createSharedComposable(() => {
 
     const {setupDataChanelEvents} = useWebRtcDataChannels()
@@ -31,12 +32,10 @@ export const useWebRtcConnections = createSharedComposable(() => {
         try {
 
             peerConnections[remoteUserId] = new RTCPeerConnection({
-                // iceServers: webRtcStore.iceServers,
-                // iceTransportPolicy: "all", // Разрешить и TCP и UDP
-                // iceCandidatePoolSize: 1 // Для локального тестирования
+                iceServers: webRtcStore.iceServers,
             });
-            dispatchUpdatePeerStatus(remoteUserId)
 
+            dispatchUpdatePeerStatus(remoteUserId)
 
             peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({
                 remoteUserId
