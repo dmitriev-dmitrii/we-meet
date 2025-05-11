@@ -1,22 +1,11 @@
 import {useWebSocket} from "../useWebSocket.js";
-
-import {peerConnections, webRtcStore} from "@/store/webRtcStore.js";
+import {peerConnections} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
-
-import {
-    BUS_EVENTS,
-    WEB_SOCKET_EVENTS
-} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
+import {BUS_EVENTS, WEB_SOCKET_EVENTS} from "@/constants/constants.js";
 import {createSharedComposable} from "@/utils/sharedComposable.js";
-
-
-const configuration = {
-    iceServers: webRtcStore.iceServers,
-};
-
 export const useWebRtcConnections = createSharedComposable(() => {
 
     const {setupDataChanelEvents} = useWebRtcDataChannels()
@@ -26,8 +15,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
 
     const dispatchUpdatePeerStatus = (remoteUserId) => {
 
-
-        const status = peerConnections[remoteUserId].connectionState
+        const status = peerConnections[remoteUserId]?.connectionState
 
         if (status) {
             dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId})
@@ -42,7 +30,11 @@ export const useWebRtcConnections = createSharedComposable(() => {
 
         try {
 
-            peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
+            peerConnections[remoteUserId] = new RTCPeerConnection({
+                // iceServers: webRtcStore.iceServers,
+                // iceTransportPolicy: "all", // Разрешить и TCP и UDP
+                // iceCandidatePoolSize: 1 // Для локального тестирования
+            });
             dispatchUpdatePeerStatus(remoteUserId)
 
 
@@ -121,6 +113,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
             peerConnections[remoteUserId].onicecandidate = onIceCandidate.bind({remoteUserId});
 
             const offer = await peerConnections[remoteUserId].createOffer()
+
             await peerConnections[remoteUserId].setLocalDescription(offer)
 
             const payload = {
@@ -131,7 +124,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
 
             sendWebSocketMessage(payload)
         } catch (e) {
-            console.log('createPeerConnection err', e)
+            console.log('createPeerOffer err', e)
         }
     }
 
@@ -140,6 +133,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
             const {
                 userId: remoteUserId
             } = fromUser
+
             await createPeerConnection(fromUser)
 
             peerConnections[remoteUserId].ondatachannel = (event) => {
@@ -152,6 +146,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
             await peerConnections[remoteUserId].setRemoteDescription(data.offer)
 
             const answer = await peerConnections[remoteUserId].createAnswer()
+
             await peerConnections[remoteUserId].setLocalDescription(answer)
 
             const payload = {

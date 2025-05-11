@@ -14,12 +14,13 @@ export const localUserStore = {
 
     initLocalMediaStream: async () => {
         try {
-            localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+           const { active } =  localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
             //cb navigator.mediaDevices.ondevicechange TODO
             //TODO many media input device - select?
 
         } catch (e) {
             console.log('initLocalMediaStream err', e)
+
         }
 
     },

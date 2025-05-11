@@ -9,17 +9,15 @@ export const useWebRtcMediaStreams = createSharedComposable(() => {
     const {dispatchEvent} = useEventBus()
     const setupMediaStreamToPeer = async ({remoteUserId}) => {
 
-        if (!localUserStore.userStreams?.active) {
-            await localUserStore.initLocalMediaStream()
+        if (localUserStore.userStreams?.active) {
+            localUserStore.userStreams.getTracks().forEach(track => {
+                peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
+            });
         }
-
-        localUserStore.userStreams.getTracks().forEach(track => {
-            peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
-        });
 
         peerConnections[remoteUserId].ontrack = function (e) {
 
-            mediaStreams[remoteUserId] =  {
+            mediaStreams[remoteUserId] = {
                 ...mediaStreams[remoteUserId],
                 ...{[e.track.kind]: e}
             }

@@ -19,6 +19,7 @@ import {
 import {meetStore} from "@/store/meetStore.js";
 import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
 import {webRtcStore} from "@/store/webRtcStore.js";
+import {localUserStore} from "@/store/localUserStore.js";
 
 const {setupOnWsMessageCallbacks} = useWebSocket()
 
@@ -53,6 +54,7 @@ const {setStep} = useAppSteps();
 (async function ()  {
     //start app
     await webRtcStore.fetchIceServers()
+    await localUserStore.initLocalMediaStream()
 
     const meetIdParams = new URLSearchParams(window.location.search).get('meetId')
 
