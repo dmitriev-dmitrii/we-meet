@@ -10,13 +10,14 @@ import {
 } from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
+import {createSharedComposable} from "@/utils/sharedComposable.js";
 
 
 const configuration = {
     iceServers: webRtcStore.iceServers,
 };
 
-export const useWebRtcConnections = () => {
+export const useWebRtcConnections = createSharedComposable(() => {
 
     const {setupDataChanelEvents} = useWebRtcDataChannels()
     const {setupMediaStreamToPeer} = useWebRtcMediaStreams()
@@ -220,8 +221,7 @@ export const useWebRtcConnections = () => {
         setupPeerAnswer,
         closePeerConnection,
     }
-}
-
+})
 
 
 

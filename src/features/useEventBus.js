@@ -1,4 +1,5 @@
 import {BUS_EVENTS} from "@/constants/constants.js";
+import {createSharedComposable} from "@/utils/sharedComposable.js";
 
 class EventBus extends HTMLElement {
     constructor() {
@@ -18,7 +19,7 @@ const CALLBACKS_MAP = new Map(Object.values(BUS_EVENTS).reduce((acc, eventKeyVal
 }, []))
 
 
-export const useEventBus = () => {
+export const useEventBus =  createSharedComposable(() => {
     const dispatchEvent = (eventKey, payload = {}) => {
 
         if (!Object.values(BUS_EVENTS).includes(eventKey)) {
@@ -65,4 +66,4 @@ export const useEventBus = () => {
         listenEvent,
         unListenEvent,
     };
-};
+});
