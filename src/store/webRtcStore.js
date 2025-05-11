@@ -12,8 +12,7 @@ const fetchIceServers = async () => {
         webRtcStore.iceServers = data
 
     } catch (err) {
-        alert('fetchIceServers err ' + err.message)
-        throw err
+        console.log('upd err ' , err)
     }
 }
 

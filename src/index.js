@@ -51,7 +51,7 @@ setupOnWsMessageCallbacks({
 const {setStep} = useAppSteps();
 
 (async function ()  {
-
+    //start app
     await webRtcStore.fetchIceServers()
 
     const meetIdParams = new URLSearchParams(window.location.search).get('meetId')

@@ -110,7 +110,6 @@
     this.watchProp('peerStatus', setComponentStateByPeerStatus)
 
     this.watchProp('mediaTrackState', ({audio, video}) => {
-        console.log(video)
         updateAudioStatus(audio)
         updateVideoStatus(video)
     })
