@@ -13,9 +13,11 @@ export default defineConfig(({command, mode, isSsrBuild, isPreview}) => {
 
     return {
         server: {
+            strictPort: true,
             port: parseInt(VITE_APP_PORT, 10),
         },
         preview: {
+            strictPort: true,
             port: parseInt(VITE_APP_PORT, 10),
         },
         plugins: [
