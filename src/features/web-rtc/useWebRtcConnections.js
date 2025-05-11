@@ -24,7 +24,9 @@ export const useWebRtcConnections = createSharedComposable(() => {
     const {dispatchEvent} = useEventBus()
     const {sendWebSocketMessage} = useWebSocket()
 
-    const dispatchUpdatePeerStatus = (remoteUserId)=>{
+    const dispatchUpdatePeerStatus = (remoteUserId) => {
+
+
         const status = peerConnections[remoteUserId].connectionState
 
         if (status) {
@@ -42,6 +44,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
 
             peerConnections[remoteUserId] = new RTCPeerConnection(configuration);
             dispatchUpdatePeerStatus(remoteUserId)
+
 
             peerConnections[remoteUserId].onconnectionstatechange = onPeerConnectionStateChange.bind({
                 remoteUserId
@@ -203,14 +206,17 @@ export const useWebRtcConnections = createSharedComposable(() => {
 
 
     const closePeerConnection = (remoteUserId) => {
+        try {
 
-        if (peerConnections[remoteUserId]) {
-            peerConnections[remoteUserId].close()
+            if (peerConnections[remoteUserId]) {
+                peerConnections[remoteUserId].close()
+                dispatchUpdatePeerStatus(remoteUserId)
+            }
+
+            delete peerConnections[remoteUserId]
+        } catch (e) {
+            console.error('closePeerConnection  err', e)
         }
-
-        dispatchUpdatePeerStatus(remoteUserId)
-
-        peerConnections[remoteUserId] = null
     }
 
     return {
