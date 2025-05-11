@@ -9,8 +9,6 @@
 
             <button class="remote-media-stream__status-bar__audio-status" data-status-type="audio"> audio</button>
 
-            <button class="remote-media-stream__status-bar__video-status" data-status-type="video"> video</button>
-
         </div>
 
     </div>
@@ -38,7 +36,6 @@
     const mediaStreamWrapperElement = this.querySelector('.media-stream')
     const videoTagElement = this.querySelector('video')
     const audioStatusButton = this.querySelector('[data-status-type="audio"]')
-    const videoStatusButton = this.querySelector('[data-status-type="video"]')
     const userLabelElement = this.querySelector('[data-role="user-label"]')
 
     this.props = {
@@ -99,14 +96,11 @@
     const updateVideoStatus = (val = false) => {
         if (val) {
 
-            videoStatusButton.classList.add('active')
             videoTagElement.classList.add('active')
-
             userLabelElement.classList.remove('active')
             return
         }
 
-        videoStatusButton.classList.remove('active')
         videoTagElement.classList.remove('active')
 
         userLabelElement.classList.add('active')
@@ -116,7 +110,7 @@
     this.watchProp('peerStatus', setComponentStateByPeerStatus)
 
     this.watchProp('mediaTrackState', ({audio, video}) => {
-
+        console.log(video)
         updateAudioStatus(audio)
         updateVideoStatus(video)
     })

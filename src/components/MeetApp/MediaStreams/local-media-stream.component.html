@@ -90,7 +90,10 @@
             videoTagElement.srcObject = localUserStore.userStreams
         }
 
-        localUserStore.audio = false
+        if (import.meta.env.DEV) {
+            localUserStore.audio = false
+        }
+
         updateVideoStatus()
         updateAudioStatus()
 
