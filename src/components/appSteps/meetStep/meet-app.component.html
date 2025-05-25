@@ -47,8 +47,8 @@
         }
     }
 
-    listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, updatePeerStatusHandle.bind(this))
-    listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, updateMediaTrackStateHandle.bind(this))
+    listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, updatePeerStatusHandle)
+    listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, updateMediaTrackStateHandle)
 
     meetChatWrapper.append(document.createElement('meet-chat'))
 </script>

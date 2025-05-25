@@ -1,8 +1,11 @@
 import {usersApi} from "@/api/usersApi.js";
-import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
+import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
+import {useEventBus} from "@/features/useEventBus.js";
 
 const {sendDataChanelMessage} = useWebRtcDataChannels() //TODO придумать shared store
+const {dispatchEvent} = useEventBus()
+
 
 export const localUserStore = {
 
@@ -14,15 +17,19 @@ export const localUserStore = {
 
     initLocalMediaStream: async () => {
         try {
-           const { active } =  localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+            const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
             //cb navigator.mediaDevices.ondevicechange TODO
             //TODO many media input device - select?
 
         } catch (e) {
             console.log('initLocalMediaStream err', e)
-
         }
-
+        finally {
+            dispatchEvent( BUS_EVENTS. LOCAL_MEDIA_PERMISSIONS_UPDATED )
+        }
     },
     sendMediaTrackLocalState: () => {
         // отправить участникам мита состояние медиа треков
@@ -92,6 +99,8 @@ export const localUserStore = {
         localUserStore.userName = data.userName
         localUserStore.userId = data.userId
     },
+
+
 }
 
 

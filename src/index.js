@@ -1,6 +1,8 @@
 import '@/css/index.css'
 import  "webrtc-adapter";
 
+import  "@/components/statusBar/status-bar.component.html";
+
 import  "@/components/appSteps/meetStep/meet-app.component.html";
 import  "@/components/appSteps/meetStep/meetChat/meet-chat.component.html";
 
