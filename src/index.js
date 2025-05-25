@@ -1,14 +1,14 @@
 import '@/css/index.css'
 import  "webrtc-adapter";
 
-import  "@/components/MeetApp/meet-app.component.html";
-import  "@/components/MeetApp/MeetChat/meet-chat.component.html";
+import  "@/components/appSteps/meetStep/meet-app.component.html";
+import  "@/components/appSteps/meetStep/meetChat/meet-chat.component.html";
 
-import  "@/components/CreateMeetForm/create-meet-form.component.html";
-import  "@/components/JoinMeetForm/join-meet-form.component.html";
+import  "@/components/appSteps/createMeetStep/create-meet-form.component.html";
+import  "@/components/appSteps/joinMeetStep/join-meet-form.component.html";
 
-import  "@/components/MeetApp/MediaStreams/local-media-stream.component.html";
-import  "@/components/MeetApp/MediaStreams/remote-media-stream.component.html";
+import  "@/components/appSteps/meetStep/mediaStreams/local-media-stream.component.html";
+import  "@/components/appSteps/meetStep/mediaStreams/remote-media-stream.component.html";
 
 import { useWebSocket } from "./features/useWebSocket.js";
 import {useWebRtcConnections} from "./features/web-rtc/useWebRtcConnections.js";
@@ -17,7 +17,7 @@ import {
     WEB_SOCKET_EVENTS,
 } from "./constants/constants.js";
 import {meetStore} from "@/store/meetStore.js";
-import {APP_STEPS, useAppSteps} from "@/features/useAppSteps.js";
+import {APP_STEPS, useAppSteps} from "@/components/appSteps/useAppSteps.js";
 import {webRtcStore} from "@/store/webRtcStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
 

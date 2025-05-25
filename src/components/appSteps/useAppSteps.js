@@ -1,6 +1,6 @@
 import {createSharedComposable} from "@/utils/sharedComposable.js";
 
-const APP_WRAPPER_ELEMENT = document.getElementById('app')
+const APP_WRAPPER_ELEMENT = document.getElementById('app-steps')
 export const APP_STEPS = Object.freeze({
     CREATE_MEET_STEP: '0',
     JOIN_MEET_STEP: '1',
