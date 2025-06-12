@@ -8,7 +8,7 @@
     <img src="/vite.svg" class="logo" alt="Vite logo" />
 
   </div>
-
+  <RouterView />
 </template>
 
 <style scoped>
