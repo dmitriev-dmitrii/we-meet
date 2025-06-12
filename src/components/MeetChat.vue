@@ -1,16 +1,12 @@
 <template>
 
-  <LocalMedaStream></LocalMedaStream>
-
 </template>
 
 <script>
 import {defineComponent} from 'vue'
-import LocalMedaStream from "@/components/MediaStreams/LocalMedaStream.vue";
 
 export default defineComponent({
-  name: "Meet",
-  components: {LocalMedaStream},
+  name: "MeetChat",
   setup() {
 
     return {}

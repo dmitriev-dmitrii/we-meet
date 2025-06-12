@@ -5,9 +5,9 @@ import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, WEB_SOCKET_EVENTS} from "@/constants/constants.js";
-import {createSharedComposable} from "@/utils/sharedComposable.js";
+ 
 
-export const useWebRtcConnections = createSharedComposable(() => {
+export const useWebRtcConnections =   () => {
 
     const {setupDataChanelEvents} = useWebRtcDataChannels()
     const {setupMediaStreamToPeer} = useWebRtcMediaStreams()
@@ -221,7 +221,7 @@ export const useWebRtcConnections = createSharedComposable(() => {
         setupPeerAnswer,
         closePeerConnection,
     }
-})
+}
 
 
 

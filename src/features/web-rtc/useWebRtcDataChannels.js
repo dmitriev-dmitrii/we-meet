@@ -2,9 +2,9 @@ import {dataChannels} from "@/store/webRtcStore.js";
 import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
-import {createSharedComposable} from "@/utils/sharedComposable.js";
+ 
 
-export const useWebRtcDataChannels = createSharedComposable(() => {
+export const useWebRtcDataChannels =   () => {
 
     const {dispatchEvent} = useEventBus()
 
@@ -77,4 +77,4 @@ export const useWebRtcDataChannels = createSharedComposable(() => {
         sendDataChanelMessage,
         setupDataChanelEvents,
     }
-})
+}

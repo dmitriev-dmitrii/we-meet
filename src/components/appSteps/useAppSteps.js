@@ -1,4 +1,4 @@
-import {createSharedComposable} from "@/utils/sharedComposable.js";
+ 
 
 const APP_WRAPPER_ELEMENT = document.getElementById('app-steps')
 export const APP_STEPS = Object.freeze({
@@ -15,7 +15,7 @@ const COMPONENTS_BY_STEP_MAP = Object.freeze({
 
 let currentStep = APP_STEPS.CREATE_MEET_STEP;
 
-export const useAppSteps = createSharedComposable(() => {
+export const useAppSteps =   () => {
     const setStep = (step) => {
 
         if (!Object.values(APP_STEPS).includes(step)) {
@@ -34,4 +34,4 @@ export const useAppSteps = createSharedComposable(() => {
     return {
         setStep,
     };
-});
+}

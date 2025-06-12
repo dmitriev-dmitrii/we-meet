@@ -1,6 +1,3 @@
-import {localUserStore} from "@/store/localUserStore.js";
-import {meetStore} from "@/store/meetStore.js";
-import {createSharedComposable} from "@/utils/sharedComposable.js";
 
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
 
@@ -8,7 +5,7 @@ const onMessageHandlers = new Map()
 
 let ws = undefined
 
-export const useWebSocket =  createSharedComposable(() => {
+export const useWebSocket =    () => {
     const sendWebSocketMessage = (payload) => {
         ws.send(JSON.stringify(payload))
     }
@@ -27,11 +24,11 @@ export const useWebSocket =  createSharedComposable(() => {
     }
 
 
-    const connectToWebSocket = async () => {
+    const connectToWebSocket = async ({ userId , meetId }) => {
 
         return new Promise((resolve, reject) => {
 
-            ws = new WebSocket(`${WEB_SOCKET_URL}?userId=${localUserStore.userId}&meetId=${meetStore.meetId}`);
+            ws = new WebSocket(`${WEB_SOCKET_URL}?userId=${userId}&meetId=${meetId}`);
 
             ws.onmessage = async (event) => {
                 const payload = JSON.parse(event.data);
@@ -68,4 +65,4 @@ export const useWebSocket =  createSharedComposable(() => {
         sendWebSocketMessage,
         setupOnWsMessageCallbacks
     }
-});
+}

@@ -2,9 +2,9 @@ import {mediaStreams, peerConnections} from "@/store/webRtcStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {BUS_EVENTS} from "@/constants/constants.js";
 import {useEventBus} from "@/features/useEventBus.js";
-import {createSharedComposable} from "@/utils/sharedComposable.js";
+ 
 
-export const useWebRtcMediaStreams = createSharedComposable(() => {
+export const useWebRtcMediaStreams =   () => {
 
     const {dispatchEvent} = useEventBus()
     const setupMediaStreamToPeer = async ({remoteUserId}) => {
@@ -36,4 +36,4 @@ export const useWebRtcMediaStreams = createSharedComposable(() => {
         deleteMediaStream,
         setupMediaStreamToPeer,
     }
-})
+}

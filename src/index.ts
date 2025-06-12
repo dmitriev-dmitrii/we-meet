@@ -1,5 +1,5 @@
+import  "webrtc-adapter";
 import { createApp } from 'vue'
-
 import App from './App.vue'
 import {createRouter, createWebHashHistory} from "vue-router";
 import {routes} from "./router";
@@ -13,7 +13,7 @@ app.use(router)
 app.mount('#app')
 
 // import '@/css/index.css'
-// import  "webrtc-adapter";
+
 //
 // import  "@/components/statusBar/status-bar.component.html";
 //
@@ -37,22 +37,9 @@ app.mount('#app')
 // import {webRtcStore} from "@/store/webRtcStore.js";
 // import {localUserStore} from "@/store/localUserStore.js";
 //
-// const {setupOnWsMessageCallbacks} = useWebSocket()
+
 //
-// const {
-//     createPeerOffer,
-//     confirmPeerOffer,
-//     setupPeerAnswer,
-//     updatePeerIceCandidate,
-// } = useWebRtcConnections()
-//
-// const updateWsOnlineClients = ({data}) => {
-//     // wsOnlineClientsDom.innerText = JSON.stringify(data.wsClientsOnline ?? [])
-// }
-//
-// const removeUserOncloseWs =  ({data , fromUser }) => {
-//     meetStore.removeUserFromMeet(fromUser.userId)
-// }
+
 //
 //
 // setupOnWsMessageCallbacks({

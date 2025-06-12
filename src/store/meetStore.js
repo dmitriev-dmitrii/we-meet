@@ -42,14 +42,13 @@ const createMeet = async ({password}) => {
 const joinMeet = async () => {
     try {
 
-
         await localUserStore.auth()
         const {meetId} = meetStore
         const {userId} = localUserStore
 
         const {data} = await meetApi.joinMeetRequest({meetId, userId})
 
-        await connectToWebSocket()
+        await connectToWebSocket({meetId , userId})
         await sendMeOffer()
 
         const currentUrl = new URL(window.location.href);

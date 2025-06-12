@@ -3,7 +3,7 @@ import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {useEventBus} from "@/features/useEventBus.js";
 
-const {sendDataChanelMessage} = useWebRtcDataChannels() //TODO придумать shared store
+
 const {dispatchEvent} = useEventBus()
 
 
@@ -32,16 +32,17 @@ export const localUserStore = {
         }
     },
     sendMediaTrackLocalState: () => {
+        // TODO
         // отправить участникам мита состояние медиа треков
-        const payload = {
-            type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
-            data: {
-                video: localUserStore.video,
-                audio: localUserStore.audio
-            }
-        }
+        // const payload = {
+        //     type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
+        //     data: {
+        //         video: localUserStore.video,
+        //         audio: localUserStore.audio
+        //     }
+        // }
 
-        sendDataChanelMessage(payload)
+        // sendDataChanelMessage(payload)
     },
 
     get audio() {
