@@ -1,5 +1,17 @@
 <template>
-  CreateMeetForm
+
+  <button data-size="lg" type="button" data-theme="primary" data-action-type="create-meet">
+    create meet
+  </button>
+
+  <button data-size="lg" type="button" data-action-type="copy-meet-link">
+    copy meet link
+  </button>
+
+  <button data-size="lg" type="button" data-theme="primary" data-action-type="go-to-meet">
+    to meet =>
+  </button>
+
 </template>
 
 <script>
