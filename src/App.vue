@@ -6,7 +6,7 @@
 
     </router-link>
     <div>
-      wsClientsOnline {{ wsClientsOnline }}
+     we meet
     </div>
   </div>
 
@@ -25,10 +25,6 @@ export default defineComponent({
   setup() {
     const {setupOnWsMessageCallbacks} = useWebSocket()
 
-    const wsClientsOnline = ref(0)
-    const updateWsOnlineClients = ({data}) => {
-      wsClientsOnline.value = data.wsClientsOnline.length
-    }
 
     const {
       createPeerOffer,
@@ -43,17 +39,14 @@ export default defineComponent({
       [WEB_SOCKET_EVENTS.RTC_ANSWER]: setupPeerAnswer,
       [WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE]: updatePeerIceCandidate,
 
-      [WEB_SOCKET_EVENTS.WS_CONNECTION]: updateWsOnlineClients,
-      [WEB_SOCKET_EVENTS.WS_CLOSE]: [updateWsOnlineClients],
+      [WEB_SOCKET_EVENTS.WS_CONNECTION]: [],
+      [WEB_SOCKET_EVENTS.WS_CLOSE]: [],
       //     [WEB_SOCKET_EVENTS.WS_CLOSE]: [updateWsOnlineClients,removeUserOncloseWs],
     })
 
-    onMounted(async () => {
-      await webRtcStore.fetchIceServers()
-    })
 
     return {
-      wsClientsOnline
+
     }
   }
 })

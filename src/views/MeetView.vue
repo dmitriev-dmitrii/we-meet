@@ -38,6 +38,7 @@ export default defineComponent({
       try {
         isLoading.value = true
         await meetStore.findMeetById(unref(meetId))
+        await webRtcStore.fetchIceServers()
       } catch (e) {
 
       }

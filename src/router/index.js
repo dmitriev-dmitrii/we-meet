@@ -7,7 +7,7 @@ export const routes = [
             component: HomeView,
         },
         {
-            path: '/meet',
+            path: '/meet/:meetId',
             name: 'MeetView',
             component: () => import('../views/MeetView.vue'),
         },
