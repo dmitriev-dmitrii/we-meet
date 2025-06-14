@@ -51,13 +51,7 @@ const joinMeet = async () => {
 
         await connectToWebSocket({meetId, userId})
         await sendMeOffer()
-
-        const currentUrl = new URL(window.location.href);
-        const urlParams = new URLSearchParams(currentUrl.search);
-
-        // urlParams.set('meetId', meetId)
-        // currentUrl.search = urlParams.toString();
-        // window.history.replaceState(null, '', currentUrl)
+        
     } catch (e) {
         meetStore.meetId = ''
         alert('joinMeet err' + e.message)
@@ -67,12 +61,6 @@ const joinMeet = async () => {
 }
 const leaveMeet = () => {
     try {
-        const currentUrl = new URL(window.location.href);
-        const urlParams = new URLSearchParams(currentUrl.search);
-        urlParams.delete('meetId');
-        currentUrl.search = urlParams.toString();
-        window.history.replaceState(null, '', currentUrl)
-
         meetStore.meetId = ''
 
         Object.keys(peerConnections).forEach((remoteUserId) => {
@@ -80,6 +68,7 @@ const leaveMeet = () => {
         })
 
         closeWebSocket()
+
     } catch (e) {
         alert('leaveMeet err' + e.message)
         throw e
