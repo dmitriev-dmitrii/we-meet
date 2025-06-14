@@ -1,15 +1,24 @@
 <template>
+  <form @submit.prevent=" onSubmitForm " action="">
 
-  <button>
-    join
-  </button>
+    <label> name
+      <input>
+    </label>
+
+    <label> password
+      <input v-model="meetPassword">
+    </label>
+
+    <button type="submit">
+      join
+    </button>
+  </form>
 
 </template>
 
 <script>
 import {defineComponent, ref, unref} from 'vue'
-
-
+import {meetStore} from "@/store/meetStore.js";
 export default defineComponent({
   name: "JoinMeetForm",
   setup() {
@@ -17,8 +26,22 @@ export default defineComponent({
     const meetPassword = ref('')
     const isLoading = ref(false)
 
-    return {
+    const onSubmitForm = async () => {
+      try {
 
+        isLoading.value = true
+        await meetStore.joinMeet()
+      } catch (e) {
+
+      } finally {
+        isLoading.value = false
+      }
+
+    }
+
+    return {
+      meetPassword,
+      onSubmitForm
     }
   }
 })
