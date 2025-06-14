@@ -6,7 +6,7 @@
 
     </router-link>
     <div>
-      wsClientsOnline {{wsClientsOnline}}
+      wsClientsOnline {{ wsClientsOnline }}
     </div>
   </div>
 
@@ -14,25 +14,21 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
+import {defineComponent, onMounted, ref} from "vue";
 import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 import {WEB_SOCKET_EVENTS} from "@/constants/constants.js";
 
 export default defineComponent({
-
   name: "App",
 
   setup() {
-
     const {setupOnWsMessageCallbacks} = useWebSocket()
 
     const wsClientsOnline = ref(0)
     const updateWsOnlineClients = ({data}) => {
-
-      wsClientsOnline.value =  data.wsClientsOnline.length
-
-  }
+      wsClientsOnline.value = data.wsClientsOnline.length
+    }
 
     const {
       createPeerOffer,
@@ -49,8 +45,12 @@ export default defineComponent({
 
       [WEB_SOCKET_EVENTS.WS_CONNECTION]: updateWsOnlineClients,
       [WEB_SOCKET_EVENTS.WS_CLOSE]: [updateWsOnlineClients],
+      //     [WEB_SOCKET_EVENTS.WS_CLOSE]: [updateWsOnlineClients,removeUserOncloseWs],
     })
 
+    onMounted(async () => {
+      await webRtcStore.fetchIceServers()
+    })
 
     return {
       wsClientsOnline

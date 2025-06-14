@@ -1,92 +1,66 @@
 <template>
+<form @submit.prevent="onSubmitForm" style="display: flex;flex-direction: column">
+<label v-if="!meetId"> name
+  <input >
+</label>
 
-  <button data-size="lg" type="button" data-theme="primary" data-action-type="create-meet">
+  <label v-if="!meetId"> password
+    <input  v-model="meetPassword">
+  </label>
+
+  <button type="submit"  v-if="!meetId">
     create meet
   </button>
 
-  <button data-size="lg" type="button" data-action-type="copy-meet-link">
+  <button type="button" @click="copyMeetHref" v-if="meetId">
     copy meet link
   </button>
 
-  <button data-size="lg" type="button" data-theme="primary" data-action-type="go-to-meet">
+  <button type="button" @click="toMeet" v-if="meetId">
     to meet =>
   </button>
+</form>
+
 
 </template>
 
 <script>
 import {defineComponent, ref, unref} from 'vue'
-
+import {meetStore} from "@/store/meetStore.js";
+import {localUserStore} from "@/store/localUserStore.js";
+import {useRouter} from "vue-router";
 
 export default defineComponent({
   name: "CreateMeetForm",
   setup() {
-
+    const router = useRouter()
+    const localUserName = ref('') //    localUserStore.userName
     const meetPassword = ref('')
-    const isLoading = ref(false)
+    const meetId = ref('')
+    const copyMeetHref = async () => {
+      console.log('copyMeetHref', window.location.href)
+    }
 
-    // const joinMeet = async () => {
-    //   try {
-    //     isLoading.value = false
-    //     await meetStore.joinMeet()
-    //   } catch (e) {
-    //     console.error('create meet form joinMeet', e)
-    //   } finally {
-    //     isLoading.value = false
-    //   }
-    // }
-    //
-    // const createMeet = async () => {
-    //
-    //   try {
-    //     isLoading.value = true
-    //     await meetStore.createMeet({password: unref(meetPassword)})
-    //
-    //     if (meetStore.meetId) {
-    //
-    //     }
-    //
-    //
-    //   } catch (e) {
-    //     console.log(e)
-    //   } finally {
-    //     isLoading.value = false
-    //   }
-    // }
-    // const copyMeetHref = async () => {
-    //   console.log('copyMeetHref', window.location.href)
-    // }
+    const toMeet = async ()=>{
+      await router.push( { name:'MeetView' , params:{meetId:unref(meetId)} })
+    }
 
-    // const onSubmitForm = async (e) => {
-    //
-    //   // localUserStore.userName = userNameInput.value
-    //   await createMeet()
-    // }
-    // const onActionBarClick = async (e) => {
-    //
-    //   const eventTarget = e.target
-    //   e.stopPropagation()
-    //   const {actionType} = eventTarget.dataset
-    //
-    //   if (!Object.values(CREATE_MEET_FORM_ACTION_BAR_MAP).includes(actionType)) {
-    //     return
-    //   }
-    //
-    //   if (actionType === CREATE_MEET_FORM_ACTION_BAR_MAP.CREATE_MEET) {
-    //     await createMeet()
-    //     return;
-    //   }
-    //
-    //   if (actionType === CREATE_MEET_FORM_ACTION_BAR_MAP.COPY_MEET_LINK) {
-    //     await copyMeetHref()
-    //   }
-    //
-    //   if (actionType === CREATE_MEET_FORM_ACTION_BAR_MAP.GO_TO_MEET) {
-    //     await joinMeet()
-    //   }
-    // }
+    const onSubmitForm = async () => {
 
-    return {}
+     const res  =  await meetStore.createMeet({password:unref(meetPassword)})
+
+     meetId.value = res.meetId
+
+    }
+
+    return {
+      meetId,
+      localUserName,
+      meetPassword,
+      onSubmitForm,
+      copyMeetHref,
+      toMeet
+    }
   }
 })
 </script>
