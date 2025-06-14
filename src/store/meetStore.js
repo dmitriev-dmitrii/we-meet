@@ -31,8 +31,9 @@ const createMeet = async ({password}) => {
             password
         }
         const {data} = await meetApi.createMeet(payload)
-        meetStore.meetId = data.meetId
-        meetStore.ownerUserId = data.ownerUserId
+
+        return data.meetId
+
     } catch (e) {
         alert('createMeet err' + e.message)
         throw e
@@ -48,16 +49,17 @@ const joinMeet = async () => {
 
         const {data} = await meetApi.joinMeetRequest({meetId, userId})
 
-        await connectToWebSocket({meetId , userId})
+        await connectToWebSocket({meetId, userId})
         await sendMeOffer()
 
         const currentUrl = new URL(window.location.href);
         const urlParams = new URLSearchParams(currentUrl.search);
 
-        urlParams.set('meetId', meetId)
-        currentUrl.search = urlParams.toString();
-        window.history.replaceState(null, '', currentUrl)
+        // urlParams.set('meetId', meetId)
+        // currentUrl.search = urlParams.toString();
+        // window.history.replaceState(null, '', currentUrl)
     } catch (e) {
+        meetStore.meetId = ''
         alert('joinMeet err' + e.message)
         throw e
     }
@@ -90,8 +92,18 @@ const removeUserFromMeet = (remoteUserId) => {
     closeDataChanel(remoteUserId)
     closePeerConnection(remoteUserId)
 }
+
+const findMeetById = async (meetId) => {
+
+        const {data} = await meetApi.getMeetById({meetId})
+
+        meetStore.meetId = data.meetId
+        return data
+
+}
 export const meetStore = {
     meetId: '',
+    findMeetById,
     removeUserFromMeet,
     joinMeet,
     createMeet,
