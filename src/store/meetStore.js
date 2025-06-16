@@ -5,6 +5,7 @@ import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 import {peerConnections} from "@/store/webRtcStore.js";
+import {ref} from "vue";
 
 const {sendMeOffer} = useWebRtcConnections()
 
@@ -32,7 +33,7 @@ const createMeet = async ({password}) => {
         }
         const {data} = await meetApi.createMeet(payload)
 
-        return data.meetId
+        return data
 
     } catch (e) {
         alert('createMeet err' + e.message)
@@ -44,6 +45,8 @@ const joinMeet = async () => {
     try {
 
         await localUserStore.auth()
+        await webRtcStore.fetchIceServers()
+
         const {meetId} = meetStore
         const {userId} = localUserStore
 
@@ -53,7 +56,7 @@ const joinMeet = async () => {
         await sendMeOffer()
         
     } catch (e) {
-        meetStore.meetId = ''
+
         alert('joinMeet err' + e.message)
         throw e
     }
@@ -87,9 +90,20 @@ const findMeetById = async (meetId) => {
         const {data} = await meetApi.getMeetById({meetId})
 
         meetStore.meetId = data.meetId
+
+        currentMeetId.value = data.meetId
         return data
 
 }
+
+const currentMeetId = ref('')
+
+export const useMeetStore = ()=>{
+    return {
+        currentMeetId
+    }
+}
+
 export const meetStore = {
     meetId: '',
     findMeetById,

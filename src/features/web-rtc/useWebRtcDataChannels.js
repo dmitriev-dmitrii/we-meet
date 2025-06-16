@@ -35,7 +35,6 @@ export const useWebRtcDataChannels =   () => {
 
         channel.onopen = async (e) => {
             dispatchEvent(BUS_EVENTS.DATA_CHANEL_OPEN, { remoteUserId  , remoteUserName })
-            localUserStore.sendMediaTrackLocalState()
         }
 
         channel.onclose = async (e) => {
@@ -54,8 +53,10 @@ export const useWebRtcDataChannels =   () => {
 
         Object.values(dataChannels).forEach((item) => {
 
-            if (item.readyState === 'open') {
+            if (item?.readyState === 'open') {
                 item.send(payload)
+            } else {
+                console.warn('sendDataChanelMessage readyState is not open')
             }
 
         })

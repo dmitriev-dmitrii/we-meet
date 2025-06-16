@@ -1,12 +1,4 @@
 import {usersApi} from "@/api/usersApi.js";
-import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
-import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {useEventBus} from "@/features/useEventBus.js";
-
-
-const {dispatchEvent} = useEventBus()
-
-
 export const localUserStore = {
 
     userId: '',
@@ -16,6 +8,7 @@ export const localUserStore = {
     userStreams: {},
 
     initLocalMediaStream: async () => {
+        //TODO придумать как додаться ответа от юзера прежде чем начать peerConection
         try {
             const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({
                 video: true,
@@ -28,21 +21,8 @@ export const localUserStore = {
             console.log('initLocalMediaStream err', e)
         }
         finally {
-            dispatchEvent( BUS_EVENTS. LOCAL_MEDIA_PERMISSIONS_UPDATED )
-        }
-    },
-    sendMediaTrackLocalState: () => {
-        // TODO
-        // отправить участникам мита состояние медиа треков
-        // const payload = {
-        //     type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
-        //     data: {
-        //         video: localUserStore.video,
-        //         audio: localUserStore.audio
-        //     }
-        // }
 
-        // sendDataChanelMessage(payload)
+        }
     },
 
     get audio() {
@@ -58,7 +38,6 @@ export const localUserStore = {
             this.userStreams.getAudioTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
-            this.sendMediaTrackLocalState()
             return value
         } catch (e) {
             return false
@@ -79,7 +58,6 @@ export const localUserStore = {
             this.userStreams.getVideoTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = value
-            this.sendMediaTrackLocalState()
             return value
         } catch (e) {
 

@@ -8,7 +8,7 @@
   <h1 style="text-align: center">  Cant Found Meet</h1>
   </div>
 
-  <div v-if="isFoundMeet">
+  <div v-if="!isLoading && isFoundMeet">
     <JoinMeetForm></JoinMeetForm>
     <MeetApp></MeetApp>
   </div>
@@ -37,14 +37,17 @@ export default defineComponent({
 
       try {
         isLoading.value = true
-        await meetStore.findMeetById(unref(meetId))
-        await webRtcStore.fetchIceServers()
+
+        const res =  await meetStore.findMeetById(unref(meetId))
+
+        isFoundMeet.value = !!res.meetId
+
+
       } catch (e) {
 
       }
       finally {
         isLoading.value = false
-        isFoundMeet.value = !!meetStore.meetId
       }
 
     })
