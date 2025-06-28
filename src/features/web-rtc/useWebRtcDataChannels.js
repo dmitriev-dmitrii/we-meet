@@ -35,6 +35,16 @@ export const useWebRtcDataChannels =   () => {
 
         channel.onopen = async (e) => {
             dispatchEvent(BUS_EVENTS.DATA_CHANEL_OPEN, { remoteUserId  , remoteUserName })
+
+            const payload = {
+                type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
+                data: {
+                    video: localUserStore.video,
+                    audio: localUserStore.audio
+                }
+            }
+
+            sendDataChanelMessage(payload)
         }
 
         channel.onclose = async (e) => {

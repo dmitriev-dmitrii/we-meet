@@ -3,6 +3,10 @@
   <div style="display: flex; flex-direction: column; border: 1px solid">
     <video style="height: 200px;width: 200px" autoplay muted ref="remoteMedaStreamElement"></video>
 
+    <div>userName {{ userName }}</div>
+    <div>
+      peer status {{ peerStatus }}
+    </div>
     <div>
       audio {{ isOnAudio }}
     </div>
@@ -45,7 +49,13 @@ export default defineComponent({
     userId: {
       required: true
     },
-    status: {
+    userAccentColor: {
+      default: ''
+    },
+    userName: {
+      default: ''
+    },
+    peerStatus: {
       required: true,
       default: PEER_CONNECTIONS_STATE_STATUSES.NEW
     }
@@ -59,7 +69,7 @@ export default defineComponent({
 
     const isOnAudio = ref(false)
     const isOnVideo = ref(false)
-    const setupRemoteMediaStream =  () => {
+    const setupRemoteMediaStream = () => {
 
       if (!mediaStreams[userId]?.video) {
         return
@@ -71,7 +81,6 @@ export default defineComponent({
 
       if (remoteVideoStream instanceof MediaStream) {
         unref(remoteMedaStreamElement).srcObject = remoteVideoStream
-        console.log('setupRemoteMediaStream')
       }
 
     }
@@ -113,17 +122,17 @@ export default defineComponent({
       }
 
       streamComponentState.value = COMPONENT_CONNECTION_STATE_BY_PEER_STATUS[peerStatus]
-      console.log('streamComponentState.value', streamComponentState.value)
     }
 
-    watch(() => props.status, setComponentStateByPeerStatus)
+    watch(() => props.peerStatus, setComponentStateByPeerStatus)
 
     onMounted(async () => {
-      setComponentStateByPeerStatus(props.status)
+      setComponentStateByPeerStatus(props.peerStatus)
       setupRemoteMediaStream()
     })
 
     return {
+      setupRemoteMediaStream,
       isOnAudio,
       isOnVideo
     }

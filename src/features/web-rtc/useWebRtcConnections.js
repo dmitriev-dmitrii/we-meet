@@ -5,21 +5,23 @@ import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@/features/useEventBus.js";
 import {BUS_EVENTS, WEB_SOCKET_EVENTS} from "@/constants/constants.js";
- 
 
-export const useWebRtcConnections =   () => {
+
+
+export const useWebRtcConnections = () => {
 
     const {setupDataChanelEvents} = useWebRtcDataChannels()
     const {setupMediaStreamToPeer} = useWebRtcMediaStreams()
     const {dispatchEvent} = useEventBus()
     const {sendWebSocketMessage} = useWebSocket()
 
-    const dispatchUpdatePeerStatus = (remoteUserId) => {
+    const dispatchUpdatePeerStatus = (userId) => {
 
-        const status = peerConnections[remoteUserId]?.connectionState
+        const peerStatus = peerConnections[userId]?.connectionState
 
-        if (status) {
-            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {status, remoteUserId})
+
+        if (peerStatus) {
+            dispatchEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, {peerStatus, userId})
         }
 
     }

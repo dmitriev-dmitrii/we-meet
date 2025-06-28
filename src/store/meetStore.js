@@ -1,11 +1,14 @@
 import {meetApi} from "@/api/meetApi.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {localUserStore} from "@/store/localUserStore.js";
+import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
 import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 import {peerConnections} from "@/store/webRtcStore.js";
-import {ref} from "vue";
+import {reactive, ref, unref} from "vue";
+
+const remoteUsersMap = reactive({})
+const currentMeetId = ref('')
 
 const {sendMeOffer} = useWebRtcConnections()
 
@@ -22,6 +25,8 @@ const {
 const {
     closePeerConnection
 } = useWebRtcConnections()
+
+const {localUserId} =  useLocalUserStore()
 const createMeet = async ({password}) => {
     try {
         await localUserStore.auth()
@@ -54,7 +59,7 @@ const joinMeet = async () => {
 
         await connectToWebSocket({meetId, userId})
         await sendMeOffer()
-        
+
     } catch (e) {
 
         alert('joinMeet err' + e.message)
@@ -83,25 +88,45 @@ const removeUserFromMeet = (remoteUserId) => {
     deleteMediaStream(remoteUserId)
     closeDataChanel(remoteUserId)
     closePeerConnection(remoteUserId)
+
+    remoteUsersMap[remoteUserId] = undefined
 }
 
 const findMeetById = async (meetId) => {
 
-        const {data} = await meetApi.getMeetById({meetId})
+    const {data} = await meetApi.getMeetById({meetId})
 
-        meetStore.meetId = data.meetId
+    meetStore.meetId = data.meetId
 
-        currentMeetId.value = data.meetId
-        return data
+    currentMeetId.value = data.meetId
+    return data
 
 }
 
-const currentMeetId = ref('')
 
-export const useMeetStore = ()=>{
-    return {
-        currentMeetId
+const updateMeetUser = (payload) => {
+
+    if (payload.userId === unref(localUserId)) {
+      return
     }
+
+    if (!payload.peerStatus) {
+        payload.peerStatus = peerConnections[payload.userId]?.connectionState
+    }
+
+    remoteUsersMap[payload.userId] = { ...remoteUsersMap[payload.userId] , ...payload }
+
+}
+
+export const useMeetStore = () => {
+
+    return {
+        currentMeetId,
+        remoteUsersMap,
+        updateMeetUser,
+        removeUserFromMeet
+    }
+
 }
 
 export const meetStore = {

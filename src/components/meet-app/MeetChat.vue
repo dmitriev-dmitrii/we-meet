@@ -38,7 +38,7 @@ export default defineComponent({
 
       const {remoteUserName} = eventData
 
-      const text = 'joinedMeet'
+      const text = 'data chanel open'
 
       printChatMessage({userName: remoteUserName, text})
     }
@@ -47,7 +47,7 @@ export default defineComponent({
 
       const {remoteUserName} = eventData
 
-      const text = 'leaveMeet'
+      const text = 'data chanel closed'
 
       printChatMessage({userName: remoteUserName, text})
     }

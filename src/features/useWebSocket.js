@@ -1,10 +1,11 @@
+import {useLocalUserStore} from "@/store/localUserStore.js";
 
 const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
 
 const onMessageHandlers = new Map()
 
 let ws = undefined
-
+const {          setLocalUserIsConnected} = useLocalUserStore()
 export const useWebSocket =    () => {
     const sendWebSocketMessage = (payload) => {
         ws.send(JSON.stringify(payload))
@@ -43,11 +44,13 @@ export const useWebSocket =    () => {
             }
 
             ws.onclose = (event) => {
+                setLocalUserIsConnected(false)
                 console.log('ws closed ', event);
             };
 
             ws.onopen = (event) => {
                 console.log('ws open ');
+                setLocalUserIsConnected(true)
                 resolve()
             };
 

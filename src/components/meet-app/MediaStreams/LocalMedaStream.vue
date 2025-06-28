@@ -13,7 +13,7 @@
       <input v-model="videoCheckbox" type="checkbox">
     </label>
 
-    <button @click="onLeaveMeet"> leave meet</button>
+    <button v-if="localIsConnectedToMeet" @click="onLeaveMeet"> leave meet</button>
   </div>
 
 </template>
@@ -21,7 +21,7 @@
 <script>
 
 import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue';
-import {localUserStore} from "@/store/localUserStore.js";
+import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
 import {meetStore} from "@/store/meetStore.js";
 import {useRouter} from "vue-router";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
@@ -33,6 +33,8 @@ export default defineComponent({
     const router = useRouter()
     const {sendDataChanelMessage} = useWebRtcDataChannels()
     const localMedaStreamElement = useTemplateRef('localMedaStreamElement')
+
+    const {localIsConnectedToMeet} = useLocalUserStore()
 
     const audioCheckbox = ref(false)
     const videoCheckbox = ref(false)
@@ -75,6 +77,7 @@ export default defineComponent({
     })
 
     return {
+      localIsConnectedToMeet,
       onLeaveMeet,
       audioCheckbox,
       videoCheckbox

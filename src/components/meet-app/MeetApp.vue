@@ -1,13 +1,12 @@
 <template>
   <div style="display: flex;">
     <LocalMedaStream/>
-    <pre>    {{ remoteMediaSteams }} </pre>
-
-
-    <RemoteMediaStream v-for="{ remoteUserId , status } in remoteMediaSteams"
-                       :status="status"
-                       :userId="remoteUserId"
-                       :key="remoteUserId"
+    <RemoteMediaStream v-for="{ userId , userName ,userAccentColor, peerStatus } in remoteMediaSteams"
+                       :userAccentColor="userAccentColor"
+                       :peerStatus="peerStatus"
+                       :userName="userName"
+                       :userId="userId"
+                       :key="userId"
     />
   </div>
 
@@ -21,47 +20,19 @@ import MeetChat from "@/components/meet-app/MeetChat.vue";
 import RemoteMediaStream from "@/components/meet-app/MediaStreams/RemoteMediaStream.vue";
 import {BUS_EVENTS, DISCONNECTED_STATE_STATUSES, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
 import {useEventBus} from "@/features/useEventBus.js";
+import {useMeetStore} from "@/store/meetStore.js";
+import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
 
 export default defineComponent({
   name: "MeetApp",
   components: {RemoteMediaStream, MeetChat, LocalMedaStream},
   setup() {
-
-
-    const remoteMediaStreamsMap = reactive({})
+    const {remoteUsersMap} = useMeetStore()
 
     const remoteMediaSteams = computed(() => {
-      return Object.values(unref(remoteMediaStreamsMap))
-      // TODO -  придумать способ следить за юзерами которые онлайн  - может на беке + никнеймов здесь нет
+
+      return Object.values(unref(remoteUsersMap)).filter(Boolean)
     })
-    const updatePeerStatusHandle = (eventData) => {
-
-      const {remoteUserId, status} = eventData
-
-      remoteMediaStreamsMap[remoteUserId] = eventData
-
-
-      if (status === PEER_CONNECTIONS_STATE_STATUSES.NEW) {
-        // remoteMediaStreamsComponentsMap.set(remoteUserId, new RemoteMediaStream({remoteUserId}))
-
-        // mediaStreamsWrapper.append(remoteMediaStreamsComponentsMap.get(remoteUserId))
-      }
-
-      // if (remoteMediaStreamsComponentsMap.has(remoteUserId)) {
-      //   remoteMediaStreamsComponentsMap.get(remoteUserId).setAttribute('peerStatus', status)
-      // }
-
-      if (DISCONNECTED_STATE_STATUSES.includes(status)) {
-        remoteMediaStreamsMap[remoteUserId]  =  undefined
-      }
-
-    }
-
-
-    const {listenEvent} = useEventBus()
-
-    listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, updatePeerStatusHandle)
-
 
     return {
       remoteMediaSteams

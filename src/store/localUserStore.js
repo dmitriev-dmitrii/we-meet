@@ -1,4 +1,7 @@
 import {usersApi} from "@/api/usersApi.js";
+import {ref} from "vue";
+
+
 export const localUserStore = {
 
     userId: '',
@@ -6,6 +9,8 @@ export const localUserStore = {
     userName: '',
 
     userStreams: {},
+
+
 
     initLocalMediaStream: async () => {
         //TODO придумать как додаться ответа от юзера прежде чем начать peerConection
@@ -77,9 +82,25 @@ export const localUserStore = {
 
         localUserStore.userName = data.userName
         localUserStore.userId = data.userId
+        localUserId.value = data.userId
     },
 
 
 }
 
+const localUserId = ref('')
 
+const localIsConnectedToMeet = ref(false)
+
+const setLocalUserIsConnected = (val) =>{
+    localIsConnectedToMeet.value = !!val
+}
+
+export const useLocalUserStore = ()=> {
+
+    return {
+        localIsConnectedToMeet,
+        localUserId,
+        setLocalUserIsConnected
+    }
+}

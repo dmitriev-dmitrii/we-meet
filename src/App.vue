@@ -6,7 +6,7 @@
 
     </router-link>
     <div>
-     we meet
+      we meet
     </div>
   </div>
 
@@ -17,14 +17,22 @@
 import {defineComponent, onMounted, ref} from "vue";
 import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
-import {WEB_SOCKET_EVENTS} from "@/constants/constants.js";
+import {
+  BUS_EVENTS,
+  DISCONNECTED_STATE_STATUSES,
+  PEER_CONNECTIONS_STATE_STATUSES,
+  WEB_SOCKET_EVENTS
+} from "@/constants/constants.js";
+import {meetStore, useMeetStore} from "@/store/meetStore.js";
+import {useEventBus} from "@/features/useEventBus.js";
 
 export default defineComponent({
   name: "App",
 
   setup() {
     const {setupOnWsMessageCallbacks} = useWebSocket()
-
+    const {updateMeetUser , removeUserFromMeet } = useMeetStore()
+    const {listenEvent} = useEventBus()
 
     const {
       createPeerOffer,
@@ -33,21 +41,27 @@ export default defineComponent({
       updatePeerIceCandidate,
     } = useWebRtcConnections()
 
+    listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, updateMeetUser)
+    const onUserMeetConnected = (payload) => {
+      // console.log(payload)
+      payload.data.meetUsers.forEach(updateMeetUser)
+    }
+    const onUserMeetDisconnected = ({fromUser}) => {
+      removeUserFromMeet(fromUser.userId)
+    }
+
     setupOnWsMessageCallbacks({
       [WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER]: [createPeerOffer],
       [WEB_SOCKET_EVENTS.RTC_OFFER]: confirmPeerOffer,
       [WEB_SOCKET_EVENTS.RTC_ANSWER]: setupPeerAnswer,
       [WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE]: updatePeerIceCandidate,
 
-      [WEB_SOCKET_EVENTS.WS_CONNECTION]: [],
-      [WEB_SOCKET_EVENTS.WS_CLOSE]: [],
-      //     [WEB_SOCKET_EVENTS.WS_CLOSE]: [updateWsOnlineClients,removeUserOncloseWs],
+      [WEB_SOCKET_EVENTS.WS_CONNECTION]: [onUserMeetConnected],
+      [WEB_SOCKET_EVENTS.WS_CLOSE]: [onUserMeetDisconnected],
     })
 
 
-    return {
-
-    }
+    return {}
   }
 })
 </script>

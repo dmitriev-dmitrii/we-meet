@@ -8,7 +8,7 @@ export const useWebRtcMediaStreams = () => {
 
     const {dispatchEvent} = useEventBus()
     const setupMediaStreamToPeer = async ({remoteUserId}) => {
-        await localUserStore.initLocalMediaStream()
+
         if (localUserStore.userStreams?.active) {
             localUserStore.userStreams.getTracks().forEach(track => {
                 peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
