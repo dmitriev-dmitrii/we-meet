@@ -1,17 +1,30 @@
 <template>
 
   <div style="display: flex; flex-direction: column; border: 1px solid">
+
     <video style="height: 200px;width: 200px" autoplay muted ref="localMedaStreamElement"></video>
 
-    <div>
-      videoInputs <br> {{ videoInputs }}
-    </div>
+    <div>enabled {{ enabled }}</div>
 
-    <div>
-      audioInputs <br> {{ audioInputs }}
-    </div>
+    <label>
+      <span>  videoInput </span>
+      <select id="audio-input-select" :disabled="videoInputs.length <= 1">
+        <option :value="deviceId" v-for="{deviceId , label} in videoInputs" :key="deviceId">
+          {{ label }}
+        </option>
+      </select>
 
+    </label>
 
+    <label>
+      <span>audioInput </span>
+      <select id="audio-input-select" :disabled="audioInputs.length <= 1">
+        <option :value="deviceId" v-for="{deviceId , label} in audioInputs" :key="deviceId">
+          {{ label }}
+        </option>
+      </select>
+
+    </label>
 
     <label>
       audio
@@ -42,11 +55,23 @@ export default defineComponent({
     const {leaveMeet} = useMeetStore()
     const {sendDataChanelMessage} = useWebRtcDataChannels()
     const localMedaStreamElement = useTemplateRef('localMedaStreamElement')
-    const {localUserIsConnectedToMeet, videoInputs, audioInputs} = useLocalUserStore()
+    const {
+      localUserIsConnectedToMeet,
+      videoInputs,
+      audioInputs,
+      localUserStreams,enabled
+
+    } = useLocalUserStore()
 
     const audioCheckbox = ref(false)
     const videoCheckbox = ref(false)
 
+    const playLocalStream = () => {
+
+      if (unref(localUserStreams) instanceof MediaStream) {
+        unref(localMedaStreamElement).srcObject = unref(localUserStreams)
+      }
+    }
 
     watch([audioCheckbox, videoCheckbox], () => {
 
@@ -64,11 +89,12 @@ export default defineComponent({
       sendDataChanelMessage(payload)
     })
 
+    watch(localUserStreams, playLocalStream)
+
     onMounted(async () => {
 
-      if (localUserStore.userStreams instanceof MediaStream) {
-        unref(localMedaStreamElement).srcObject = localUserStore.userStreams
-      }
+      playLocalStream()
+
 
       if (import.meta.env.DEV) {
         localUserStore.audio = false
@@ -80,12 +106,14 @@ export default defineComponent({
     })
 
     return {
-      videoInputs, audioInputs,
 
+      videoInputs,
+      audioInputs,
       localUserIsConnectedToMeet,
       leaveMeet,
       audioCheckbox,
-      videoCheckbox
+      videoCheckbox,
+      enabled
     }
   }
 })

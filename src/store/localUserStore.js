@@ -1,14 +1,46 @@
 import {usersApi} from "@/api/usersApi.js";
-import {reactive, ref, shallowRef} from "vue";
-import {useDevicesList} from "@vueuse/core";
+import {reactive, ref, shallowRef, unref, watch} from "vue";
+import {useDevicesList, usePermission, useUserMedia} from "@vueuse/core";
+
+
+
+const constraints = {audio: true, video: true};
+
+const {stream: localUserStreams, start, enabled} = useUserMedia({constraints, autoSwitch: true});
+
+const onUserDeviceUpdated = (e) => {
+    console.log('useDevicesList updated', e)
+}
+
+const {
+    videoInputs,
+    audioInputs,
+    audioOutputs,
+    permissionGranted: isAllowLocalMediaPermissions,
+    isSupported: isSupportedLocalUserMedia,
+} = useDevicesList({
+    constraints,
+    onUpdated: onUserDeviceUpdated
+})
+
+const localUserId = ref('')
+const localUserName = ref('')
+const localUserIsConnectedToMeet = ref(false)
+
+const localVideoState = ref(true)
+const localAudioState = ref(true)
+
+const currentVideoInputId = ref('')
+const currentAudioInputId = ref('')
+const currentAudioOutputId = ref('')
+
+
 
 export const localUserStore = {
 
-    userStreams: {},
-
     get audio() {
         try {
-            return this.userStreams.getAudioTracks().some((item) => item.enabled)
+            return unref(localUserStreams).getAudioTracks().some((item) => item.enabled)
         } catch (e) {
             return false
         }
@@ -16,7 +48,7 @@ export const localUserStore = {
 
     set audio(value) {
         try {
-            this.userStreams.getAudioTracks().find(({readyState}) => {
+            unref(localUserStreams).getAudioTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = !!value
             return value
@@ -27,7 +59,7 @@ export const localUserStore = {
 
     get video() {
         try {
-            return this.userStreams.getVideoTracks().some((item) => item.enabled)
+            return unref(localUserStreams).getVideoTracks().some((item) => item.enabled)
         } catch (e) {
 
             return false
@@ -36,7 +68,7 @@ export const localUserStore = {
 
     set video(value) {
         try {
-            this.userStreams.getVideoTracks().find(({readyState}) => {
+            unref(localUserStreams).getVideoTracks().find(({readyState}) => {
                 return readyState === 'live'
             }).enabled = value
             return value
@@ -48,23 +80,10 @@ export const localUserStore = {
 
 }
 
-const constraints = {audio: true, video: true}
 
 
-const localUserId = ref('')
-const localUserName = ref('')
-
-const localUserIsConnectedToMeet = ref(false)
 
 export const useLocalUserStore = () => {
-
-    const {
-        videoInputs,
-        audioInputs
-    } = useDevicesList({
-        constraints
-    })
-
     const setLocalUserIsConnected = (val) => {
         //ws is connected
 
@@ -85,11 +104,16 @@ export const useLocalUserStore = () => {
 
         try {
 
+            if (!unref(isSupportedLocalUserMedia)) {
+                localAudioState.value = false
+                localVideoState.value = false
+                return
+            }
 
-            const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia(constraints);
+            await navigator.mediaDevices.getUserMedia(constraints);
 
-            //cb navigator.mediaDevices.ondevicechange TODO
-            //TODO many media input device - select?
+            await start()
+
 
         } catch (e) {
             console.log('initLocalMediaStream err', e)
@@ -98,14 +122,26 @@ export const useLocalUserStore = () => {
         }
     }
 
+
+    watch([currentAudioInputId, currentVideoInputId], () => {
+        // TODO смена медиа инпутов
+    })
+
     return {
+        localUserStreams,
+        localVideoState,
+        localAudioState,
+        isAllowLocalMediaPermissions,
+        isSupportedLocalUserMedia,
         videoInputs,
         audioInputs,
+        audioOutputs,
         localUserIsConnectedToMeet,
         localUserId,
         localUserName,
         setLocalUserIsConnected,
         initLocalMediaStream,
         auth,
+        enabled,
     }
 }
