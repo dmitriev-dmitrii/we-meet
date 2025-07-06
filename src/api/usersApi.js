@@ -10,7 +10,7 @@ const getIceServers = () => {
     return axios.get(`${USERS_API_URL}/ice-servers`)
 }
 
-export const usersApi = Object.freeze({
+export const usersApi = {
     userAuth,
     getIceServers
-})
+}

@@ -3,9 +3,9 @@
   <div style="display: flex; flex-direction: column; border: 1px solid">
     <video style="height: 200px;width: 200px" autoplay muted ref="remoteMedaStreamElement"></video>
 
-    <div>userName {{ userName }}</div>
+    <div> {{ userName }}</div>
     <div>
-      peer status {{ peerStatus }}
+      peer status :{{ peerStatus }}
     </div>
     <div>
       audio {{ isOnAudio }}

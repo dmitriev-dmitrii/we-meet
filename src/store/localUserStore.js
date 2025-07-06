@@ -13,7 +13,6 @@ export const localUserStore = {
 
 
     initLocalMediaStream: async () => {
-        //TODO придумать как додаться ответа от юзера прежде чем начать peerConection
         try {
             const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({
                 video: true,

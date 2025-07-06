@@ -1,6 +1,4 @@
 <template>
-  meetUsersMap
-  <pre>{{meetUsersMap}}</pre>
   <div v-if="isLoading">
     <h1 style="text-align: center"> Loading </h1>
   </div>
@@ -30,15 +28,12 @@ export default defineComponent({
   components: {MeetApp, JoinMeetForm, LocalMedaStream},
 
   setup() {
-    const {meetUsersMap} = useMeetStore()
     const {localIsConnectedToMeet} = useLocalUserStore()
 
     const isFoundMeet = ref(false)
     const isLoading = ref(true)
 
     const meetId = useRouteParams('meetId')
-
-
 
     onMounted(async () => {
 
@@ -60,7 +55,6 @@ export default defineComponent({
     })
 
     return {
-      meetUsersMap,
       localIsConnectedToMeet,
       isFoundMeet,
       isLoading

@@ -20,7 +20,9 @@ export default defineConfig(({command, mode, isSsrBuild, isPreview}) => {
             strictPort: true,
             port: parseInt(VITE_APP_PORT, 10),
         },
-        plugins: [vue()],
+        plugins: [
+            vue()
+        ],
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url))
