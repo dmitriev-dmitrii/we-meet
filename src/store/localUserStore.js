@@ -1,5 +1,6 @@
 import {usersApi} from "@/api/usersApi.js";
 import {reactive, ref, shallowRef} from "vue";
+import {useDevicesList} from "@vueuse/core";
 
 export const localUserStore = {
 
@@ -47,18 +48,30 @@ export const localUserStore = {
 
 }
 
+const constraints = {audio: true, video: true}
+
+
 const localUserId = ref('')
 const localUserName = ref('')
+
 const localUserIsConnectedToMeet = ref(false)
 
 export const useLocalUserStore = () => {
+
+    const {
+        videoInputs,
+        audioInputs
+    } = useDevicesList({
+        constraints
+    })
+
     const setLocalUserIsConnected = (val) => {
         //ws is connected
 
         localUserIsConnectedToMeet.value = !!val
     }
 
-    const auth = async ({userName=''} = {}) => {
+    const auth = async ({userName = ''} = {}) => {
 
         const {data} = await usersApi.userAuth({userName})
 
@@ -68,12 +81,13 @@ export const useLocalUserStore = () => {
         return data
     }
 
-   const  initLocalMediaStream = async () => {
+    const initLocalMediaStream = async () => {
+
         try {
-            const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
+
+
+            const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia(constraints);
+
             //cb navigator.mediaDevices.ondevicechange TODO
             //TODO many media input device - select?
 
@@ -85,7 +99,8 @@ export const useLocalUserStore = () => {
     }
 
     return {
-
+        videoInputs,
+        audioInputs,
         localUserIsConnectedToMeet,
         localUserId,
         localUserName,

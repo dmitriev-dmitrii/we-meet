@@ -3,6 +3,16 @@
   <div style="display: flex; flex-direction: column; border: 1px solid">
     <video style="height: 200px;width: 200px" autoplay muted ref="localMedaStreamElement"></video>
 
+    <div>
+      videoInputs <br> {{ videoInputs }}
+    </div>
+
+    <div>
+      audioInputs <br> {{ audioInputs }}
+    </div>
+
+
+
     <label>
       audio
       <input v-model="audioCheckbox" type="checkbox">
@@ -32,7 +42,7 @@ export default defineComponent({
     const {leaveMeet} = useMeetStore()
     const {sendDataChanelMessage} = useWebRtcDataChannels()
     const localMedaStreamElement = useTemplateRef('localMedaStreamElement')
-    const {localUserIsConnectedToMeet} = useLocalUserStore()
+    const {localUserIsConnectedToMeet, videoInputs, audioInputs} = useLocalUserStore()
 
     const audioCheckbox = ref(false)
     const videoCheckbox = ref(false)
@@ -44,11 +54,11 @@ export default defineComponent({
       localUserStore.video = unref(videoCheckbox)
 
       const payload = {
-          type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE,
-          data: {
-              video: localUserStore.video,
-              audio: localUserStore.audio
-          }
+        type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE,
+        data: {
+          video: localUserStore.video,
+          audio: localUserStore.audio
+        }
       }
 
       sendDataChanelMessage(payload)
@@ -70,6 +80,8 @@ export default defineComponent({
     })
 
     return {
+      videoInputs, audioInputs,
+
       localUserIsConnectedToMeet,
       leaveMeet,
       audioCheckbox,
