@@ -2,12 +2,12 @@ import {useWebSocket} from "../useWebSocket.js";
 import {peerConnections} from "@/features/web-rtc/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
-import {localUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@vueuse/core";
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {WEB_SOCKET_EVENTS} from "@/constants/web-socket.js";
 import {usersApi} from "@/api/usersApi.js";
 import {shallowRef, unref} from "vue";
+import {useLocalUserStore} from "@/store/localUserStore.js";
 
 const {setupDataChanelEvents} = useWebRtcDataChannels();
 const {setupMediaStreamToPeer} = useWebRtcMediaStreams();
@@ -17,6 +17,7 @@ const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE);
 
 const iceServers = shallowRef([])
 
+const {localUserId} = useLocalUserStore()
 export const useWebRtcConnections = () => {
     const fetchIceServers = async () => {
         try {
@@ -132,16 +133,17 @@ export const useWebRtcConnections = () => {
         try {
 
             const {
-                userId
+                userId,
+                userName
             } = fromUser
 
             await createPeerConnection(fromUser)
 
-            const channel = await peerConnections[userId].createDataChannel(localUserStore.userId);
+            const channel = await peerConnections[userId].createDataChannel(unref(localUserId));
 
             setupDataChanelEvents({fromUser, channel})
 
-            peerConnections[userId].onicecandidate = onIceCandidate.bind({userId});
+            peerConnections[userId].onicecandidate = onIceCandidate.bind(fromUser);
 
             const offer = await peerConnections[userId].createOffer()
 

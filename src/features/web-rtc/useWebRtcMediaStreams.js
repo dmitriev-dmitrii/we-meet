@@ -1,15 +1,15 @@
 import {mediaStreams, peerConnections} from "@/features/web-rtc/webRtcStore.js";
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
+import { useLocalUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@vueuse/core";
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {unref} from "vue";
 
-const {localUserStreams} = useLocalUserStore()
+const {localUserMediaStreams} = useLocalUserStore()
 export const useWebRtcMediaStreams = () => {
     const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
     const setupMediaStreamToPeer = async ({userId, userName}) => {
 
-        const localMediaStream = unref(localUserStreams)
+        const localMediaStream = unref(localUserMediaStreams)
 
         if (localMediaStream instanceof MediaStream) {
             localMediaStream.getTracks().forEach(track => {

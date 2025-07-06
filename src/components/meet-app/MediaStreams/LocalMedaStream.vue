@@ -4,35 +4,34 @@
 
     <video style="height: 200px;width: 200px" autoplay muted ref="localMedaStreamElement"></video>
 
-    <div>enabled {{ enabled }}</div>
+
+<!--    <label>-->
+<!--      <span>  videoInput </span>-->
+<!--      <select id="video-input-select" :disabled="videoInputs.length <= 1">-->
+<!--        <option :value="deviceId" v-for="{deviceId , label} in videoInputs" :key="deviceId">-->
+<!--          {{ label }}-->
+<!--        </option>-->
+<!--      </select>-->
+
+<!--    </label>-->
+
+<!--    <label>-->
+<!--      <span>audioInput </span>-->
+<!--      <select id="audio-input-select" :disabled="audioInputs.length <= 1">-->
+<!--        <option :value="deviceId" v-for="{deviceId , label} in audioInputs" :key="deviceId">-->
+<!--          {{ label }}-->
+<!--        </option>-->
+<!--      </select>-->
+
+<!--    </label>-->
 
     <label>
-      <span>  videoInput </span>
-      <select id="audio-input-select" :disabled="videoInputs.length <= 1">
-        <option :value="deviceId" v-for="{deviceId , label} in videoInputs" :key="deviceId">
-          {{ label }}
-        </option>
-      </select>
-
-    </label>
-
-    <label>
-      <span>audioInput </span>
-      <select id="audio-input-select" :disabled="audioInputs.length <= 1">
-        <option :value="deviceId" v-for="{deviceId , label} in audioInputs" :key="deviceId">
-          {{ label }}
-        </option>
-      </select>
-
-    </label>
-
-    <label>
-      audio
+      audio state
       <input v-model="audioCheckbox" type="checkbox">
     </label>
 
     <label>
-      video
+      video state
       <input v-model="videoCheckbox" type="checkbox">
     </label>
 
@@ -45,7 +44,7 @@
 
 import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue';
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
+import { useLocalUserStore} from "@/store/localUserStore.js";
 import {WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {useMeetStore} from "@/store/meetStore.js";
 
@@ -59,37 +58,38 @@ export default defineComponent({
       localUserIsConnectedToMeet,
       videoInputs,
       audioInputs,
-      localUserStreams,enabled
-
+      localUserMediaStreams,
+      localAudioState,
+      localVideoState,
     } = useLocalUserStore()
 
     const audioCheckbox = ref(false)
     const videoCheckbox = ref(false)
 
-    const playLocalStream = () => {
-
-      if (unref(localUserStreams) instanceof MediaStream) {
-        unref(localMedaStreamElement).srcObject = unref(localUserStreams)
-      }
-    }
-
     watch([audioCheckbox, videoCheckbox], () => {
 
-      localUserStore.audio = unref(audioCheckbox)
-      localUserStore.video = unref(videoCheckbox)
+      localAudioState.value = unref(audioCheckbox)
+      localVideoState.value = unref(videoCheckbox)
 
       const payload = {
         type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE,
         data: {
-          video: localUserStore.video,
-          audio: localUserStore.audio
+          video: localAudioState.value,
+          audio: localVideoState.value
         }
       }
 
       sendDataChanelMessage(payload)
     })
 
-    watch(localUserStreams, playLocalStream)
+    const playLocalStream = () => {
+
+      if (unref(localUserMediaStreams) instanceof MediaStream) {
+        unref(localMedaStreamElement).srcObject = unref(localUserMediaStreams)
+      }
+    }
+
+    watch(localUserMediaStreams, playLocalStream)
 
     onMounted(async () => {
 
@@ -97,11 +97,11 @@ export default defineComponent({
 
 
       if (import.meta.env.DEV) {
-        localUserStore.audio = false
+        localAudioState.value = false
       }
 
-      audioCheckbox.value = localUserStore.audio
-      videoCheckbox.value = localUserStore.video
+      audioCheckbox.value = unref(localAudioState)
+      videoCheckbox.value = unref(localVideoState)
 
     })
 
@@ -113,7 +113,6 @@ export default defineComponent({
       leaveMeet,
       audioCheckbox,
       videoCheckbox,
-      enabled
     }
   }
 })

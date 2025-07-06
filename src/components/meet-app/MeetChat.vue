@@ -17,7 +17,7 @@
 <script>
 import {defineComponent, ref, unref} from 'vue'
 
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
+import { useLocalUserStore} from "@/store/localUserStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";

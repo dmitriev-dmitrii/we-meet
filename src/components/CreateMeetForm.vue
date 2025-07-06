@@ -24,7 +24,7 @@
 <script>
 import {defineComponent, ref, unref} from 'vue'
 import {useMeetStore} from "@/store/meetStore.js";
-import {localUserStore} from "@/store/localUserStore.js";
+
 import {useRouter} from "vue-router";
 
 export default defineComponent({

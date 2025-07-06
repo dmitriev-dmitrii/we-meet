@@ -1,10 +1,10 @@
 import {dataChannels} from "@/features/web-rtc/webRtcStore.js";
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
+import {useLocalUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@vueuse/core";
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {unref} from "vue";
 
-const {localUserId , localUserName} =  useLocalUserStore()
+const {localUserId, localUserName, localAudioState, localVideoState} = useLocalUserStore()
 export const useWebRtcDataChannels = () => {
 
     const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
@@ -26,17 +26,17 @@ export const useWebRtcDataChannels = () => {
 
             webRtcEventBus.emit({
                 type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_OPEN,
-                fromUser:{
+                fromUser: {
                     userId,
                     userName,
                 },
             })
 
             sendDataChanelMessage({
-                type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE ,
+                type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE,
                 data: {
-                    video: localUserStore.video,
-                    audio: localUserStore.audio
+                    video: localAudioState.value,
+                    audio: localVideoState.value
                 }
             })
         }
@@ -60,8 +60,8 @@ export const useWebRtcDataChannels = () => {
         const payload = JSON.stringify({
             ...payloadRaw,
             fromUser: {
-                userId : unref(localUserId),
-                userName : unref(localUserName)
+                userId: unref(localUserId),
+                userName: unref(localUserName)
             },
         })
 
