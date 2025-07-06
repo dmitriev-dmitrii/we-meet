@@ -8,12 +8,12 @@
       peer status :{{ peerStatus }}
     </div>
     <div>
-      audio {{ isOnAudio }}
+      audio {{ audio }}
     </div>
 
     <div>
       video
-      {{ isOnVideo }}
+      {{ video }}
     </div>
 
   </div>
@@ -23,9 +23,8 @@
 <script>
 import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue'
 
-import {BUS_EVENTS, MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/constants.js";
-import {mediaStreams} from "@/store/webRtcStore.js";
-import {useEventBus} from "@/features/useEventBus.js";
+import { MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/web-rtc.js";
+import {mediaStreams} from "@/features/web-rtc/webRtcStore.js";
 
 const COMPONENT_CONNECTION_STATE = {
   LOADING: "loading",
@@ -58,62 +57,41 @@ export default defineComponent({
     peerStatus: {
       required: true,
       default: PEER_CONNECTIONS_STATE_STATUSES.NEW
+    },
+    audio: {
+      type: Boolean,
+      default: false
+    },
+    video: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props) {
 
-    const {userId} = props
     const remoteMedaStreamElement = useTemplateRef('remoteMedaStreamElement')
 
-    const streamComponentState = ref('')
+    const streamComponentState = ref(COMPONENT_CONNECTION_STATE.LOADING)
 
-    const isOnAudio = ref(false)
-    const isOnVideo = ref(false)
     const setupRemoteMediaStream = () => {
 
-      if (!mediaStreams[userId]?.video) {
-        return
-      }
+      // TODO -  if only audio stream ?
 
-      const {streams} = mediaStreams[userId][MEDIA_TRACK_KIND.VIDEO]
+      if (mediaStreams[props.userId]?.video) {
 
-      const [remoteVideoStream] = streams
+        const {streams} = mediaStreams[props.userId][MEDIA_TRACK_KIND.VIDEO]
 
-      if (remoteVideoStream instanceof MediaStream) {
-        unref(remoteMedaStreamElement).srcObject = remoteVideoStream
-      }
+        const [remoteVideoStream] = streams
 
-    }
+        if (remoteVideoStream instanceof MediaStream) {
+          unref(remoteMedaStreamElement).srcObject = remoteVideoStream
+        }
 
-    const updateRemoteMediaTrackHandle = (eventData) => {
-      const {remoteUserId} = eventData
-
-      if (remoteUserId === userId) {
-        setupRemoteMediaStream()
-      }
-    }
-
-    const updateMediaTrackStateHandle = (eventData) => {
-
-      const {from, data} = eventData
-
-      if (from !== userId) {
-        return
-      }
-
-      isOnAudio.value = data.audio
-      isOnVideo.value = data.video
-
-      if (data.video) {
-        setupRemoteMediaStream()
       }
 
     }
 
-    const {listenEvent} = useEventBus()
 
-    listenEvent(BUS_EVENTS.REMOTE_USER_ON_TRACK, updateRemoteMediaTrackHandle)
-    listenEvent(BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE, updateMediaTrackStateHandle)
 
     const setComponentStateByPeerStatus = (peerStatus) => {
 
@@ -122,6 +100,10 @@ export default defineComponent({
       }
 
       streamComponentState.value = COMPONENT_CONNECTION_STATE_BY_PEER_STATUS[peerStatus]
+
+      if (streamComponentState.value === COMPONENT_CONNECTION_STATE.CONNECTED) {
+        setupRemoteMediaStream()
+      }
     }
 
     watch(() => props.peerStatus, setComponentStateByPeerStatus)
@@ -132,9 +114,7 @@ export default defineComponent({
     })
 
     return {
-      setupRemoteMediaStream,
-      isOnAudio,
-      isOnVideo
+
     }
 
     // TODO  не стабильно работает видео при соединении - придумать как дожидаться что канал и все пиры готовы к трансляции

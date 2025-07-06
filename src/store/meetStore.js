@@ -1,141 +1,145 @@
-import {meetApi} from "@/api/meetApi.js";
+import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
-import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcMediaStreams} from "@/features/web-rtc/useWebRtcMediaStreams.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
-import {peerConnections} from "@/store/webRtcStore.js";
+import {useLocalUserStore} from "@/store/localUserStore.js";
+import {useWebSocket} from "@/features/useWebSocket.js";
 import {reactive, ref, unref} from "vue";
-
-const remoteUsersMap = reactive({})
-const currentMeetId = ref('')
-
-const {sendMeOffer} = useWebRtcConnections()
+import {useEventBus} from "@vueuse/core";
+import {meetApi} from "@/api/meetApi.js";
 
 const {closeWebSocket, connectToWebSocket} = useWebSocket()
+const {closePeerConnection} = useWebRtcConnections()
+const {deleteMediaStream} = useWebRtcMediaStreams()
+const {closeDataChanel} = useWebRtcDataChannels()
+const {sendMeOffer} = useWebRtcConnections()
 
-const {
-    closeDataChanel
-} = useWebRtcDataChannels()
+const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
+const {localUserId, auth} = useLocalUserStore()
 
-const {
-    deleteMediaStream,
-} = useWebRtcMediaStreams()
+const currentMeetId = ref('')
+const remoteUsersMap = reactive({})
+export const useMeetStore = () => {
 
-const {
-    closePeerConnection
-} = useWebRtcConnections()
+    const findMeetById = async (meetId) => {
 
-const {localUserId} =  useLocalUserStore()
-const createMeet = async ({password}) => {
-    try {
-        await localUserStore.auth()
+        const {data} = await meetApi.getMeetById({meetId})
 
-        const payload = {
-            userName: localUserStore.userName,
-            userId: localUserStore.userId,
-            password
-        }
-        const {data} = await meetApi.createMeet(payload)
-
+        currentMeetId.value = data.meetId
         return data
 
-    } catch (e) {
-        alert('createMeet err' + e.message)
-        throw e
     }
-}
+    const updateMeetUser = (payload) => {
 
-const joinMeet = async () => {
-    try {
 
-        await localUserStore.auth()
-        await webRtcStore.fetchIceServers()
+        if (payload.userId === unref(localUserId) || !payload.userId) {
+            return
+        }
+        //
+        // const defaultUserFields = {
+        //
+        // }
+        //
 
-        const {meetId} = meetStore
-        const {userId} = localUserStore
+        remoteUsersMap[payload.userId] = {...remoteUsersMap[payload.userId], ...payload}
 
-        const {data} = await meetApi.joinMeetRequest({meetId, userId})
-
-        await connectToWebSocket({meetId, userId})
-        await sendMeOffer()
-
-    } catch (e) {
-
-        alert('joinMeet err' + e.message)
-        throw e
     }
 
-}
-const leaveMeet = () => {
-    try {
-        meetStore.meetId = ''
-
-        Object.keys(peerConnections).forEach((remoteUserId) => {
-            removeUserFromMeet(remoteUserId)
-        })
-
-        closeWebSocket()
-
-    } catch (e) {
-        alert('leaveMeet err' + e.message)
-        throw e
-    }
-}
-
-const removeUserFromMeet = (remoteUserId) => {
-
-    deleteMediaStream(remoteUserId)
-    closeDataChanel(remoteUserId)
-    closePeerConnection(remoteUserId)
-
-    remoteUsersMap[remoteUserId] = undefined
-}
-
-const findMeetById = async (meetId) => {
-
-    const {data} = await meetApi.getMeetById({meetId})
-
-    meetStore.meetId = data.meetId
-
-    currentMeetId.value = data.meetId
-    return data
-
-}
-
-
-const updateMeetUser = (payload) => {
-
-    if (payload.userId === unref(localUserId)) {
-      return
+    const setCurrentMeet = (meetId) => {
+        currentMeetId.value = meetId
     }
 
-    if (!payload.peerStatus) {
-        payload.peerStatus = peerConnections[payload.userId]?.connectionState
+    const removeUserFromMeet = (remoteUserId) => {
+
+        deleteMediaStream(remoteUserId)
+        closeDataChanel(remoteUserId)
+        closePeerConnection(remoteUserId)
+
+        remoteUsersMap[remoteUserId] = undefined
     }
 
-    remoteUsersMap[payload.userId] = { ...remoteUsersMap[payload.userId] , ...payload }
+    const createMeet = async ({password}) => {
+        try {
+            const {userId} = await auth()
 
-}
+            const payload = {
+                userId,
+                password
+            }
 
-export const useMeetStore = () => {
+            const {data} = await meetApi.createMeet(payload)
+
+            return data
+
+        } catch (e) {
+            alert('createMeet err' + e.message)
+            throw e
+        }
+    }
+
+    const joinMeet = async ({userName, password}) => {
+
+        try {
+
+            await auth({userName})
+
+            const payload = {
+                meetId: unref(currentMeetId),
+                userId: unref(localUserId)
+            }
+
+            const {data} = await meetApi.joinMeetRequest({...payload, ...{password}})
+
+            await connectToWebSocket(payload)
+
+            await sendMeOffer()
+
+        } catch (e) {
+
+            alert('joinMeet err ' + e.message)
+            throw e
+        }
+
+    }
+    const leaveMeet = () => {
+        try {
+            Object.keys(unref(remoteUsersMap)).forEach((remoteUserId) => {
+                removeUserFromMeet(remoteUserId)
+            })
+
+            closeWebSocket()
+
+        } catch (e) {
+            alert('leaveMeet err' + e.message)
+            throw e
+        }
+    }
+
+    webRtcEventBus.on((payload) => {
+
+        const {type, data, fromUser} = payload
+
+        if (type === WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE || type === WEB_RTC_EVENT_BUS_TYPES.PEER_UPDATE_STATUS) {
+
+            updateMeetUser({...fromUser, ...data})
+        }
+
+    })
+
 
     return {
         currentMeetId,
         remoteUsersMap,
+
+        findMeetById,
+        setCurrentMeet,
+        joinMeet,
+        createMeet,
+        leaveMeet,
+
         updateMeetUser,
         removeUserFromMeet
     }
 
 }
-
-export const meetStore = {
-    meetId: '',
-    findMeetById,
-    removeUserFromMeet,
-    joinMeet,
-    createMeet,
-    leaveMeet,
-}
-
 

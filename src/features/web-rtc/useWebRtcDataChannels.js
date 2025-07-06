@@ -1,54 +1,56 @@
-import {dataChannels} from "@/store/webRtcStore.js";
-import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
-import {localUserStore} from "@/store/localUserStore.js";
-import {useEventBus} from "@/features/useEventBus.js";
- 
+import {dataChannels} from "@/features/web-rtc/webRtcStore.js";
+import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
+import {useEventBus} from "@vueuse/core";
+import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
+import {unref} from "vue";
 
-export const useWebRtcDataChannels =   () => {
+const {localUserId , localUserName} =  useLocalUserStore()
+export const useWebRtcDataChannels = () => {
 
-    const {dispatchEvent} = useEventBus()
+    const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
+    const setupDataChanelEvents = ({channel, fromUser}) => {
 
-    const setupDataChanelEvents = ( { channel , fromUser  } ) => {
+        const {userId, userName} = fromUser
 
-        const {  userId:remoteUserId , userName: remoteUserName } = fromUser
-
-        dataChannels[remoteUserId] = channel
+        dataChannels[userId] = channel
 
         channel.onmessage = (e) => {
-            const payload = JSON.parse(e.data)
 
-            const { type } = payload
+            const data = JSON.parse(e.data)
 
-            if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE) {
-
-                dispatchEvent( BUS_EVENTS.UPDATE_REMOTE_USER_MEDIA_TRACK_STATE,  payload)
-
-            }
-
-            if (type === DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE) {
-
-                dispatchEvent( BUS_EVENTS.DATA_CHANEL_TEXT_MESSAGE,  payload )
-
-            }
+            webRtcEventBus.emit(data)
 
         }
 
         channel.onopen = async (e) => {
-            dispatchEvent(BUS_EVENTS.DATA_CHANEL_OPEN, { remoteUserId  , remoteUserName })
 
-            const payload = {
-                type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
+            webRtcEventBus.emit({
+                type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_OPEN,
+                fromUser:{
+                    userId,
+                    userName,
+                },
+            })
+
+            sendDataChanelMessage({
+                type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE ,
                 data: {
                     video: localUserStore.video,
                     audio: localUserStore.audio
                 }
-            }
-
-            sendDataChanelMessage(payload)
+            })
         }
 
         channel.onclose = async (e) => {
-            dispatchEvent(BUS_EVENTS.DATA_CHANEL_CLOSE, { remoteUserId  , remoteUserName })
+
+            webRtcEventBus.emit({
+                type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_CLOSE,
+                fromUser: {
+                    userId,
+                    userName,
+                },
+            })
+
         };
 
     }
@@ -57,8 +59,10 @@ export const useWebRtcDataChannels =   () => {
 
         const payload = JSON.stringify({
             ...payloadRaw,
-            from: localUserStore.userId ,
-            fromUserName : localUserStore.userName
+            fromUser: {
+                userId : unref(localUserId),
+                userName : unref(localUserName)
+            },
         })
 
         Object.values(dataChannels).forEach((item) => {
@@ -79,7 +83,7 @@ export const useWebRtcDataChannels =   () => {
             dataChannels[remoteUserId].close()
         }
 
-       dataChannels[remoteUserId] = null
+        dataChannels[remoteUserId] = null
 
     }
 

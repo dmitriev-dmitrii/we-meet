@@ -3,34 +3,35 @@
     <h1 style="text-align: center"> Loading </h1>
   </div>
 
-  <div v-if="!isLoading && !isFoundMeet">
+  <div v-if="!isLoading && !currentMeetId">
     <h1 style="text-align: center"> Cant Found Meet</h1>
   </div>
 
-  <div v-if="!isLoading && isFoundMeet">
-    <JoinMeetForm v-if="!localIsConnectedToMeet"></JoinMeetForm>
-    <MeetApp></MeetApp>
+  <div v-if="!isLoading && currentMeetId">
+    <JoinMeetForm v-if="!localUserIsConnectedToMeet"/>
+    <MeetApp/>
   </div>
 
 </template>
 
 <script>
-import {computed, defineComponent, onMounted, ref, unref} from 'vue'
+
 import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
-import {useRouteParams} from '@vueuse/router'
-import {meetStore, useMeetStore} from "@/store/meetStore.js";
+import { useLocalUserStore} from "@/store/localUserStore.js";
+import {defineComponent, onMounted, ref, unref} from 'vue';
 import JoinMeetForm from "@/components/JoinMeetForm.vue";
 import MeetApp from "@/components/meet-app/MeetApp.vue";
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
-
+import {useMeetStore} from "@/store/meetStore.js";
+import {useRouteParams} from '@vueuse/router'
+import {onBeforeRouteLeave} from "vue-router";
 export default defineComponent({
   name: "MeetView",
   components: {MeetApp, JoinMeetForm, LocalMedaStream},
 
   setup() {
-    const {localIsConnectedToMeet} = useLocalUserStore()
+    const {findMeetById, setCurrentMeet, currentMeetId} = useMeetStore()
+    const {localUserIsConnectedToMeet , initLocalMediaStream } = useLocalUserStore()
 
-    const isFoundMeet = ref(false)
     const isLoading = ref(true)
 
     const meetId = useRouteParams('meetId')
@@ -40,11 +41,10 @@ export default defineComponent({
       try {
         isLoading.value = true
 
-        const res = await meetStore.findMeetById(unref(meetId))
-        await localUserStore.initLocalMediaStream()
+        const res = await findMeetById(unref(meetId))
+        await initLocalMediaStream()
 
-        isFoundMeet.value = !!res.meetId
-
+        setCurrentMeet(res.meetId)
 
       } catch (e) {
 
@@ -54,9 +54,13 @@ export default defineComponent({
 
     })
 
+    onBeforeRouteLeave(() => {
+      setCurrentMeet('')
+    })
+
     return {
-      localIsConnectedToMeet,
-      isFoundMeet,
+      currentMeetId,
+      localUserIsConnectedToMeet,
       isLoading
     }
   }

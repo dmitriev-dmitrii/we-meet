@@ -1,33 +1,9 @@
 import {usersApi} from "@/api/usersApi.js";
-import {ref} from "vue";
-
+import {reactive, ref, shallowRef} from "vue";
 
 export const localUserStore = {
 
-    userId: '',
-
-    userName: '',
-
     userStreams: {},
-
-
-
-    initLocalMediaStream: async () => {
-        try {
-            const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
-            //cb navigator.mediaDevices.ondevicechange TODO
-            //TODO many media input device - select?
-
-        } catch (e) {
-            console.log('initLocalMediaStream err', e)
-        }
-        finally {
-
-        }
-    },
 
     get audio() {
         try {
@@ -69,37 +45,52 @@ export const localUserStore = {
         }
     },
 
-    auth: async () => {
-
-        const {userName} = localUserStore
-
-        const payload = {
-            userName
-        }
-
-        const {data} = await usersApi.userAuth(payload)
-
-        localUserStore.userName = data.userName
-        localUserStore.userId = data.userId
-        localUserId.value = data.userId
-    },
-
-
 }
 
 const localUserId = ref('')
+const localUserName = ref('')
+const localUserIsConnectedToMeet = ref(false)
 
-const localIsConnectedToMeet = ref(false)
+export const useLocalUserStore = () => {
+    const setLocalUserIsConnected = (val) => {
+        //ws is connected
 
-const setLocalUserIsConnected = (val) =>{
-    localIsConnectedToMeet.value = !!val
-}
+        localUserIsConnectedToMeet.value = !!val
+    }
 
-export const useLocalUserStore = ()=> {
+    const auth = async ({userName=''} = {}) => {
+
+        const {data} = await usersApi.userAuth({userName})
+
+        localUserId.value = data.userId
+        localUserName.value = data.userName
+
+        return data
+    }
+
+   const  initLocalMediaStream = async () => {
+        try {
+            const {active} = localUserStore.userStreams = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
+            //cb navigator.mediaDevices.ondevicechange TODO
+            //TODO many media input device - select?
+
+        } catch (e) {
+            console.log('initLocalMediaStream err', e)
+        } finally {
+
+        }
+    }
 
     return {
-        localIsConnectedToMeet,
+
+        localUserIsConnectedToMeet,
         localUserId,
-        setLocalUserIsConnected
+        localUserName,
+        setLocalUserIsConnected,
+        initLocalMediaStream,
+        auth,
     }
 }

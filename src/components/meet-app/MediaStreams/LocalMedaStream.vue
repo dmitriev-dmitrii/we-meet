@@ -13,7 +13,7 @@
       <input v-model="videoCheckbox" type="checkbox">
     </label>
 
-    <button v-if="localIsConnectedToMeet" @click="onLeaveMeet"> leave meet</button>
+    <button v-if="localUserIsConnectedToMeet" @click="leaveMeet"> leave meet</button>
   </div>
 
 </template>
@@ -21,37 +21,30 @@
 <script>
 
 import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue';
-import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
-import {meetStore} from "@/store/meetStore.js";
-import {useRouter} from "vue-router";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
+import {localUserStore, useLocalUserStore} from "@/store/localUserStore.js";
+import {WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
+import {useMeetStore} from "@/store/meetStore.js";
 
 export default defineComponent({
   name: "LocalMedaStream",
   setup() {
-    const router = useRouter()
+    const {leaveMeet} = useMeetStore()
     const {sendDataChanelMessage} = useWebRtcDataChannels()
     const localMedaStreamElement = useTemplateRef('localMedaStreamElement')
-
-    const {localIsConnectedToMeet} = useLocalUserStore()
+    const {localUserIsConnectedToMeet} = useLocalUserStore()
 
     const audioCheckbox = ref(false)
     const videoCheckbox = ref(false)
 
-    const onLeaveMeet = () => {
-
-      meetStore.leaveMeet()
-      router.push({name:'HomeView'})
-    }
-
 
     watch([audioCheckbox, videoCheckbox], () => {
+
       localUserStore.audio = unref(audioCheckbox)
       localUserStore.video = unref(videoCheckbox)
 
       const payload = {
-          type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_UPDATE_MEDIA_TRACK_STATE,
+          type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_MEDIA_TRACK_STATE,
           data: {
               video: localUserStore.video,
               audio: localUserStore.audio
@@ -77,8 +70,8 @@ export default defineComponent({
     })
 
     return {
-      localIsConnectedToMeet,
-      onLeaveMeet,
+      localUserIsConnectedToMeet,
+      leaveMeet,
       audioCheckbox,
       videoCheckbox
     }

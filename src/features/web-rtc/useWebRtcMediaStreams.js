@@ -1,35 +1,37 @@
-import {mediaStreams, peerConnections} from "@/store/webRtcStore.js";
+import {mediaStreams, peerConnections} from "@/features/web-rtc/webRtcStore.js";
 import {localUserStore} from "@/store/localUserStore.js";
-import {BUS_EVENTS} from "@/constants/constants.js";
-import {useEventBus} from "@/features/useEventBus.js";
-
+import {useEventBus} from "@vueuse/core";
+import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 
 export const useWebRtcMediaStreams = () => {
-
-    const {dispatchEvent} = useEventBus()
-    const setupMediaStreamToPeer = async ({remoteUserId}) => {
+    const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
+    const setupMediaStreamToPeer = async ({userId, userName}) => {
 
         if (localUserStore.userStreams?.active) {
             localUserStore.userStreams.getTracks().forEach(track => {
-                peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
+                peerConnections[userId].addTrack(track, localUserStore.userStreams)
             });
         }
 
-        peerConnections[remoteUserId].ontrack = function (e) {
+        peerConnections[userId].ontrack = function (e) {
 
-            mediaStreams[remoteUserId] = {
-                ...mediaStreams[remoteUserId],
+            mediaStreams[userId] = {
+                ...mediaStreams[userId],
                 ...{[e.track.kind]: e}
             }
 
-            dispatchEvent(BUS_EVENTS.REMOTE_USER_ON_TRACK, {remoteUserId})
+            webRtcEventBus.emit({
+                type: WEB_RTC_EVENT_BUS_TYPES.PEER_REMOTE_USER_ON_TRACK,
+                fromUser: { userId, userName },
+                data: {
+                    mediaTrackKind: e.track.kind
+                }
+            })
         }
-
-
     }
 
-    const deleteMediaStream = (remoteUserId) => {
-        delete mediaStreams[remoteUserId]
+    const deleteMediaStream = (userId) => {
+        delete mediaStreams[userId]
     }
 
     return {
