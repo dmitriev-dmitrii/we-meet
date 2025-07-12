@@ -11,7 +11,6 @@ const {
     videoInputs,
     audioInputs,
     audioOutputs,
-    permissionGranted: isAllowLocalMediaPermissions,
     isSupported: isSupportedLocalUserMedia,
 } = useDevicesList({
     constraints,
@@ -21,6 +20,7 @@ const {
 const localUserId = ref('')
 const localUserName = ref('')
 const localUserIsConnectedToMeet = ref(false)
+const isAllowLocalMediaPermissions = ref(false)
 
 const localUserMediaStreams = shallowRef()
 
@@ -110,8 +110,11 @@ export const useLocalUserStore = () => {
 
             localUserMediaStreams.value = await navigator.mediaDevices.getUserMedia(constraints);
 
+            isAllowLocalMediaPermissions.value = true
+
         } catch (e) {
             console.log('initLocalMediaStream err', e)
+            isAllowLocalMediaPermissions.value = false
         } finally {
 
         }

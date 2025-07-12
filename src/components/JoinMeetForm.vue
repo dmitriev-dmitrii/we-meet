@@ -5,7 +5,7 @@
       <input v-model="userName">
     </label>
 
-    <label> password
+    <label hidden> password
       <input v-model="meetPassword">
     </label>
 

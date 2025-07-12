@@ -25,14 +25,15 @@
 
 <!--    </label>-->
 
+
     <label>
       audio state
-      <input v-model="audioCheckbox" type="checkbox">
+      <input v-model="audioCheckbox" :disabled="!isAllowLocalMediaPermissions" type="checkbox">
     </label>
 
     <label>
       video state
-      <input v-model="videoCheckbox" type="checkbox">
+      <input v-model="videoCheckbox" :disabled="!isAllowLocalMediaPermissions" type="checkbox">
     </label>
 
     <button v-if="localUserIsConnectedToMeet" @click="leaveMeet"> leave meet</button>
@@ -55,6 +56,7 @@ export default defineComponent({
     const {sendDataChanelMessage} = useWebRtcDataChannels()
     const localMedaStreamElement = useTemplateRef('localMedaStreamElement')
     const {
+      isAllowLocalMediaPermissions,
       localUserIsConnectedToMeet,
       videoInputs,
       audioInputs,
@@ -106,7 +108,7 @@ export default defineComponent({
     })
 
     return {
-
+      isAllowLocalMediaPermissions,
       videoInputs,
       audioInputs,
       localUserIsConnectedToMeet,

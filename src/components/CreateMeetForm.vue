@@ -1,7 +1,7 @@
 <template>
 <form @submit.prevent="onSubmitForm" style="display: flex;flex-direction: column">
 
-  <label v-if="!meetId"> password
+  <label v-if="!meetId" hidden> password
     <input  v-model="meetPassword">
   </label>
 
