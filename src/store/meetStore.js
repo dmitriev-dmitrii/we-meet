@@ -5,7 +5,7 @@ import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 import {useWebSocket} from "@/features/useWebSocket.js";
 import {reactive, ref, unref} from "vue";
-import {useEventBus} from "@vueuse/core";
+import {createGlobalState, useEventBus} from "@vueuse/core";
 import {meetApi} from "@/api/meetApi.js";
 
 const {closeWebSocket, connectToWebSocket} = useWebSocket()
@@ -14,13 +14,14 @@ const {deleteMediaStream} = useWebRtcMediaStreams()
 const {closeDataChanel} = useWebRtcDataChannels()
 const {sendMeOffer} = useWebRtcConnections()
 
-const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
-const {localUserId, auth} = useLocalUserStore()
 
-const currentMeetId = ref('')
-const remoteUsersMap = reactive({})
-export const useMeetStore = () => {
+export const useMeetStore = createGlobalState(() => {
 
+    const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
+    const {localUserId, auth} = useLocalUserStore()
+
+    const currentMeetId = ref('')
+    const remoteUsersMap = reactive({})
     const findMeetById = async (meetId) => {
 
         const {data} = await meetApi.getMeetById({meetId})
@@ -141,5 +142,5 @@ export const useMeetStore = () => {
         removeUserFromMeet
     }
 
-}
+})
 

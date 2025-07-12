@@ -1,87 +1,89 @@
 import {usersApi} from "@/api/usersApi.js";
 import {computed, ref, shallowRef, unref, watch} from "vue";
-import {useDevicesList} from "@vueuse/core";
+import {createGlobalState, useDevicesList} from "@vueuse/core";
 
 const constraints = {audio: true, video: true};
-const onUserDeviceUpdated = (e) => {
-    console.log('useDevicesList updated', e)
-}
 
-const {
-    videoInputs,
-    audioInputs,
-    audioOutputs,
-    isSupported: isSupportedLocalUserMedia,
-} = useDevicesList({
-    constraints,
-    onUpdated: onUserDeviceUpdated
-})
+export const useLocalUserStore = createGlobalState(() => {
 
-const localUserId = ref('')
-const localUserName = ref('')
-const localUserIsConnectedToMeet = ref(false)
-const isAllowLocalMediaPermissions = ref(false)
-
-const localUserMediaStreams = shallowRef()
-
-const localAudioState = computed({
-    get() {
-        try {
-
-            const audioTracks = unref(localUserMediaStreams).getAudioTracks()
-
-            return audioTracks.some((item) => item.enabled)
-        } catch (e) {
-            return false
+    const {
+        videoInputs,
+        audioInputs,
+        audioOutputs,
+        isSupported: isSupportedLocalUserMedia,
+    } = useDevicesList({
+        constraints,
+        onUpdated: (e) => {
+            console.log('useDevicesList updated', e)
         }
-    },
-    set(value) {
-        try {
-            const audioTracks = unref(localUserMediaStreams).getAudioTracks()
+    })
 
-            return  audioTracks.find(({readyState}) => {
-                return readyState === 'live'
-            }).enabled = !!value
+    const localUserId = ref('')
+    const localUserName = ref('')
+    const localUserMediaStreams = shallowRef()
 
-        } catch (e) {
-            return false
+    const isAllowLocalMediaPermissions = ref(false)
+
+    const currentVideoInputId = ref('')
+    const currentAudioInputId = ref('')
+    const currentAudioOutputId = ref('')
+
+    const localUserIsConnectedToMeet = ref(false)
+
+
+    const localAudioState = computed({
+        get() {
+            try {
+
+                const audioTracks = unref(localUserMediaStreams).getAudioTracks()
+
+                return audioTracks.some((item) => item.enabled)
+            } catch (e) {
+                return false
+            }
+        },
+        set(value) {
+            try {
+                const audioTracks = unref(localUserMediaStreams).getAudioTracks()
+
+                return  audioTracks.find(({readyState}) => {
+                    return readyState === 'live'
+                }).enabled = !!value
+
+            } catch (e) {
+                return false
+            }
         }
-    }
-})
+    })
 
-const localVideoState = computed({
-    get() {
-        try {
-            const videoTracks = unref(localUserMediaStreams).getVideoTracks()
+    const localVideoState = computed({
+        get() {
+            try {
+                const videoTracks = unref(localUserMediaStreams).getVideoTracks()
 
-            return videoTracks.some((item) => item.enabled)
-        } catch (e) {
+                return videoTracks.some((item) => item.enabled)
+            } catch (e) {
 
-            return false
-        }
-    },
+                return false
+            }
+        },
 
-    set(value) {
-        try {
-            const videoTracks = unref(localUserMediaStreams).getVideoTracks()
+        set(value) {
+            try {
+                const videoTracks = unref(localUserMediaStreams).getVideoTracks()
 
-            return videoTracks.find(({readyState}) => {
-                return readyState === 'live'
-            }).enabled = !!value
+                return videoTracks.find(({readyState}) => {
+                    return readyState === 'live'
+                }).enabled = !!value
 
 
-        } catch (e) {
+            } catch (e) {
 
-            return false
-        }
-    },
-})
+                return false
+            }
+        },
+    })
 
-const currentVideoInputId = ref('')
-const currentAudioInputId = ref('')
-const currentAudioOutputId = ref('')
-
-export const useLocalUserStore = () => {
     const setLocalUserIsConnected = (val) => {
         //ws is connected
 
@@ -121,7 +123,7 @@ export const useLocalUserStore = () => {
     }
 
 
-    watch([currentAudioInputId, currentVideoInputId], () => {
+    watch([currentAudioInputId, currentVideoInputId , currentAudioOutputId], () => {
         // TODO смена медиа инпутов
     })
 
@@ -141,4 +143,4 @@ export const useLocalUserStore = () => {
         initLocalMediaStream,
         auth,
     }
-}
+})

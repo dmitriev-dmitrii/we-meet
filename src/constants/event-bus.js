@@ -1,9 +1,4 @@
-export const BUS_EVENTS_INSTANCE = {
-    WEB_RTC_EVENT_BUS_INSTANCE: '1',
-    DATA_CHANEL_EVENT_BUS_INSTANCE: '3',
-};
-
-export const WEB_RTC_EVENT_BUS_INSTANCE = 'webrtc'
+export const WEB_RTC_EVENT_BUS_INSTANCE = 'web-rtc-event-bus'
 
 export const WEB_RTC_EVENT_BUS_TYPES = {
 

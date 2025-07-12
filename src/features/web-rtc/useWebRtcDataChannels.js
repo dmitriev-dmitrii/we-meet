@@ -1,10 +1,20 @@
-import {dataChannels} from "@/features/web-rtc/webRtcStore.js";
+import { useWebRtcStore} from "@/store/webRtcStore.js";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@vueuse/core";
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {unref} from "vue";
 
-const {localUserId, localUserName, localAudioState, localVideoState} = useLocalUserStore()
+const {
+    dataChannels
+} = useWebRtcStore()
+
+const {
+    localUserId,
+    localUserName,
+    localAudioState,
+    localVideoState
+} = useLocalUserStore()
+
 export const useWebRtcDataChannels = () => {
 
     const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
@@ -65,7 +75,7 @@ export const useWebRtcDataChannels = () => {
             },
         })
 
-        Object.values(dataChannels).forEach((item) => {
+        Object.values(unref(dataChannels)).forEach((item) => {
 
             if (item?.readyState === 'open') {
                 item.send(payload)

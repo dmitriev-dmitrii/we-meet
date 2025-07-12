@@ -1,5 +1,5 @@
 import {useWebSocket} from "../useWebSocket.js";
-import {peerConnections} from "@/features/web-rtc/webRtcStore.js";
+import { useWebRtcStore} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
 import {useEventBus} from "@vueuse/core";
@@ -9,6 +9,7 @@ import {usersApi} from "@/api/usersApi.js";
 import {shallowRef, unref} from "vue";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 
+const {peerConnections} = useWebRtcStore()
 const {setupDataChanelEvents} = useWebRtcDataChannels();
 const {setupMediaStreamToPeer} = useWebRtcMediaStreams();
 const {sendWebSocketMessage} = useWebSocket();

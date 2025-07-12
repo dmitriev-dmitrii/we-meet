@@ -24,7 +24,8 @@
 import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue'
 
 import { MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/web-rtc.js";
-import {mediaStreams} from "@/features/web-rtc/webRtcStore.js";
+import {useWebRtcStore} from "@/store/webRtcStore.js";
+
 
 const COMPONENT_CONNECTION_STATE = {
   LOADING: "loading",
@@ -68,6 +69,10 @@ export default defineComponent({
     }
   },
   setup(props) {
+
+    const {
+      mediaStreams
+    } = useWebRtcStore()
 
     const remoteMedaStreamElement = useTemplateRef('remoteMedaStreamElement')
 
