@@ -1,11 +1,11 @@
 <template>
-  <form @submit.prevent=" onSubmitForm " action="">
+  <form @submit.prevent=" onSubmitForm">
 
     <label> name
-      <input>
+      <input v-model="userName">
     </label>
 
-    <label> password
+    <label hidden> password
       <input v-model="meetPassword">
     </label>
 
@@ -17,20 +17,29 @@
 </template>
 
 <script>
-import {defineComponent, ref, unref} from 'vue'
-import {meetStore} from "@/store/meetStore.js";
+import {defineComponent, onMounted, ref, unref} from 'vue'
+import {useMeetStore} from "@/store/meetStore.js";
+import {useLocalUserStore} from "@/store/localUserStore.js";
+
 export default defineComponent({
   name: "JoinMeetForm",
   setup() {
-
+    const {localUserName} = useLocalUserStore()
+    const {joinMeet} = useMeetStore()
     const meetPassword = ref('')
+    const userName = ref('')
     const isLoading = ref(false)
 
     const onSubmitForm = async () => {
       try {
 
         isLoading.value = true
-        await meetStore.joinMeet()
+
+        await joinMeet({
+          userName: unref(userName),
+          password: unref(meetPassword)
+        })
+
       } catch (e) {
 
       } finally {
@@ -39,7 +48,12 @@ export default defineComponent({
 
     }
 
+    onMounted(() => {
+      userName.value = unref(localUserName)
+    })
+
     return {
+      userName,
       meetPassword,
       onSubmitForm
     }

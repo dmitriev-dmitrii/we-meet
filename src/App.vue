@@ -5,34 +5,24 @@
       <img src="/vite.svg" class="logo" alt="Vite logo"/>
 
     </router-link>
-    <div>
-      we meet
-    </div>
   </div>
 
   <RouterView/>
 </template>
 
 <script>
-import {defineComponent, onMounted, ref} from "vue";
+import {defineComponent} from "vue";
 import {useWebSocket} from "@/features/useWebSocket.js";
 import {useWebRtcConnections} from "@/features/web-rtc/useWebRtcConnections.js";
-import {
-  BUS_EVENTS,
-  DISCONNECTED_STATE_STATUSES,
-  PEER_CONNECTIONS_STATE_STATUSES,
-  WEB_SOCKET_EVENTS
-} from "@/constants/constants.js";
-import {meetStore, useMeetStore} from "@/store/meetStore.js";
-import {useEventBus} from "@/features/useEventBus.js";
+import {useMeetStore} from "@/store/meetStore.js";
+import {WEB_SOCKET_EVENTS} from "@/constants/web-socket.js";
 
 export default defineComponent({
   name: "App",
 
   setup() {
     const {setupOnWsMessageCallbacks} = useWebSocket()
-    const {updateMeetUser , removeUserFromMeet } = useMeetStore()
-    const {listenEvent} = useEventBus()
+    const {updateMeetUser, removeUserFromMeet} = useMeetStore()
 
     const {
       createPeerOffer,
@@ -41,17 +31,15 @@ export default defineComponent({
       updatePeerIceCandidate,
     } = useWebRtcConnections()
 
-    listenEvent(BUS_EVENTS.UPDATE_PEER_CONNECTION_STATUS, updateMeetUser)
     const onUserMeetConnected = (payload) => {
-      // console.log(payload)
-      payload.data.meetUsers.forEach(updateMeetUser)
+      // payload.data.meetUsers.forEach(updateMeetUser)
     }
     const onUserMeetDisconnected = ({fromUser}) => {
       removeUserFromMeet(fromUser.userId)
     }
 
     setupOnWsMessageCallbacks({
-      [WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER]: [createPeerOffer],
+      [WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER]: createPeerOffer,
       [WEB_SOCKET_EVENTS.RTC_OFFER]: confirmPeerOffer,
       [WEB_SOCKET_EVENTS.RTC_ANSWER]: setupPeerAnswer,
       [WEB_SOCKET_EVENTS.RTC_ICE_CANDIDATE]: updatePeerIceCandidate,

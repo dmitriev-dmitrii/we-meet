@@ -1,35 +1,50 @@
-import {mediaStreams, peerConnections} from "@/store/webRtcStore.js";
-import {localUserStore} from "@/store/localUserStore.js";
-import {BUS_EVENTS} from "@/constants/constants.js";
-import {useEventBus} from "@/features/useEventBus.js";
+import {useWebRtcStore} from "@/store/webRtcStore.js";
+import {useLocalUserStore} from "@/store/localUserStore.js";
+import {useEventBus} from "@vueuse/core";
+import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
+import {unref} from "vue";
 
+const {
+    peerConnections,
+    mediaStreams
+} = useWebRtcStore()
+
+const {
+    localUserMediaStreams
+} = useLocalUserStore()
 
 export const useWebRtcMediaStreams = () => {
+    const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
+    const setupMediaStreamToPeer = async ({userId, userName}) => {
 
-    const {dispatchEvent} = useEventBus()
-    const setupMediaStreamToPeer = async ({remoteUserId}) => {
+        const localMediaStream = unref(localUserMediaStreams)
 
-        if (localUserStore.userStreams?.active) {
-            localUserStore.userStreams.getTracks().forEach(track => {
-                peerConnections[remoteUserId].addTrack(track, localUserStore.userStreams)
+        if (localMediaStream instanceof MediaStream) {
+            localMediaStream.getTracks().forEach(track => {
+                peerConnections[userId].addTrack(track, localMediaStream)
             });
+
         }
 
-        peerConnections[remoteUserId].ontrack = function (e) {
+        peerConnections[userId].ontrack = function (e) {
 
-            mediaStreams[remoteUserId] = {
-                ...mediaStreams[remoteUserId],
+            mediaStreams[userId] = {
+                ...mediaStreams[userId],
                 ...{[e.track.kind]: e}
             }
 
-            dispatchEvent(BUS_EVENTS.REMOTE_USER_ON_TRACK, {remoteUserId})
+            webRtcEventBus.emit({
+                type: WEB_RTC_EVENT_BUS_TYPES.PEER_REMOTE_USER_ON_TRACK,
+                fromUser: {userId, userName},
+                data: {
+                    mediaTrackKind: e.track.kind
+                }
+            })
         }
-
-
     }
 
-    const deleteMediaStream = (remoteUserId) => {
-        delete mediaStreams[remoteUserId]
+    const deleteMediaStream = (userId) => {
+        delete mediaStreams[userId]
     }
 
     return {

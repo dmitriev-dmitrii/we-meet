@@ -1,6 +1,6 @@
 <template>
   <ul data-role="messages-list">
-    <li v-for="item in messages">{{item}}</li>
+    <li v-for="item in messages">{{ item }}</li>
   </ul>
 
   <form @submit.prevent="onSubmitForm">
@@ -16,52 +16,50 @@
 
 <script>
 import {defineComponent, ref, unref} from 'vue'
-import {BUS_EVENTS, DATA_CHANNELS_MESSAGE_TYPE} from "@/constants/constants.js";
-import {localUserStore} from "@/store/localUserStore.js";
+
+import { useLocalUserStore} from "@/store/localUserStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
-import {useEventBus} from "@/features/useEventBus.js";
+
+import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
+import {useEventBus} from "@vueuse/core";
+
 
 export default defineComponent({
   name: "MeetChat",
   setup() {
-    const {listenEvent} = useEventBus()
+    const {localUserName} = useLocalUserStore();
+    const {sendDataChanelMessage} = useWebRtcDataChannels();
 
     const textMessage = ref('')
     const messages = ref([])
 
 
-    const {sendDataChanelMessage} = useWebRtcDataChannels();
     const printChatMessage = ({userName, text}) => {
       messages.value.push(`[${userName}] : ${text}`)
     }
-    const onDataChanelOpen = (eventData) => {
+    const onDataChanelOpen = ({fromUser}) => {
 
-      const {remoteUserName} = eventData
-
+      const {userName} = fromUser
       const text = 'data chanel open'
 
-      printChatMessage({userName: remoteUserName, text})
+      printChatMessage({userName, text})
     }
 
-    const onDataChanelClose = (eventData) => {
+    const onDataChanelClose = ({fromUser}) => {
 
-      const {remoteUserName} = eventData
+      const {userName} = fromUser
 
       const text = 'data chanel closed'
 
-      printChatMessage({userName: remoteUserName, text})
+      printChatMessage({userName, text})
     }
 
-    const onDataChanelTextMessage = (eventData) => {
-      const {data, type, fromUserName} = eventData
+    const onDataChanelTextMessage = ({data, fromUser}) => {
 
-      if (type !== DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE) {
-        return
-      }
-
+      const {userName} = fromUser
       const {text} = data
 
-      printChatMessage({userName: fromUserName, text})
+      printChatMessage({userName, text})
     }
 
 
@@ -75,25 +73,38 @@ export default defineComponent({
       }
 
       const payload = {
-        type: DATA_CHANNELS_MESSAGE_TYPE.DATA_CHANEL_TEXT_MESSAGE,
+        type: WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_TEXT_MESSAGE,
         data: {
           text,
         }
       }
 
-      sendDataChanelMessage(payload)
+      sendDataChanelMessage(payload) //TODO проверить всем ли доставлено
 
-
-      printChatMessage({userName: localUserStore.userName, text})
+      printChatMessage({userName: unref(localUserName), text})
 
       textMessage.value = '';
     }
 
+    const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
 
+    webRtcEventBus.on((payload) => {
 
-    listenEvent(BUS_EVENTS.DATA_CHANEL_TEXT_MESSAGE, onDataChanelTextMessage)
-    listenEvent(BUS_EVENTS.DATA_CHANEL_OPEN, onDataChanelOpen)
-    listenEvent(BUS_EVENTS.DATA_CHANEL_CLOSE, onDataChanelClose)
+      const {type} = payload
+
+      if (type === WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_TEXT_MESSAGE) {
+        onDataChanelTextMessage(payload)
+      }
+
+      if (type === WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_OPEN) {
+        onDataChanelOpen(payload)
+      }
+
+      if (type === WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_CLOSE) {
+        onDataChanelClose(payload)
+      }
+
+    })
 
     return {
       messages,
