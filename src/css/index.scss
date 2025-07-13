@@ -1,2 +1,46 @@
-//@import "tailwindcss/index.css";
+@use "./vars.scss" as *;
+@import "normalize.css";
 
+*{
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 10px;
+
+  color-scheme: dark;
+
+  color: $main-text-color;
+  background-color: $main-bg-color;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+body {
+  font-size: 1.5rem;
+  line-height: 1.5;
+
+  font-family:  system-ui, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: normal;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: $title-text-color;
+  font-weight: bold;
+}
+
+//a {
+//  color: $link-text-color;
+//  &:visited {
+//    color:$link-text-color ;
+//  }
+//}

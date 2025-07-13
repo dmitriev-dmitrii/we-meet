@@ -9,6 +9,9 @@ export const routes = [
     {
         path: '/meet/:meetId',
         name: 'MeetView',
+        meta: {
+
+        },
         component: () => import('../views/MeetView.vue'),
     },
     {

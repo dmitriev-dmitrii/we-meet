@@ -9,32 +9,16 @@ import {usersApi} from "@/api/usersApi.js";
 import {shallowRef, unref} from "vue";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 
-const {peerConnections} = useWebRtcStore()
+const {peerConnections , iceServers} = useWebRtcStore()
 const {setupDataChanelEvents} = useWebRtcDataChannels();
 const {setupMediaStreamToPeer} = useWebRtcMediaStreams();
 const {sendWebSocketMessage} = useWebSocket();
 
 const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE);
 
-const iceServers = shallowRef([])
 
 const {localUserId} = useLocalUserStore()
 export const useWebRtcConnections = () => {
-    const fetchIceServers = async () => {
-        try {
-
-            if (unref(iceServers).length) {
-                return
-            }
-
-            const {data} = await usersApi.getIceServers()
-
-            iceServers.value = data
-
-        } catch (err) {
-            console.log('fetchIceServers err ', err)
-        }
-    }
 
     const dispatchUpdatePeerStatus = ({userId, userName}) => {
 
@@ -115,7 +99,6 @@ export const useWebRtcConnections = () => {
 
     const sendMeOffer = async () => {
         try {
-            await fetchIceServers()
 
             const payload = {
                 type: WEB_SOCKET_EVENTS.RTC_SEND_ME_OFFER,
