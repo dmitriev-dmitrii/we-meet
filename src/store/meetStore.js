@@ -14,17 +14,19 @@ const {deleteMediaStream} = useWebRtcMediaStreams()
 const {closeDataChanel} = useWebRtcDataChannels()
 const {sendMeOffer} = useWebRtcConnections()
 
-
 export const useMeetStore = createGlobalState(() => {
 
     const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
     const {localUserId, auth} = useLocalUserStore()
 
     const currentMeetId = ref('')
+    const isPrivateMeet = ref(false)
     const remoteUsersMap = reactive({})
     const findMeetById = async (meetId) => {
 
         const {data} = await meetApi.getMeetById({meetId})
+
+        isPrivateMeet.value = data.ownerUserId === localUserId ? false : data.isPrivateMeet
 
         currentMeetId.value = data.meetId
         return data
@@ -131,6 +133,7 @@ export const useMeetStore = createGlobalState(() => {
     return {
         currentMeetId,
         remoteUsersMap,
+        isPrivateMeet,
 
         findMeetById,
         setCurrentMeet,

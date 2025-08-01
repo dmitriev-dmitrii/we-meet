@@ -1,15 +1,21 @@
 <template>
+
   <div v-if="isLoading">
-    <h1 style="text-align: center"> Loading </h1>
+    <h2 style="text-align: center"> Loading... </h2>
+    <!--  todo  add loader  -->
   </div>
 
   <div v-if="!isLoading && !currentMeetId">
-    <h1 style="text-align: center"> Cant Found Meet</h1>
+    <h2 style="text-align: center"> Cant Found Meet </h2>
+    <!--    todo push err page  -->
   </div>
 
-  <div v-if="!isLoading && currentMeetId">
+  <div v-if="!isLoading && currentMeetId" class="meet-view" >
+
     <JoinMeetForm v-if="!localUserIsConnectedToMeet"/>
-    <MeetApp/>
+
+    <MeetApp v-else/>
+
   </div>
 
 </template>
@@ -17,24 +23,28 @@
 <script>
 
 import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
-import { useLocalUserStore} from "@/store/localUserStore.js";
-import {defineComponent, onMounted, ref, unref} from 'vue';
-import JoinMeetForm from "@/components/JoinMeetForm.vue";
+import {useLocalUserStore} from "@/store/localUserStore.js";
+import {computed, defineComponent, onMounted, ref, unref} from 'vue';
+import JoinMeetForm from "@/components/meet-form/JoinMeetForm.vue";
 import MeetApp from "@/components/meet-app/MeetApp.vue";
 import {useMeetStore} from "@/store/meetStore.js";
 import {useRouteParams} from '@vueuse/router'
 import {onBeforeRouteLeave} from "vue-router";
+import {useWebSocket} from "@/features/useWebSocket.js";
+
 export default defineComponent({
   name: "MeetView",
   components: {MeetApp, JoinMeetForm, LocalMedaStream},
 
   setup() {
+    const {closeWebSocket} = useWebSocket()
     const {findMeetById, setCurrentMeet, currentMeetId} = useMeetStore()
-    const {localUserIsConnectedToMeet , initLocalMediaStream } = useLocalUserStore()
+    const {localUserIsConnectedToMeet, initLocalMediaStream} = useLocalUserStore()
 
     const isLoading = ref(true)
 
-    const meetId = useRouteParams('meetId')
+    const meetId = useRouteParams('meetId');
+
 
     onMounted(async () => {
 
@@ -56,17 +66,24 @@ export default defineComponent({
 
     onBeforeRouteLeave(() => {
       setCurrentMeet('')
+      closeWebSocket()
+
     })
 
     return {
+      isLoading,
       currentMeetId,
       localUserIsConnectedToMeet,
-      isLoading
     }
   }
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.meet-view {
 
+  height: 100%;
+
+
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
 
   <div style="display: flex; flex-direction: column; border: 1px solid">
-    <video style="height: 200px;width: 200px" autoplay muted ref="remoteMedaStreamElement"></video>
+    <video style="height: 200px;width: 200px" autoplay ref="remoteMedaStreamElement"></video>
 
     <div> {{ userName }}</div>
     <div>
