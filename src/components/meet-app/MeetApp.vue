@@ -1,6 +1,6 @@
 <template>
   <div class="meda-streams-layout" :class="mediaStreamLayoutClasses">
-    <LocalMedaStream class="meda-stream"/>
+    <LocalMedaStream class="meda-stream local-stream"/>
     <RemoteMediaStream class="meda-stream"
                        v-for="{ userId  , userName ,userAccentColor, peerStatus ,audio, video} in remoteMediaSteams"
                        :userAccentColor="userAccentColor"
@@ -67,22 +67,60 @@ export default defineComponent({
 
 $gap: 0.5rem;
 
+.local-stream {
+  grid-area: local-stream;
+}
 .meda-streams-layout {
   height: 100vh;
   gap: $gap;
   display: grid;
+
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
+
   transition: 300ms;
 
   &.u-1 {
-    grid-template-columns: 0.5fr;
-    grid-template-rows: 0.5fr;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
   }
 
   &.u-2 {
     grid-template-columns: 1fr;
     grid-template-rows: 50vh;
+
+    grid-template-areas:
+    "."
+    "local-stream";
+  }
+
+  &.u-3 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    grid-template-areas:
+    ". ."
+    "local-stream local-stream";
+  }
+
+
+  &.u-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    grid-template-areas:
+    ". ."
+    "local-stream . ";
+  }
+
+  &.u-5 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    grid-template-areas:
+    ". ."
+    ". ."
+    "local-stream local-stream";
   }
 }
 
