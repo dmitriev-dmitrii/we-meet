@@ -87,7 +87,7 @@ export default defineComponent({
   grid-template-areas:
   ". . ."
   ". . ."
-  ". local-stream .";
+  ". . local-stream";
 
   transition: .3s;
 
@@ -130,7 +130,7 @@ export default defineComponent({
 
     grid-template-areas:
     ". ."
-    "local-stream . ";
+    ". local-stream";
   }
 
   &.u-5 {
