@@ -2,6 +2,7 @@
   <fieldset :disabled="isLoading" class="form_wrapper">
 
     <LocalMedaStream  class="join-meet-local-stream"/>
+    <LocalMediaControls/>
 
     <form @submit.prevent=" onSubmitForm" class="form">
 
@@ -29,10 +30,11 @@ import {useLocalUserStore} from "@/store/localUserStore.js";
 import UiButton from "@/components/ui/UiButton.vue";
 import UiTextInput from "@/components/ui/UiTextInput.vue";
 import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
+import LocalMediaControls from "@/components/meet-app/MediaStreams/LocalMediaControls.vue";
 
 export default defineComponent({
   name: "JoinMeetForm",
-  components: {LocalMedaStream, UiTextInput, UiButton},
+  components: {LocalMediaControls, LocalMedaStream, UiTextInput, UiButton},
   setup() {
 
     const {localUserName, localUserIsConnectedToMeet} = useLocalUserStore()
@@ -75,6 +77,6 @@ export default defineComponent({
 @use "./css/meet-form.scss";
 
 .join-meet-local-stream {
-  min-height: 300px;
+  min-height: 400px;
 }
 </style>

@@ -1,135 +1,93 @@
 <template>
-  <div class="meda-streams-layout" :class="mediaStreamLayoutClasses">
-    <LocalMedaStream class="meda-stream local-stream"/>
-    <RemoteMediaStream class="meda-stream"
-                       v-for="{ userId  , userName ,userAccentColor, peerStatus ,audio, video} in remoteMediaSteams"
-                       :userAccentColor="userAccentColor"
-                       :peerStatus="peerStatus"
-                       :userName="userName"
-                       :userId="userId"
-                       :audio="audio"
-                       :video="video"
-                       :key="userId"
-    />
+  <div class="meet-app">
+    <div class="meet-app__content">
+      <MediaStreamsLayout class="meet-app__content__streams"/>
+      <MeetChat class="meet-app__content__chat" :class="{ hidden : meetChatIsHidden }"/>
+    </div>
+    <div class="meet-app__controls">
+      <LocalMediaControls/>
+      <button v-if="localUserIsConnectedToMeet" @click="leaveMeet"> leave meet</button>
+
+      <label>
+        meetChatIsHidden
+        <input v-model="meetChatIsHidden" type="checkbox">
+      </label>
+
+    </div>
   </div>
-  <!--  <MeetChat v-if="remoteMediaSteams.length"/>-->
 </template>
 
 <script>
-import {computed, defineComponent, onMounted, reactive, ref, unref, watch} from 'vue'
-import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
+import {defineComponent, ref} from 'vue'
 import MeetChat from "@/components/meet-app/MeetChat.vue";
-import RemoteMediaStream from "@/components/meet-app/MediaStreams/RemoteMediaStream.vue";
-import {useMeetStore} from "@/store/meetStore.js";
-import {useCssVar} from '@vueuse/core'
+import MediaStreamsLayout from "@/components/meet-app/MediaStreamsLayout.vue";
 
+import {useLocalUserStore} from "@/store/localUserStore.js";
+import LocalMediaControls from "@/components/meet-app/MediaStreams/LocalMediaControls.vue";
+import {useMeetStore} from "@/store/meetStore.js";
 
 export default defineComponent({
   name: "MeetApp",
-  components: {
-    RemoteMediaStream, MeetChat, LocalMedaStream
-  },
+  components: {LocalMediaControls, MediaStreamsLayout, MeetChat},
   setup() {
-    const {remoteUsersMap} = useMeetStore()
+    const {leaveMeet} = useMeetStore()
+    const {
+      localUserIsConnectedToMeet,
+    } = useLocalUserStore();
 
-    // const mediaStreamSize = useCssVar('--media-stream-size')
-    //
-    // const mediaStreamWidth = useCssVar('--media-stream-width')
-    // const mediaStreamHeight = useCssVar('--media-stream-height')
-    //
-
-    const mediaStreamLayoutClasses = computed(() => {
-      return {
-        [`u-${unref(Object.keys(remoteUsersMap).length + 1)}`]: true
-      }
-    })
-
-    const remoteMediaSteams = computed(() => {
-
-      return Object.values(unref(remoteUsersMap)).filter(Boolean)
-    })
-
-
-    // watch(remoteMediaSteams, () => {
-    //   const remoteUsersCount = Object.values(unref(remoteUsersMap)).length
-    //
-    // })
+    const meetChatIsHidden = ref(true)
 
     return {
-      mediaStreamLayoutClasses,
-      remoteMediaSteams
+      meetChatIsHidden,
+      leaveMeet,
+      localUserIsConnectedToMeet
     }
   }
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 
-$gap: 0.5rem;
+.meet-app {
+  padding: $base-gap;
+  height: 100%;
+  display: flex;
+  gap: $base-gap;
+  flex-direction: column;
 
-.local-stream {
-  grid-area: local-stream;
-}
-.meda-streams-layout {
-  height: 100vh;
-  gap: $gap;
-  display: grid;
+  .meet-app__content {
+    display: flex;
+    gap: $base-gap;
+    width: 100%;
+    height: 100%;
 
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+    &__streams {
+      flex: 100%;
+      transition: flex 0.3s ease ;
+    }
 
-  transition: 300ms;
+    &__chat.hidden {
+      width: 0;
+      opacity: 0;
+      position: absolute;
+      flex: 0 0 0;
+    }
 
-  &.u-1 {
-    grid-template-columns: auto;
-    grid-template-rows: auto;
+    &__chat {
+      width: 100%;
+      flex: 40%;
+      transition: flex 0.3s ease , opacity 0.3s 0.3s ease-in;
+      align-self: flex-end;
+    }
+
   }
 
-  &.u-2 {
-    grid-template-columns: 1fr;
-    grid-template-rows: 50vh;
-
-    grid-template-areas:
-    "."
-    "local-stream";
-  }
-
-  &.u-3 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-
-    grid-template-areas:
-    ". ."
-    "local-stream local-stream";
-  }
-
-
-  &.u-4 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-
-    grid-template-areas:
-    ". ."
-    "local-stream . ";
-  }
-
-  &.u-5 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-
-    grid-template-areas:
-    ". ."
-    ". ."
-    "local-stream local-stream";
+  &__controls {
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    gap: $base-gap;
   }
 }
-
-.meda-stream {
-  overflow: hidden;
-  max-width: 100%;
-  border-radius: $base-border-radius;
-}
-
-
-
 </style>

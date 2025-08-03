@@ -1,23 +1,7 @@
 <template>
-
-  <div v-if="isLoading">
-    <h2 style="text-align: center"> Loading... </h2>
-    <!--  todo  add loader  -->
+  <div class="meet-view">
+      <component :is="currentMeetViewComponent"/>
   </div>
-
-  <div v-if="!isLoading && !currentMeetId">
-    <h2 style="text-align: center"> Cant Found Meet </h2>
-    <!--    todo push err page  -->
-  </div>
-
-  <div v-if="!isLoading && currentMeetId" class="meet-view" >
-
-    <JoinMeetForm v-if="!localUserIsConnectedToMeet"/>
-
-    <MeetApp v-else/>
-
-  </div>
-
 </template>
 
 <script>
@@ -26,25 +10,67 @@ import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.
 import {useLocalUserStore} from "@/store/localUserStore.js";
 import {computed, defineComponent, onMounted, ref, unref} from 'vue';
 import JoinMeetForm from "@/components/meet-form/JoinMeetForm.vue";
-import MeetApp from "@/components/meet-app/MeetApp.vue";
+
 import {useMeetStore} from "@/store/meetStore.js";
 import {useRouteParams} from '@vueuse/router'
-import {onBeforeRouteLeave} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 import {useWebSocket} from "@/features/useWebSocket.js";
+import MeetChat from "@/components/meet-app/MeetChat.vue";
+import MediaStreamsLayout from "@/components/meet-app/MediaStreamsLayout.vue";
+import MeetApp from "@/components/meet-app/MeetApp.vue";
+import UiLoading from "@/components/ui/UiLoading.vue";
+
+const MEET_VIEW_STEPS_COMPONENTS_MAP = {
+  SEARCH_MEET: UiLoading,
+  JOIN_MEET: JoinMeetForm,
+  STARTED_MEET: MeetApp,
+}
 
 export default defineComponent({
   name: "MeetView",
-  components: {MeetApp, JoinMeetForm, LocalMedaStream},
+  components: {
+    UiLoading,
+    MeetApp,
+    MediaStreamsLayout,
+    MeetChat,
+    JoinMeetForm,
+    LocalMedaStream
+  },
 
   setup() {
     const {closeWebSocket} = useWebSocket()
-    const {findMeetById, setCurrentMeet, currentMeetId} = useMeetStore()
-    const {localUserIsConnectedToMeet, initLocalMediaStream} = useLocalUserStore()
+
+    const {
+      findMeetById,
+      setCurrentMeet,
+    } = useMeetStore()
+
+    const {
+      localUserIsConnectedToMeet,
+      initLocalMediaStream
+    } = useLocalUserStore();
 
     const isLoading = ref(true)
 
-    const meetId = useRouteParams('meetId');
+    const currentMeetViewComponent = computed(() => {
 
+      if (unref(isLoading)) {
+        return MEET_VIEW_STEPS_COMPONENTS_MAP.SEARCH_MEET
+      }
+
+      // todo  not found meet step
+
+      if (!unref(isLoading) && !unref(localUserIsConnectedToMeet)) {
+        return MEET_VIEW_STEPS_COMPONENTS_MAP.JOIN_MEET
+      }
+
+      if (unref(localUserIsConnectedToMeet)) {
+        return MEET_VIEW_STEPS_COMPONENTS_MAP.STARTED_MEET
+      }
+
+    })
+
+    const meetId = useRouteParams('meetId');
 
     onMounted(async () => {
 
@@ -57,7 +83,7 @@ export default defineComponent({
         setCurrentMeet(res.meetId)
 
       } catch (e) {
-
+        setCurrentMeet('')
       } finally {
         isLoading.value = false
       }
@@ -65,15 +91,14 @@ export default defineComponent({
     })
 
     onBeforeRouteLeave(() => {
+
       setCurrentMeet('')
       closeWebSocket()
 
     })
 
     return {
-      isLoading,
-      currentMeetId,
-      localUserIsConnectedToMeet,
+      currentMeetViewComponent
     }
   }
 })
@@ -81,9 +106,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .meet-view {
-
-  height: 100%;
-
-
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
+
 </style>

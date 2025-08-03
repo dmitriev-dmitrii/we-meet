@@ -1,9 +1,10 @@
 <template>
 
-  <div style="display: flex; flex-direction: column; border: 1px solid">
-    <video style="height: 200px;width: 200px" autoplay ref="remoteMedaStreamElement"></video>
+  <div class="media-stream">
+    <div class="media-stream__label">{{ userName}}</div>
+    <video class="media-stream__video" autoplay ref="remoteMedaStreamElement"></video>
 
-    <div> {{ userName }}</div>
+    <div class="media-stream__controls">
     <div>
       peer status :{{ peerStatus }}
     </div>
@@ -15,7 +16,7 @@
       video
       {{ video }}
     </div>
-
+    </div>
   </div>
 
 </template>
@@ -128,6 +129,6 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+@use "./css/media-stream";
 </style>

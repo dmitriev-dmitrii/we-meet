@@ -1,31 +1,34 @@
 <template>
-  <ul data-role="messages-list">
-    <li v-for="item in messages">{{ item }}</li>
-  </ul>
+  <div class="meet-chat">
+    <ul class="meet-chat__messages">
+      <li v-for="item in messages">{{ item }}</li>
+    </ul>
 
-  <form @submit.prevent="onSubmitForm">
-    <label>
-      <input v-model="textMessage" type="text" placeholder="write message">
-    </label>
+    <form @submit.prevent="onSubmitForm" class="meet-chat__form">
 
-    <button type="submit">
-      send
-    </button>
-  </form>
+      <UiTextInput v-model="textMessage" size="small" placeholder="write message"/>
+      <UiButton size="small" type="submit">
+        send
+      </UiButton>
+    </form>
+  </div>
 </template>
 
 <script>
 import {defineComponent, ref, unref} from 'vue'
 
-import { useLocalUserStore} from "@/store/localUserStore.js";
+import {useLocalUserStore} from "@/store/localUserStore.js";
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {useEventBus} from "@vueuse/core";
+import UiButton from "@/components/ui/UiButton.vue";
+import UiTextInput from "@/components/ui/UiTextInput.vue";
 
 
 export default defineComponent({
   name: "MeetChat",
+  components: {UiTextInput, UiButton},
   setup() {
     const {localUserName} = useLocalUserStore();
     const {sendDataChanelMessage} = useWebRtcDataChannels();
@@ -115,6 +118,15 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.meet-chat {
+  display: flex;
+  flex-direction: column;
+  &__messages{
 
+  }
+  &__form {
+    display: flex;
+  }
+}
 </style>

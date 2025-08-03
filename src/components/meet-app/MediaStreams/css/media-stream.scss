@@ -1,0 +1,34 @@
+@use "@/css/vars.scss" as *;
+
+.media-stream {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  &__label,
+  &__video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__label {
+    z-index: 0;
+  }
+
+  &__video {
+    object-fit: cover;
+    object-position: center center;
+    z-index: 1;
+  }
+
+  &__controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+  }
+}
