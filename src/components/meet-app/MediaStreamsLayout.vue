@@ -37,17 +37,17 @@ export default defineComponent({
     // const mediaStreamHeight = useCssVar('--media-stream-height')
     //
 
-    const mediaStreamLayoutClasses = computed(() => {
-      return {
-        [`u-${unref(Object.keys(remoteUsersMap).length + 1)}`]: true
-      }
-    })
 
     const remoteMediaSteams = computed(() => {
 
       return Object.values(unref(remoteUsersMap)).filter(Boolean)
     })
 
+    const mediaStreamLayoutClasses = computed(() => {
+      return {
+        [`u-${unref(unref(remoteMediaSteams).length + 1)}`]: true
+      }
+    })
 
     // watch(remoteMediaSteams, () => {
     //   const remoteUsersCount = Object.values(unref(remoteUsersMap)).length

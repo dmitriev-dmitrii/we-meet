@@ -35,7 +35,7 @@ export default defineComponent({
       localUserIsConnectedToMeet,
     } = useLocalUserStore();
 
-    const meetChatIsHidden = ref(true)
+    const meetChatIsHidden = ref(false)
 
     return {
       meetChatIsHidden,
