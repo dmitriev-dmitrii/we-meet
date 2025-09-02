@@ -8,7 +8,7 @@ export default defineConfig(({command, mode, isSsrBuild, isPreview}) => {
     const {VITE_APP_PORT} = loadEnv(mode, process.cwd());
 
     const isProdMode = mode === 'production'
-    const publicPath = isProdMode ? "/we-meet-frontend/" : "/"
+    const publicPath = isProdMode ? "/we-meet/" : "/"
 
     return {
         server: {
