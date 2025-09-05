@@ -3,13 +3,14 @@
     We Meet
   </h1>
 
-    <CreateMeetForm/>
+  <CreateMeetForm/>
 
 </template>
 
 <script>
 import {defineComponent, onMounted, ref} from 'vue'
 import CreateMeetForm from "@/components/meet-form/CreateMeetForm.vue";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   name: "HomeView",
@@ -17,6 +18,7 @@ export default defineComponent({
   setup() {
 
     const mounted = ref(false)
+
 
     onMounted(async () => {
       mounted.value = true
@@ -30,13 +32,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 h1 {
-  font-size: 10rem;
+  font-size: 70rem;
   letter-spacing: -15rem;
   //min-height: 15rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0;
+  margin-top: 0;
   padding: 0;
   opacity: 0;
 }

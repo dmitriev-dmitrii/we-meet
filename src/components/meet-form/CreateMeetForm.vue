@@ -7,24 +7,24 @@
     <form @submit.prevent="onSubmitForm" class="form">
 
 
-      <p v-if="!meetId"> if y want create private meet -
-        <label for="meet-password" class="form_password-label">
-          enter password
-        </label>
-      </p>
+      <!--      <p v-if="!meetId"> if y want create private meet - -->
+      <!--        <label for="meet-password" class="form_password-label">-->
+      <!--          enter password-->
+      <!--        </label>-->
+      <!--      </p>-->
 
-      <UiTextInput v-if="!meetId" id="meet-password" v-model="meetPassword" placeholder="password"/>
+      <!--      <UiTextInput v-if="!meetId" id="meet-password" hidden v-model="meetPassword" placeholder="password"/>-->
 
-      <UiButton type="submit" v-if="!meetId" theme="primary" :loading="isLoading">
-        create meet
+      <UiButton type="submit" v-if="!meetId" :variant="UI_VARIANTS.PRIMARY" :loading="isLoading">
+        create new meet
       </UiButton>
 
       <UiButton type="button" @click="copyMeetHref" v-if="meetId">
         copy meet link
       </UiButton>
 
-      <UiButton type="button" @click="toMeet" v-if="meetId" theme="primary">
-        to meet =>
+      <UiButton type="button" @click="toMeet" v-if="meetId" :variant="UI_VARIANTS.PRIMARY">
+        to meet →
       </UiButton>
     </form>
 
@@ -38,6 +38,8 @@ import {useMeetStore} from "@/store/meetStore.js";
 import {useRouter} from "vue-router";
 import UiButton from "@/components/ui/UiButton.vue";
 import UiTextInput from "@/components/ui/UiTextInput.vue";
+import {UI_VARIANTS} from "@/components/ui/constants/uiVariants.js";
+import {ROUTER_NAMES} from "@/router/constants/routerNames.js";
 
 export default defineComponent({
   name: "CreateMeetForm",
@@ -53,7 +55,7 @@ export default defineComponent({
 
     const currentMeetRoute = computed(() => {
       return router.resolve({
-        name: 'MeetView',
+        name: ROUTER_NAMES.MEET,
         params: {
           meetId: unref(meetId)
         }
@@ -69,19 +71,30 @@ export default defineComponent({
     }
 
     const onSubmitForm = async () => {
+      try {
 
-      isLoading.value = true
 
-      const res = await createMeet({
-        password: unref(meetPassword)
-      })
+        isLoading.value = true
 
-      meetId.value = res.meetId
+        const res = await createMeet({
+          password: unref(meetPassword)
+        })
 
-      isLoading.value = false
+        meetId.value = res.meetId
+
+        isLoading.value = false
+      } catch (error) {
+
+        console.log(error)
+        await router.push({
+          name: ROUTER_NAMES.ERROR,
+          state: error,
+        })
+      }
     }
 
     return {
+      UI_VARIANTS,
       isLoading,
       meetId,
       meetPassword,

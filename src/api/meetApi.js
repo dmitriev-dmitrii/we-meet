@@ -1,20 +1,21 @@
-import axios from "axios";
+import {axiosInstance} from "@/api/config/axiosInstance.js";
 
-const MEET_API_URL = import.meta.env.VITE_WE_MEET_API_URL + '/api/meet';
+
+const MEET_API_URL =  '/api/meet';
 
 const createMeet = (payload) => {
 
-    return axios.post(`${MEET_API_URL}/create`, payload)
+    return axiosInstance.post(`${MEET_API_URL}/create`, payload)
 
 }
 
 const getMeetById = ({meetId}) => {
-    return axios.get(`${MEET_API_URL}/${meetId}`)
+    return axiosInstance.get(`${MEET_API_URL}/${meetId}`)
 }
 
 const  joinMeetRequest = ({meetId , userName , userId}) => {
     const payload = { userName , userId }
-    return axios.post(`${MEET_API_URL}/${meetId}/join-request`, payload)
+    return axiosInstance.post(`${MEET_API_URL}/${meetId}/join-request`, payload)
 }
 
 export const meetApi = {

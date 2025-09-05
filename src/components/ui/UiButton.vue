@@ -8,20 +8,21 @@
 
 <script>
 import {computed, defineComponent} from 'vue'
+import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
+import {UI_VARIANTS} from "@/components/ui/constants/uiVariants.js";
 
 export default defineComponent({
   name: "UiButton",
   props: {
-
     size: {
-      default: 'base',
+      default: UI_SIZES.MEDIUM,
       type: String,
-      validator: (value, props) => ['small', 'base', 'large'].includes(value),
+      validator: (value, props) => Object.values(UI_SIZES).includes(value),
     },
-    theme: {
-      default: 'base',
+    variant: {
+      default: UI_VARIANTS.BASE,
       type: String,
-      validator: (value, props) => ['primary', 'base', 'danger'].includes(value),
+      validator: (value, props) => Object.values(UI_VARIANTS).includes(value),
     },
     loading: {
       type: Boolean,
@@ -37,7 +38,7 @@ export default defineComponent({
     const classes = computed(() => {
 
       return {
-        [`theme_${props.theme}`]: true,
+        [`variant_${props.variant}`]: true,
         [`size_${props.size}`]: true,
         loading: props.loading,
         disabled: props.disabled,
@@ -55,7 +56,6 @@ export default defineComponent({
 
 .ui-button {
   border-radius: $base-border-radius;
-  border: 1px solid rgba(0, 0, 0, 0);
   padding: 0.5em 1.25em;
   cursor: pointer;
   transition: border-color 0.15s, opacity 0.25s;
@@ -92,18 +92,21 @@ export default defineComponent({
 
 }
 
-.theme {
+.variant {
 
   &_primary {
+    border: 1px solid $primary-color;
     background-color: $primary-color;
     font-weight: bold;
   }
 
   &_base {
+    border: 1px solid $main-text-color;
     background-color: $accent-color;
   }
 
   &_danger {
+    border: 1px solid $danger-color;
     background-color: $danger-color;
   }
 
@@ -111,16 +114,16 @@ export default defineComponent({
 
 .size {
 
-  &_small {
+  &_sm {
     font-size: 1.5rem;
   }
 
-  &_base {
-    font-size: 1.75rem;
+  &_md {
+    font-size: 2rem;
   }
 
-  &_large {
-    font-size: 2rem;
+  &_lg {
+    font-size: 2.5rem;
   }
 
 }

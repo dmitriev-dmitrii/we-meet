@@ -15,7 +15,7 @@
         <UiTextInput v-model="meetPassword" id="meet-password" placeholder="password"/>
       </span>
 
-      <UiButton type="submit" theme="primary" :loading="isLoading">
+      <UiButton type="submit" :variant="UI_VARIANTS.PRIMARY" :loading="isLoading">
         join
       </UiButton>
 
@@ -31,13 +31,19 @@ import UiButton from "@/components/ui/UiButton.vue";
 import UiTextInput from "@/components/ui/UiTextInput.vue";
 import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
 import LocalMediaControls from "@/components/meet-app/MediaStreams/LocalMediaControls.vue";
+import {UI_VARIANTS} from "@/components/ui/constants/uiVariants.js";
 
 export default defineComponent({
   name: "JoinMeetForm",
+  computed: {
+    UI_VARIANTS() {
+      return UI_VARIANTS
+    }
+  },
   components: {LocalMediaControls, LocalMedaStream, UiTextInput, UiButton},
   setup() {
 
-    const {localUserName, localUserIsConnectedToMeet} = useLocalUserStore()
+    const {localUserName, localUserIsConnectedToMeet , initLocalMediaStream} = useLocalUserStore()
     const {joinMeet, isPrivateMeet} = useMeetStore()
     const meetPassword = ref('')
     const userName = ref('')
@@ -60,6 +66,9 @@ export default defineComponent({
       }
 
     }
+
+
+    onMounted(initLocalMediaStream)
 
     return {
       localUserIsConnectedToMeet,

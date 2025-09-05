@@ -23,14 +23,18 @@ export const useMeetStore = createGlobalState(() => {
     const isPrivateMeet = ref(false)
     const remoteUsersMap = reactive({})
     const findMeetById = async (meetId) => {
+        try {
 
-        const {data} = await meetApi.getMeetById({meetId})
 
-        isPrivateMeet.value = data.ownerUserId === localUserId ? false : data.isPrivateMeet
+            const {data} = await meetApi.getMeetById({meetId})
 
-        currentMeetId.value = data.meetId
-        return data
+            isPrivateMeet.value = data.ownerUserId === localUserId ? false : data.isPrivateMeet
 
+            currentMeetId.value = data.meetId
+            return data
+        } catch (e) {
+            throw e
+        }
     }
     const updateMeetUser = (payload) => {
 
@@ -75,7 +79,7 @@ export const useMeetStore = createGlobalState(() => {
             return data
 
         } catch (e) {
-            alert('createMeet err' + e.message)
+            console.log('createMeet err' + e.message)
             throw e
         }
     }

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {defineComponent, ref} from 'vue'
+import {defineComponent, onMounted, ref} from 'vue'
 import MeetChat from "@/components/meet-app/MeetChat.vue";
 import MediaStreamsLayout from "@/components/meet-app/MediaStreamsLayout.vue";
 
@@ -33,9 +33,12 @@ export default defineComponent({
     const {leaveMeet} = useMeetStore()
     const {
       localUserIsConnectedToMeet,
+      initLocalMediaStream
     } = useLocalUserStore();
 
     const meetChatIsHidden = ref(false)
+
+    onMounted(initLocalMediaStream)
 
     return {
       meetChatIsHidden,
@@ -63,7 +66,7 @@ export default defineComponent({
 
     &__streams {
       flex: 100%;
-      transition: flex 0.3s ease ;
+      transition: flex 0.3s ease;
     }
 
     &__chat.hidden {
@@ -76,7 +79,7 @@ export default defineComponent({
     &__chat {
       width: 100%;
       flex: 40%;
-      transition: flex 0.3s ease , opacity 0.3s 0.3s ease-in;
+      transition: flex 0.3s ease, opacity 0.3s 0.3s ease-in;
       align-self: flex-end;
     }
 

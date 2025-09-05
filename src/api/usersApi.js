@@ -1,13 +1,14 @@
-import axios from "axios";
+import {axiosInstance} from "@/api/config/axiosInstance.js";
 
-const USERS_API_URL = import.meta.env.VITE_WE_MEET_API_URL + '/api/users';
+
+const USERS_API_URL = '/api/users';
 
 const userAuth = (payload) => {
-    return axios.post(`${USERS_API_URL}/auth`, payload)
+    return axiosInstance.post(`${USERS_API_URL}/auth`, payload)
 }
 
 const getIceServers = () => {
-    return axios.get(`${USERS_API_URL}/ice-servers`)
+    return axiosInstance.get(`${USERS_API_URL}/ice-servers`)
 }
 
 export const usersApi = {

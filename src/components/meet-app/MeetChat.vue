@@ -6,7 +6,7 @@
 
     <form @submit.prevent="onSubmitForm" class="meet-chat__form">
 
-      <UiTextInput v-model="textMessage" size="small" placeholder="write message"/>
+      <UiTextInput v-model="textMessage" :size="UI_SIZES.SMALL" placeholder="write message"/>
       <UiButton size="small" type="submit">
         send
       </UiButton>
@@ -24,6 +24,7 @@ import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/e
 import {useEventBus} from "@vueuse/core";
 import UiButton from "@/components/ui/UiButton.vue";
 import UiTextInput from "@/components/ui/UiTextInput.vue";
+import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
 
 
 export default defineComponent({
@@ -110,6 +111,7 @@ export default defineComponent({
     })
 
     return {
+      UI_SIZES,
       messages,
       textMessage,
       onSubmitForm

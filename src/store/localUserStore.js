@@ -14,7 +14,7 @@ export const useLocalUserStore = createGlobalState(() => {
     } = useDevicesList({
         constraints,
         onUpdated: (e) => {
-            console.log('useDevicesList updated', e)
+            // console.log('useDevicesList updated', e)
         }
     })
 

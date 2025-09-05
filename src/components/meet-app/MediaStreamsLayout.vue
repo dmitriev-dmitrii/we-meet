@@ -106,7 +106,7 @@ export default defineComponent({
   }
 
   &.u-2 {
-    grid-template-columns: 1fr;
+    grid-template-columns: 50%;
     grid-template-rows: 50%;
 
     grid-template-areas:

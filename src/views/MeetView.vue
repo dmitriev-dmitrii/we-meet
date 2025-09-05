@@ -1,6 +1,6 @@
 <template>
   <div class="meet-view">
-      <component :is="currentMeetViewComponent"/>
+    <component :is="currentMeetViewComponent"/>
   </div>
 </template>
 
@@ -19,6 +19,7 @@ import MeetChat from "@/components/meet-app/MeetChat.vue";
 import MediaStreamsLayout from "@/components/meet-app/MediaStreamsLayout.vue";
 import MeetApp from "@/components/meet-app/MeetApp.vue";
 import UiLoading from "@/components/ui/UiLoading.vue";
+import {ROUTER_NAMES} from "@/router/constants/routerNames.js";
 
 const MEET_VIEW_STEPS_COMPONENTS_MAP = {
   SEARCH_MEET: UiLoading,
@@ -39,7 +40,7 @@ export default defineComponent({
 
   setup() {
     const {closeWebSocket} = useWebSocket()
-
+    const router = useRouter()
     const {
       findMeetById,
       setCurrentMeet,
@@ -47,7 +48,6 @@ export default defineComponent({
 
     const {
       localUserIsConnectedToMeet,
-      initLocalMediaStream
     } = useLocalUserStore();
 
     const isLoading = ref(true)
@@ -57,8 +57,6 @@ export default defineComponent({
       if (unref(isLoading)) {
         return MEET_VIEW_STEPS_COMPONENTS_MAP.SEARCH_MEET
       }
-
-      // todo  not found meet step
 
       if (!unref(isLoading) && !unref(localUserIsConnectedToMeet)) {
         return MEET_VIEW_STEPS_COMPONENTS_MAP.JOIN_MEET
@@ -78,12 +76,18 @@ export default defineComponent({
         isLoading.value = true
 
         const res = await findMeetById(unref(meetId))
-        await initLocalMediaStream()
 
         setCurrentMeet(res.meetId)
 
-      } catch (e) {
+      } catch (error) {
+        console.log(error)
+        await router.replace({
+          name: ROUTER_NAMES.ERROR,
+          state: error,
+        })
+
         setCurrentMeet('')
+
       } finally {
         isLoading.value = false
       }

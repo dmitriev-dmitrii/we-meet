@@ -6,14 +6,15 @@
 <script>
 
 import {computed, defineComponent} from 'vue'
+import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
 
 export default defineComponent({
   name: "UiTextInput",
   props: {
     size: {
-      default: 'base',
-      type:String,
-      validator: (value, props) => ['small', 'base', 'large'].includes(value),
+      default: UI_SIZES.MEDIUM,
+      type: String,
+      validator: (value, props) => Object.values(UI_SIZES).includes(value),
     },
     loading: {
       type:Boolean,

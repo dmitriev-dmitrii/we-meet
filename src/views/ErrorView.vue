@@ -1,39 +1,76 @@
 <template>
-  <main class="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-    <div class="text-center">
+  <main>
 
-      <h1 class="mt-4 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
-        <span class="font-bold text-indigo-600">404 </span> <br/>
-        Page not found
-      </h1>
+    <h1>
+      {{ status }}
+    </h1>
 
-      <p class="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">Sorry, we couldn’t find the page you’re looking for.</p>
+    <h2>{{ statusText }}</h2>
 
-      <div class="mt-10 flex items-center justify-center gap-x-6">
+    <p>
+      {{ message }}
+    </p>
 
-        <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Go back home</a>
+    <RouterLink to="/">
+      <UiButton :variant="UI_VARIANTS.PRIMARY" :size="UI_SIZES.LARGE">Go home page →</UiButton>
+    </RouterLink>
 
-        <a href="#" class="text-sm font-semibold text-gray-900">Contact support <span aria-hidden="true">&rarr;</span></a>
-
-      </div>
-
-    </div>
-
+    <p v-if="errorId"> error id : {{ errorId }}</p>
   </main>
 </template>
 
 <script>
-import {defineComponent} from 'vue'
+import {defineComponent, unref} from 'vue'
+import UiButton from "@/components/ui/UiButton.vue";
+import {useRoute} from "vue-router";
+import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
+import {UI_VARIANTS} from "@/components/ui/constants/uiVariants.js";
 
 export default defineComponent({
   name: "ErrorView",
+  components: {UiButton},
+  props: {
+    status: {
+      default: '',
+    },
+    statusText: {
+      default: 'Unknown Error',
+    },
+    message: {
+      default: 'Oops...'
+    },
+    errorId: {
+      default: ''
+    },
+  },
   setup() {
 
-    return {}
+    return {
+      UI_VARIANTS,
+      UI_SIZES
+    }
   }
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+h1, h2 {
+  font-size: 6rem;
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  padding: 0;
+  margin: 3rem 0;
+}
 
 </style>
