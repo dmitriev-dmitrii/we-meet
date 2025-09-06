@@ -7,19 +7,13 @@
     <div class="meet-app__controls">
       <LocalMediaControls/>
       <button v-if="localUserIsConnectedToMeet" @click="leaveMeet"> leave meet</button>
-
-      <label>
-        meetChatIsHidden
-        <input v-model="meetChatIsHidden" type="checkbox">
-      </label>
-
     </div>
   </div>
 </template>
 
 <script>
 import {defineComponent, onMounted, ref} from 'vue'
-import MeetChat from "@/components/meet-app/MeetChat.vue";
+import MeetChat from "@/components/meet-app/meet-chat/MeetChat.vue";
 import MediaStreamsLayout from "@/components/meet-app/MediaStreamsLayout.vue";
 
 import {useLocalUserStore} from "@/store/localUserStore.js";
@@ -33,12 +27,9 @@ export default defineComponent({
     const {leaveMeet} = useMeetStore()
     const {
       localUserIsConnectedToMeet,
-      initLocalMediaStream
     } = useLocalUserStore();
 
     const meetChatIsHidden = ref(false)
-
-    onMounted(initLocalMediaStream)
 
     return {
       meetChatIsHidden,
@@ -86,7 +77,11 @@ export default defineComponent({
   }
 
   &__controls {
-    width: 100%;
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    z-index: 1;
+    //width: 100%;
     height: 5rem;
     display: flex;
     align-items: center;

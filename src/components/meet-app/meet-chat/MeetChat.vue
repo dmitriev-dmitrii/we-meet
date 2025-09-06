@@ -4,10 +4,12 @@
       <li v-for="item in messages">{{ item }}</li>
     </ul>
 
+    <MeetChatSounds v-if="false"/>
+
     <form @submit.prevent="onSubmitForm" class="meet-chat__form">
 
       <UiTextInput v-model="textMessage" :size="UI_SIZES.SMALL" placeholder="write message"/>
-      <UiButton size="small" type="submit">
+      <UiButton :size="UI_SIZES.SMALL" type="submit">
         send
       </UiButton>
     </form>
@@ -25,11 +27,11 @@ import {useEventBus} from "@vueuse/core";
 import UiButton from "@/components/ui/UiButton.vue";
 import UiTextInput from "@/components/ui/UiTextInput.vue";
 import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
-
+import MeetChatSounds from "@/components/meet-app/meet-chat/MeetChatSounds.vue";
 
 export default defineComponent({
   name: "MeetChat",
-  components: {UiTextInput, UiButton},
+  components: {MeetChatSounds, UiTextInput, UiButton},
   setup() {
     const {localUserName} = useLocalUserStore();
     const {sendDataChanelMessage} = useWebRtcDataChannels();
