@@ -75,7 +75,7 @@ export const useWebRtcDataChannels = () => {
             },
         })
 
-        Object.values(unref(dataChannels)).forEach((item) => {
+        Object.values(dataChannels).forEach((item) => {
 
             if (item?.readyState === 'open') {
                 item.send(payload)

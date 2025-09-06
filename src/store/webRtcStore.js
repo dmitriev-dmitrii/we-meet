@@ -5,11 +5,11 @@ import {usersApi} from "@/api/usersApi.js";
 export const useWebRtcStore = createGlobalState(() => {
 
 
-     const peerConnections = shallowRef({});
-     const dataChannels = shallowRef({});
-     const mediaStreams = shallowRef({});
+     const peerConnections ={};
+     const dataChannels = {};
+     const mediaStreams = {};
 
-    const iceServers = shallowRef([])
+    const iceServers = shallowRef([]);
 
     const fetchIceServers = async () => {
         try {
