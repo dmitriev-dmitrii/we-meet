@@ -1,5 +1,5 @@
 <template>
-  <fieldset :disabled="isLoading" class="form_wrapper">
+  <fieldset :disabled="isLoading|| isLoadingLocalMedia" class="form_wrapper">
 
     <LocalMedaStream  class="join-meet-local-stream"/>
     <LocalMediaControls/>
@@ -7,7 +7,7 @@
     <form @submit.prevent=" onSubmitForm" class="form">
 
       <label>you name
-        <UiTextInput v-model="userName" placeholder="enter you name"/>
+        <UiTextInput v-model.trim="userName" placeholder="enter you name"/>
       </label>
 
       <span v-if="isPrivateMeet">
@@ -15,7 +15,7 @@
         <UiTextInput v-model="meetPassword" id="meet-password" placeholder="password"/>
       </span>
 
-      <UiButton type="submit" :variant="UI_VARIANTS.PRIMARY" :loading="isLoading">
+      <UiButton type="submit" :variant="UI_VARIANTS.PRIMARY" :loading="isLoading || isLoadingLocalMedia">
         join
       </UiButton>
 
@@ -24,26 +24,21 @@
 </template>
 
 <script>
-import {defineComponent, onMounted, ref, unref} from 'vue'
+import {defineComponent, ref, unref} from 'vue'
 import {useMeetStore} from "@/store/meetStore.js";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 import UiButton from "@/components/ui/UiButton.vue";
 import UiTextInput from "@/components/ui/UiTextInput.vue";
-import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
-import LocalMediaControls from "@/components/meet-app/MediaStreams/LocalMediaControls.vue";
+import LocalMedaStream from "@/components/meet-app/media-streams/LocalMedaStream.vue";
+import LocalMediaControls from "@/components/meet-app/media-streams/LocalMediaControls.vue";
 import {UI_VARIANTS} from "@/components/ui/constants/uiVariants.js";
 
 export default defineComponent({
   name: "JoinMeetForm",
-  computed: {
-    UI_VARIANTS() {
-      return UI_VARIANTS
-    }
-  },
   components: {LocalMediaControls, LocalMedaStream, UiTextInput, UiButton},
   setup() {
 
-    const {localUserName, localUserIsConnectedToMeet , initLocalMediaStream} = useLocalUserStore()
+    const { localUserIsConnectedToMeet , isLoadingLocalMedia } = useLocalUserStore()
     const {joinMeet, isPrivateMeet} = useMeetStore()
     const meetPassword = ref('')
     const userName = ref('')
@@ -59,7 +54,7 @@ export default defineComponent({
           password: unref(meetPassword)
         })
 
-      } catch (e) {
+      } catch (err) {
 
       } finally {
         isLoading.value = false
@@ -67,12 +62,11 @@ export default defineComponent({
 
     }
 
-
-    onMounted(initLocalMediaStream)
-
     return {
+      UI_VARIANTS,
       localUserIsConnectedToMeet,
       isPrivateMeet,
+      isLoadingLocalMedia,
       isLoading,
       userName,
       meetPassword,

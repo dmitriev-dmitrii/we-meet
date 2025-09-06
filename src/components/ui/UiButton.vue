@@ -22,7 +22,7 @@ export default defineComponent({
     variant: {
       default: UI_VARIANTS.BASE,
       type: String,
-      validator: (value, props) => Object.values(UI_VARIANTS).includes(value),
+      validator: (value, props) =>  Object.values(UI_VARIANTS).includes(value),
     },
     loading: {
       type: Boolean,
@@ -80,13 +80,12 @@ export default defineComponent({
 
   @media (hover: hover) {
 
-    &:hover:not(.loading),
-    {
+    &:hover:not([disabled]):not(.loading) {
       border-color: currentColor;
     }
   }
 
-  &:active {
+  &:active:not([disabled]):not(.loading) {
     border-color: currentColor;
   }
 
@@ -101,7 +100,7 @@ export default defineComponent({
   }
 
   &_base {
-    border: 1px solid $main-text-color;
+    border: 1px solid $secondary-color;
     background-color: $accent-color;
   }
 

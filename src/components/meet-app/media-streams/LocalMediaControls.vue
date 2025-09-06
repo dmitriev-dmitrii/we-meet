@@ -1,15 +1,15 @@
 <template>
   <div class="local-media-controls">
+
     <label>
-      audio state
-      <input v-model="localAudioState" :disabled="!isAllowLocalMediaPermissions" type="checkbox">
+      audio
+      <input v-model="localAudioState" :disabled="isDisabledControls" type="checkbox">
     </label>
 
     <label>
-      video state
-      <input v-model="localVideoState" :disabled="!isAllowLocalMediaPermissions" type="checkbox">
+      video
+      <input v-model="localVideoState" :disabled="isDisabledControls" type="checkbox">
     </label>
-
 
     <!--    <label>-->
     <!--      <span>  videoInput </span>-->
@@ -34,24 +34,30 @@
 </template>
 
 <script>
-import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue'
+import {computed, defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue'
 import {useWebRtcDataChannels} from "@/features/web-rtc/useWebRtcDataChannels.js";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 import {WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
+import UiButton from "@/components/ui/UiButton.vue";
 
 export default defineComponent({
   name: "LocalMediaControls",
+  components: {UiButton},
   setup() {
     const {sendDataChanelMessage} = useWebRtcDataChannels()
 
     const {
+      isLoadingLocalMedia,
       isAllowLocalMediaPermissions,
       localUserIsConnectedToMeet,
+      initLocalMediaStream,
       videoInputs,
       audioInputs,
       localAudioState,
       localVideoState,
     } = useLocalUserStore()
+
+    const isDisabledControls = computed(()=> unref(isLoadingLocalMedia) && !unref(isAllowLocalMediaPermissions))
 
     watch([localAudioState, localVideoState], () => {
       const payload = {
@@ -67,6 +73,8 @@ export default defineComponent({
 
     onMounted(async () => {
 
+      await initLocalMediaStream()
+
       if (import.meta.env.DEV) {
         localAudioState.value = false
       }
@@ -74,7 +82,7 @@ export default defineComponent({
     })
 
     return {
-      isAllowLocalMediaPermissions,
+      isDisabledControls,
       localUserIsConnectedToMeet,
       videoInputs,
       audioInputs,
@@ -88,6 +96,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .local-media-controls {
   display: flex;
+  gap: $base-gap;
 }
 
 </style>

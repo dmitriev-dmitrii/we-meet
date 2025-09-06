@@ -1,6 +1,7 @@
 @use "@/css/vars.scss" as *;
 
 .media-stream {
+  border-radius: $base-border-radius;
   position: relative;
   width: 100%;
   height: 100%;

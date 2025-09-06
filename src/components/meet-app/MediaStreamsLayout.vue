@@ -16,9 +16,9 @@
 
 <script>
 import {computed, defineComponent, onMounted, reactive, ref, unref, watch} from 'vue'
-import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
-import MeetChat from "@/components/meet-app/MeetChat.vue";
-import RemoteMediaStream from "@/components/meet-app/MediaStreams/RemoteMediaStream.vue";
+import LocalMedaStream from "@/components/meet-app/media-streams/LocalMedaStream.vue";
+import MeetChat from "@/components/meet-app/meet-chat/MeetChat.vue";
+import RemoteMediaStream from "@/components/meet-app/media-streams/RemoteMediaStream.vue";
 import {useMeetStore} from "@/store/meetStore.js";
 import {useCssVar} from '@vueuse/core'
 
@@ -95,7 +95,6 @@ export default defineComponent({
   & > :nth-child(n) {
     overflow: hidden;
     max-width: 100%;
-    border-radius: $base-border-radius;
   }
 
   &.u-1 {

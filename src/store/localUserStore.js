@@ -23,6 +23,7 @@ export const useLocalUserStore = createGlobalState(() => {
     const localUserMediaStreams = shallowRef()
 
     const isAllowLocalMediaPermissions = ref(false)
+    const isLoadingLocalMedia = ref(false)
 
     const currentVideoInputId = ref('')
     const currentAudioInputId = ref('')
@@ -46,7 +47,7 @@ export const useLocalUserStore = createGlobalState(() => {
             try {
                 const audioTracks = unref(localUserMediaStreams).getAudioTracks()
 
-                return  audioTracks.find(({readyState}) => {
+                return audioTracks.find(({readyState}) => {
                     return readyState === 'live'
                 }).enabled = !!value
 
@@ -101,7 +102,7 @@ export const useLocalUserStore = createGlobalState(() => {
     const initLocalMediaStream = async () => {
 
         try {
-
+            isLoadingLocalMedia.value = true
             if (!unref(isSupportedLocalUserMedia)) {
                 localAudioState.value = false
                 localVideoState.value = false
@@ -116,16 +117,17 @@ export const useLocalUserStore = createGlobalState(() => {
             console.log('initLocalMediaStream err', e)
             isAllowLocalMediaPermissions.value = false
         } finally {
-
+            isLoadingLocalMedia.value = false
         }
     }
 
 
-    watch([currentAudioInputId, currentVideoInputId , currentAudioOutputId], () => {
+    watch([currentAudioInputId, currentVideoInputId, currentAudioOutputId], () => {
         // TODO смена медиа инпутов
     })
 
     return {
+
         localUserMediaStreams,
         localVideoState,
         localAudioState,
@@ -134,6 +136,7 @@ export const useLocalUserStore = createGlobalState(() => {
         videoInputs,
         audioInputs,
         audioOutputs,
+        isLoadingLocalMedia,
         localUserIsConnectedToMeet,
         localUserId,
         localUserName,

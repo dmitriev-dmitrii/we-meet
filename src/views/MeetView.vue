@@ -6,7 +6,7 @@
 
 <script>
 
-import LocalMedaStream from "@/components/meet-app/MediaStreams/LocalMedaStream.vue";
+import LocalMedaStream from "@/components/meet-app/media-streams/LocalMedaStream.vue";
 import {useLocalUserStore} from "@/store/localUserStore.js";
 import {computed, defineComponent, onMounted, ref, unref} from 'vue';
 import JoinMeetForm from "@/components/meet-form/JoinMeetForm.vue";
@@ -15,7 +15,7 @@ import {useMeetStore} from "@/store/meetStore.js";
 import {useRouteParams} from '@vueuse/router'
 import {onBeforeRouteLeave, useRouter} from "vue-router";
 import {useWebSocket} from "@/features/useWebSocket.js";
-import MeetChat from "@/components/meet-app/MeetChat.vue";
+import MeetChat from "@/components/meet-app/meet-chat/MeetChat.vue";
 import MediaStreamsLayout from "@/components/meet-app/MediaStreamsLayout.vue";
 import MeetApp from "@/components/meet-app/MeetApp.vue";
 import UiLoading from "@/components/ui/UiLoading.vue";

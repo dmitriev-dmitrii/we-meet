@@ -1,10 +1,17 @@
 <template>
-  <input class="ui-text-input" type="text" v-bind="$attrs" :class="classes" >
+  <input
+      class="ui-text-input"
+      type="text"
+      v-bind="$attrs"
+      :class="classes"
+      :value="$attrs.modelValue"
+      @input="$emit('update:modelValue', $event.target.value)"
+      :disabled="disabled || loading"
+  >
   <div v-if="loading">loading ...</div>
 </template>
 
 <script>
-
 import {computed, defineComponent} from 'vue'
 import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
 
@@ -14,27 +21,27 @@ export default defineComponent({
     size: {
       default: UI_SIZES.MEDIUM,
       type: String,
-      validator: (value, props) => Object.values(UI_SIZES).includes(value),
+      validator: (value) => Object.values(UI_SIZES).includes(value),
     },
     loading: {
-      type:Boolean,
+      type: Boolean,
       default: false
     },
     disabled: {
-      type:Boolean,
+      type: Boolean,
       default: false
     }
   },
+
   setup(props) {
-
     const classes = computed(() => {
-
       return {
         [`size-${props.size}`]: true,
-        loading: props.loading,
-        disabled: props.disabled,
+        'loading': props.loading,
+        'disabled': props.disabled,
       }
     })
+
     return {
       classes
     }
@@ -53,14 +60,10 @@ export default defineComponent({
   box-sizing: border-box;
   width: 100%;
 
-  @media (hover: hover) {
-    &:hover {
-      border-color:$primary-color;
-    }
-  }
   &:focus::placeholder {
     color: rgba(0,0,0,0);
   }
+
 
   &:disabled,
   .loading {
@@ -74,6 +77,13 @@ export default defineComponent({
 
   .loading {
     cursor: wait;
+  }
+
+
+  @media (hover: hover) {
+    &:hover:not([disabled]):not(.loading) {
+      border-color: $primary-color;
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="meet-chat">
     <ul class="meet-chat__messages">
-      <li v-for="item in messages">{{ item }}</li>
+      <li class="meet-chat__messages__item" v-for="item in messages">{{ item }}</li>
     </ul>
 
     <MeetChatSounds v-if="false"/>
@@ -9,7 +9,7 @@
     <form @submit.prevent="onSubmitForm" class="meet-chat__form">
 
       <UiTextInput v-model="textMessage" :size="UI_SIZES.SMALL" placeholder="write message"/>
-      <UiButton :size="UI_SIZES.SMALL" type="submit">
+      <UiButton :disabled="!textMessage" :size="UI_SIZES.SMALL" type="submit">
         send
       </UiButton>
     </form>
@@ -95,7 +95,6 @@ export default defineComponent({
     const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)
 
     webRtcEventBus.on((payload) => {
-
       const {type} = payload
 
       if (type === WEB_RTC_EVENT_BUS_TYPES.DATA_CHANEL_TEXT_MESSAGE) {
@@ -123,12 +122,21 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+
 .meet-chat {
   display: flex;
   flex-direction: column;
-  &__messages{
 
+  &__messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    &__item {
+
+    }
   }
+
   &__form {
     display: flex;
   }
