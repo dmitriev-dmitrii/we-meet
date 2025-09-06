@@ -80,7 +80,8 @@ export const useWebRtcDataChannels = () => {
             if (item?.readyState === 'open') {
                 item.send(payload)
             } else {
-                console.warn('sendDataChanelMessage readyState is not open')
+                console.warn(`sendDataChanelMessage [${item?.label}] readyState is not open`,
+                )
             }
 
         })
