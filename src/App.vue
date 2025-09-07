@@ -1,7 +1,6 @@
 <template>
-
-  <div v-if="isLoading">loading</div>
-  <RouterView   v-else/>
+{{iceServers}}
+  <RouterView  />
 
 </template>
 
@@ -21,7 +20,6 @@ export default defineComponent({
 
   },
   setup() {
-    const {fetchIceServers} = useWebRtcStore()
     const {setupOnWsMessageCallbacks} = useWebSocket()
     const {updateMeetUser, removeUserFromMeet} = useMeetStore()
     const {localUserIsConnectedToMeet} = useLocalUserStore()
@@ -48,24 +46,8 @@ export default defineComponent({
       [WEB_SOCKET_EVENTS.WS_CONNECTION]: [onUserMeetConnected],
       [WEB_SOCKET_EVENTS.WS_CLOSE]: [onUserMeetDisconnected],
     })
-
-
-    const isLoading = ref(true)
-
-
-    onMounted(async () => {
-      try {
-        await fetchIceServers()
-      } catch (e) {
-        // TODO // обработать ошибки
-      } finally {
-        isLoading.value = false
-      }
-
-    })
-
     return {
-      isLoading
+
     }
   }
 })

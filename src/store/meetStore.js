@@ -7,12 +7,14 @@ import {useWebSocket} from "@/features/useWebSocket.js";
 import {reactive, ref, unref} from "vue";
 import {createGlobalState, useEventBus} from "@vueuse/core";
 import {meetApi} from "@/api/meetApi.js";
+import {useWebRtcStore} from "@/store/webRtcStore.js";
 
 const {closeWebSocket, connectToWebSocket} = useWebSocket()
 const {closePeerConnection} = useWebRtcConnections()
 const {deleteMediaStream} = useWebRtcMediaStreams()
 const {closeDataChanel} = useWebRtcDataChannels()
 const {sendMeOffer} = useWebRtcConnections()
+const {fetchIceServers} = useWebRtcStore()
 
 export const useMeetStore = createGlobalState(() => {
 
@@ -94,7 +96,7 @@ export const useMeetStore = createGlobalState(() => {
                 meetId: unref(currentMeetId),
                 userId: unref(localUserId)
             }
-
+            await fetchIceServers()
             const {data} = await meetApi.joinMeetRequest({...payload, ...{password}})
 
             await connectToWebSocket(payload)

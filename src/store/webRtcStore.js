@@ -28,6 +28,7 @@ export const useWebRtcStore = createGlobalState(() => {
     }
 
     return {
+        iceServers,
         fetchIceServers,
         peerConnections,
         dataChannels,
