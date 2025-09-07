@@ -1,14 +1,13 @@
 import  "webrtc-adapter";
 import { createApp } from 'vue'
 import App from './App.vue'
-import {createMemoryHistory, createRouter, createWebHashHistory, createWebHistory} from "vue-router";
+import { createRouter, createWebHashHistory} from "vue-router";
 import {routes} from "./router";
 import './css/index.scss'
 
 const app = createApp(App)
 const router = createRouter({
-    history:createWebHistory(),
-    // history: createWebHashHistory(),
+    history: createWebHashHistory(),
     routes
 })
 app.use(router)

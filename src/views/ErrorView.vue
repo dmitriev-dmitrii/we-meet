@@ -11,9 +11,7 @@
       {{ message }}
     </p>
 
-
     <UiButton @click="onHomeClick" :variant="UI_VARIANTS.PRIMARY" :size="UI_SIZES.LARGE">Go home page →</UiButton>
-
 
     <p v-if="errorId"> error id : {{ errorId }}</p>
   </main>
