@@ -80,7 +80,6 @@ export default defineComponent({
         setCurrentMeet(res.meetId)
 
       } catch (error) {
-        console.log(error)
         await router.replace({
           name: ROUTER_NAMES.ERROR,
           state: error,

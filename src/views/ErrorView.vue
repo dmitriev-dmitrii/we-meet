@@ -33,10 +33,10 @@ export default defineComponent({
       default: '',
     },
     statusText: {
-      default: 'Unknown Error',
+      default: '',
     },
     message: {
-      default: 'Oops...'
+      default: ''
     },
     errorId: {
       default: ''

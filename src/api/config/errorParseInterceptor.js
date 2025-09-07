@@ -1,15 +1,17 @@
 export const errorParseInterceptor = (error) => {
 
-    if (error.response) {
+    if (error?.response?.data) {
 
         const {
-            status = '500',
-            statusText = 'Service Error',
-            message = ''
-        } = error.response
+            status,
+            statusText,
+            message,
+            details,
+        } = error.response.data
 
         return {
             status,
+            details,
             statusText,
             message
         }
@@ -17,7 +19,7 @@ export const errorParseInterceptor = (error) => {
 
     return {
         status: '',
-        statusText: error.message || 'Service unavailable',
+        statusText: error.message || 'Unexpected Error',
         message: 'Something wrong...'
     }
 }
