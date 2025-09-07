@@ -21,7 +21,7 @@ export const routes = [
 
             const {
                 status,
-                statusText ,
+                statusText,
                 message,
                 errorId
             } = history.state

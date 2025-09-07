@@ -11,9 +11,9 @@
       {{ message }}
     </p>
 
-    <RouterLink to="/">
-      <UiButton :variant="UI_VARIANTS.PRIMARY" :size="UI_SIZES.LARGE">Go home page →</UiButton>
-    </RouterLink>
+
+    <UiButton @click="onHomeClick" :variant="UI_VARIANTS.PRIMARY" :size="UI_SIZES.LARGE">Go home page →</UiButton>
+
 
     <p v-if="errorId"> error id : {{ errorId }}</p>
   </main>
@@ -22,9 +22,10 @@
 <script>
 import {defineComponent, unref} from 'vue'
 import UiButton from "@/components/ui/UiButton.vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {UI_SIZES} from "@/components/ui/constants/uiSizes.js";
 import {UI_VARIANTS} from "@/components/ui/constants/uiVariants.js";
+import {ROUTER_NAMES} from "@/router/constants/routerNames.js";
 
 export default defineComponent({
   name: "ErrorView",
@@ -44,8 +45,12 @@ export default defineComponent({
     },
   },
   setup() {
-
+    const router = useRouter()
+    const onHomeClick = async () => {
+      await router.push({name: ROUTER_NAMES.HOME})
+    }
     return {
+      onHomeClick,
       UI_VARIANTS,
       UI_SIZES
     }

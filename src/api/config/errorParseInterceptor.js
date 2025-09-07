@@ -5,7 +5,7 @@ export const errorParseInterceptor = (error) => {
         const {
             status = '500',
             statusText = 'Service Error',
-            message = 'Something wrong...'
+            message = ''
         } = error.response
 
         return {
@@ -14,7 +14,6 @@ export const errorParseInterceptor = (error) => {
             message
         }
     }
-
 
     return {
         status: '',
