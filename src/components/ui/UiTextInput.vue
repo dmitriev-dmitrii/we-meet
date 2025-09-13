@@ -36,7 +36,7 @@ export default defineComponent({
   setup(props) {
     const classes = computed(() => {
       return {
-        [`size-${props.size}`]: true,
+        [`size_${props.size}`]: true,
         'loading': props.loading,
         'disabled': props.disabled,
       }
@@ -54,7 +54,7 @@ export default defineComponent({
 .ui-text-input {
   border-radius: $base-border-radius;
   border: 1px solid rgba(0, 0, 0, 0);
-  padding: 0.5em ;
+  padding: 0.35em 0.5em 0.5em 0.5em;
   transition: border-color 0.25s;
   display: block;
   box-sizing: border-box;
@@ -88,18 +88,20 @@ export default defineComponent({
 }
 
 .size {
-  &_small {
+
+  &_sm {
     font-size: 1.5rem;
   }
 
-  &_base {
-    font-size: 1.75rem;
-    min-height: 4rem;
-  }
-
-  &_large {
+  &_md {
     font-size: 2rem;
   }
+
+  &_lg {
+    font-size: 2.5rem;
+  }
+
 }
+
 
 </style>

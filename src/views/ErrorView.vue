@@ -42,11 +42,17 @@ export default defineComponent({
       default: ''
     },
   },
-  setup() {
+  setup(props) {
     const router = useRouter()
     const onHomeClick = async () => {
       await router.push({name: ROUTER_NAMES.HOME})
     }
+
+    if (!props.statusText && !props.status) {
+      console.warn('no  status for err => replaced to home page')
+      router.replace({name: ROUTER_NAMES.HOME})
+    }
+
     return {
       onHomeClick,
       UI_VARIANTS,

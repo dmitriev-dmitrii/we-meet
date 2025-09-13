@@ -1,21 +1,30 @@
 <template>
 
   <div class="media-stream">
-    <div class="media-stream__label">{{ userName}}</div>
-    <video class="media-stream__video" autoplay ref="remoteMedaStreamElement"></video>
+    <div class="media-stream__label">{{ userName }}</div>
+
+    <video class="media-stream__video"
+           autoplay
+           playsinline
+           webkit-playsinline
+           x5-playsinline
+           x5-video-player-type
+           disablepictureinpicture
+           ref="remoteMedaStreamElement">
+    </video>
 
     <div class="media-stream__controls">
-    <div>
-      peer status :{{ peerStatus }}
-    </div>
-    <div>
-      audio {{ audio }}
-    </div>
+      <div>
+        peer status :{{ peerStatus }}
+      </div>
+      <div>
+        audio {{ audio }}
+      </div>
 
-    <div>
-      video
-      {{ video }}
-    </div>
+      <div>
+        video
+        {{ video }}
+      </div>
     </div>
   </div>
 
@@ -24,7 +33,7 @@
 <script>
 import {defineComponent, onMounted, ref, unref, useTemplateRef, watch} from 'vue'
 
-import { MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/web-rtc.js";
+import {MEDIA_TRACK_KIND, PEER_CONNECTIONS_STATE_STATUSES} from "@/constants/web-rtc.js";
 import {useWebRtcStore} from "@/store/webRtcStore.js";
 
 
@@ -98,7 +107,6 @@ export default defineComponent({
     }
 
 
-
     const setComponentStateByPeerStatus = (peerStatus) => {
 
       if (!Object.keys(COMPONENT_CONNECTION_STATE_BY_PEER_STATUS).includes(peerStatus)) {
@@ -119,9 +127,7 @@ export default defineComponent({
       setupRemoteMediaStream()
     })
 
-    return {
-
-    }
+    return {}
 
     // TODO  не стабильно работает видео при соединении - придумать как дожидаться что канал и все пиры готовы к трансляции
     // TODO придумать другой способ как сообщить о переключении  состояния микрофона и видео  у remoteUser

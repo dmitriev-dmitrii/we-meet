@@ -53,26 +53,21 @@ export default defineComponent({
 
     const isLoading = ref(false)
 
-    const currentMeetRoute = computed(() => {
-      return router.resolve({
+    const copyMeetHref = async () => {
+      await window.navigator.clipboard.writeText(window.location + unref(meetId))
+    }
+
+    const toMeet = async () => {
+      await router.push({
         name: ROUTER_NAMES.MEET,
         params: {
           meetId: unref(meetId)
         }
       })
-    })
-
-    const copyMeetHref = async () => {
-      await window.navigator.clipboard.writeText(window.location.origin + unref(currentMeetRoute).href)
-    }
-
-    const toMeet = async () => {
-      await router.push(unref(currentMeetRoute))
     }
 
     const onSubmitForm = async () => {
       try {
-
 
         isLoading.value = true
 
@@ -85,7 +80,6 @@ export default defineComponent({
         isLoading.value = false
       } catch (error) {
 
-        console.log(error)
         await router.push({
           name: ROUTER_NAMES.ERROR,
           state: error,

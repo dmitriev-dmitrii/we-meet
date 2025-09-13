@@ -1,8 +1,8 @@
 import {useWebRtcStore} from "@/store/webRtcStore.js";
-import {useLocalUserStore} from "@/store/localUserStore.js";
 import {useEventBus} from "@vueuse/core";
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {unref} from "vue";
+import {useLocalMediaControls} from "@/features/useLocalMediaControls.js";
 
 const {
     peerConnections,
@@ -11,7 +11,7 @@ const {
 
 const {
     localUserMediaStreams
-} = useLocalUserStore()
+} = useLocalMediaControls()
 
 export const useWebRtcMediaStreams = () => {
     const webRtcEventBus = useEventBus(WEB_RTC_EVENT_BUS_INSTANCE)

@@ -1,5 +1,5 @@
 <template>
-{{iceServers}}
+
   <RouterView  />
 
 </template>

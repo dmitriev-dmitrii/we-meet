@@ -27,10 +27,9 @@ export const useMeetStore = createGlobalState(() => {
     const findMeetById = async (meetId) => {
         try {
 
-
             const {data} = await meetApi.getMeetById({meetId})
 
-            isPrivateMeet.value = data.ownerUserId === localUserId ? false : data.isPrivateMeet
+            isPrivateMeet.value = data.isPrivateMeet
 
             currentMeetId.value = data.meetId
             return data

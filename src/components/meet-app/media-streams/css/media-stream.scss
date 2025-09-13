@@ -23,6 +23,7 @@
     object-fit: cover;
     object-position: center center;
     z-index: 1;
+    transform: scaleX(-1); /* Зеркальное отражение */
   }
 
   &__controls {

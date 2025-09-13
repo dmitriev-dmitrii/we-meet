@@ -1,15 +1,14 @@
 import {useWebSocket} from "../useWebSocket.js";
-import { useWebRtcStore} from "@/store/webRtcStore.js";
+import {useWebRtcStore} from "@/store/webRtcStore.js";
 import {useWebRtcDataChannels} from "./useWebRtcDataChannels.js";
 import {useWebRtcMediaStreams} from "./useWebRtcMediaStreams.js";
-import {useEventBus} from "@vueuse/core";
 import {WEB_RTC_EVENT_BUS_INSTANCE, WEB_RTC_EVENT_BUS_TYPES} from "@/constants/event-bus.js";
 import {WEB_SOCKET_EVENTS} from "@/constants/web-socket.js";
-import {usersApi} from "@/api/usersApi.js";
-import {shallowRef, unref} from "vue";
 import {useLocalUserStore} from "@/store/localUserStore.js";
+import {useEventBus} from "@vueuse/core";
+import {unref} from "vue";
 
-const {peerConnections , iceServers} = useWebRtcStore()
+const {peerConnections, iceServers} = useWebRtcStore()
 const {setupDataChanelEvents} = useWebRtcDataChannels();
 const {setupMediaStreamToPeer} = useWebRtcMediaStreams();
 const {sendWebSocketMessage} = useWebSocket();

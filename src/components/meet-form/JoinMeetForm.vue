@@ -1,5 +1,5 @@
 <template>
-  <fieldset :disabled="isLoading|| isLoadingLocalMedia" class="form_wrapper">
+  <fieldset :disabled="isLoading || isLoadingLocalMedia" class="form_wrapper">
 
     <LocalMedaStream  class="join-meet-local-stream"/>
     <LocalMediaControls/>
