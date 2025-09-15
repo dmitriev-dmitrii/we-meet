@@ -104,7 +104,6 @@ export const useMeetStore = createGlobalState(() => {
 
         } catch (e) {
 
-            alert('joinMeet err ' + e.message)
             throw e
         }
 
@@ -118,7 +117,7 @@ export const useMeetStore = createGlobalState(() => {
             closeWebSocket()
 
         } catch (e) {
-            alert('leaveMeet err' + e.message)
+
             throw e
         }
     }

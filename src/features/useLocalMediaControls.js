@@ -154,7 +154,6 @@ export const useLocalMediaControls = createSharedComposable(() => {
 
 
     watch([currentAudioInputId, currentVideoInputId, currentAudioOutputId], () => {
-        console.log('hui')
         // TODO смена медиа инпутов
     })
 
