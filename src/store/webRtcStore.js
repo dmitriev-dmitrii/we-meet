@@ -11,14 +11,14 @@ export const useWebRtcStore = createGlobalState(() => {
 
     const iceServers = shallowRef([]);
 
-    const fetchIceServers = async () => {
+    const fetchIceServers = async (coturn) => {
         try {
 
             if (unref(iceServers).length) {
                 return
             }
 
-            const {data} = await usersApi.getIceServers()
+            const {data} = await usersApi.getIceServers(coturn)
 
             iceServers.value = data
 

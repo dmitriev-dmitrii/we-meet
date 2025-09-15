@@ -11,33 +11,33 @@
       <input v-model="localVideoState" :disabled="isDisabledControls" type="checkbox">
     </label>
 
-    <label>
-      <span>  videoInput {{videoInputs.length}}</span>
-      <select id="video-input-select" :disabled="videoInputs.length <= 1">
-        <option :value="deviceId" v-for="{deviceId , label} in videoInputs" :key="deviceId">
-          {{ label }}
-        </option>
-      </select>
-    </label>
+<!--    <label>-->
+<!--      <span>  videoInput {{videoInputs.length}}</span>-->
+<!--      <select id="video-input-select" :disabled="videoInputs.length <= 1">-->
+<!--        <option :value="deviceId" v-for="{deviceId , label} in videoInputs" :key="deviceId">-->
+<!--          {{ label }}-->
+<!--        </option>-->
+<!--      </select>-->
+<!--    </label>-->
 
-    <label>
-      <span>audioInputs {{audioInputs.length}} </span>
-      <select id="audio-input-select" :disabled="audioInputs.length <= 1">
-        <option :value="deviceId" v-for="{deviceId , label} in audioInputs" :key="deviceId">
-          {{ label }}
-        </option>
-      </select>
+<!--    <label>-->
+<!--      <span>audioInputs {{audioInputs.length}} </span>-->
+<!--      <select id="audio-input-select" :disabled="audioInputs.length <= 1">-->
+<!--        <option :value="deviceId" v-for="{deviceId , label} in audioInputs" :key="deviceId">-->
+<!--          {{ label }}-->
+<!--        </option>-->
+<!--      </select>-->
 
-    </label>
+<!--    </label>-->
 
-    <label>
-      <span>audioOutput </span>
-      <select id="audio-input-select" :disabled="audioOutputs.length <= 1">
-        <option :value="deviceId" v-for="{deviceId , label} in audioOutputs" :key="deviceId">
-          {{ label }}
-        </option>
-      </select>
-    </label>
+<!--    <label>-->
+<!--      <span>audioOutput </span>-->
+<!--      <select id="audio-input-select" :disabled="audioOutputs.length <= 1">-->
+<!--        <option :value="deviceId" v-for="{deviceId , label} in audioOutputs" :key="deviceId">-->
+<!--          {{ label }}-->
+<!--        </option>-->
+<!--      </select>-->
+<!--    </label>-->
 
   </div>
 </template>

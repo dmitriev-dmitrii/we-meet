@@ -85,7 +85,7 @@ export const useMeetStore = createGlobalState(() => {
         }
     }
 
-    const joinMeet = async ({userName, password}) => {
+    const joinMeet = async ({userName, password , coturn}) => {
 
         try {
 
@@ -95,7 +95,7 @@ export const useMeetStore = createGlobalState(() => {
                 meetId: unref(currentMeetId),
                 userId: unref(localUserId)
             }
-            await fetchIceServers()
+            await fetchIceServers(coturn)
             const {data} = await meetApi.joinMeetRequest({...payload, ...{password}})
 
             await connectToWebSocket(payload)

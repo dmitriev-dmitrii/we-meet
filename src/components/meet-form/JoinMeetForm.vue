@@ -1,10 +1,16 @@
 <template>
   <fieldset :disabled="isLoading || isLoadingLocalMedia" class="form_wrapper">
 
-    <LocalMedaStream  class="join-meet-local-stream"/>
+    <LocalMedaStream class="join-meet-local-stream"/>
     <LocalMediaControls/>
 
     <form @submit.prevent=" onSubmitForm" class="form">
+
+
+      <label>coturn
+        <input type="checkbox" v-model="coturn">
+      </label>
+
 
       <label>you name
         <UiTextInput v-model.trim="userName" placeholder="enter you name"/>
@@ -38,11 +44,13 @@ export default defineComponent({
   components: {LocalMediaControls, LocalMedaStream, UiTextInput, UiButton},
   setup() {
 
-    const { localUserIsConnectedToMeet , isLoadingLocalMedia } = useLocalUserStore()
+    const {localUserIsConnectedToMeet, isLoadingLocalMedia} = useLocalUserStore()
     const {joinMeet, isPrivateMeet} = useMeetStore()
     const meetPassword = ref('')
     const userName = ref('')
+
     const isLoading = ref(false)
+    const coturn = ref(false)
 
     const onSubmitForm = async () => {
       try {
@@ -51,7 +59,8 @@ export default defineComponent({
 
         await joinMeet({
           userName: unref(userName),
-          password: unref(meetPassword)
+          password: unref(meetPassword),
+          coturn: unref(coturn)
         })
 
       } catch (err) {
@@ -63,6 +72,7 @@ export default defineComponent({
     }
 
     return {
+      coturn,
       UI_VARIANTS,
       localUserIsConnectedToMeet,
       isPrivateMeet,

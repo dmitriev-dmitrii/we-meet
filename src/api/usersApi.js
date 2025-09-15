@@ -7,8 +7,8 @@ const userAuth = (payload) => {
     return axiosInstance.post(`${USERS_API_URL}/auth`, payload)
 }
 
-const getIceServers = () => {
-    return axiosInstance.get(`${USERS_API_URL}/ice-servers`)
+const getIceServers = (coturn='') => {
+    return axiosInstance.get(`${USERS_API_URL}/ice-servers?coturn=${coturn}`)
 }
 
 export const usersApi = {
