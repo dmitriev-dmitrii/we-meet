@@ -5,7 +5,7 @@ import path from "path";
 
 export default defineConfig(({command, mode, isSsrBuild, isPreview}) => {
 
-    const {VITE_APP_DEV_PORT} = loadEnv(mode, process.cwd());
+    const VITE_APP_DEV_PORT = 3003
 
     const isProdMode = mode === 'production'
     const publicPath = isProdMode ? "/we-meet/" : "/"
@@ -13,11 +13,11 @@ export default defineConfig(({command, mode, isSsrBuild, isPreview}) => {
     return {
         server: {
             strictPort: true,
-            port: parseInt(VITE_APP_DEV_PORT, 10),
+            port: VITE_APP_DEV_PORT,
         },
         preview: {
             strictPort: true,
-            port: parseInt(VITE_APP_DEV_PORT, 10),
+            port: VITE_APP_DEV_PORT,
         },
         plugins: [
             vue(),
