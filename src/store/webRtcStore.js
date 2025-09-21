@@ -19,7 +19,7 @@ export const useWebRtcStore = createGlobalState(() => {
             }
 
             const {data} = await usersApi.getIceServers(coturn)
-
+            console.log(iceServers)
             iceServers.value = data
 
         } catch (err) {
