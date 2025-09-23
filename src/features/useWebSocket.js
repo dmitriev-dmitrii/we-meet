@@ -1,6 +1,6 @@
 import {useLocalUserStore} from "@/store/localUserStore.js";
 
-const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_API_URL;
+const WEB_SOCKET_URL = import.meta.env.VITE_WE_MEET_WS_URL;
 
 const onMessageHandlers = new Map()
 
@@ -26,10 +26,9 @@ export const useWebSocket =    () => {
 
 
     const connectToWebSocket = async ({ userId , meetId }) => {
+    return new Promise((resolve, reject) => {
 
-        return new Promise((resolve, reject) => {
-
-            ws = new WebSocket(`${WEB_SOCKET_URL}?userId=${userId}&meetId=${meetId}`);
+            ws = new WebSocket(`${WEB_SOCKET_URL}/api/ws/?userId=${userId}&meetId=${meetId}`);
 
             ws.onmessage = async (event) => {
                 const payload = JSON.parse(event.data);
