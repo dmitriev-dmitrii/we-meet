@@ -1,0 +1,17 @@
+services:
+  we-meet-frontend:
+    image: nginx:alpine
+    container_name: we-meet-frontend
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+#    build:
+#      context: ./
+    volumes:
+      - ./dist:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - we-meet-network
+networks:
+  we-meet-network:
+    external: true

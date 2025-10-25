@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "make clean-dist && npm i && vite",
-    "build": "make clean-dist && vite build",
-    "preview": "make clean-dist && vite build --mode development && vite preview --mode development"
+    "build": "vite build",
+    "preview": "vite build --mode development && vite preview --mode development"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
